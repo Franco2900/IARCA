@@ -1,0 +1,56 @@
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+main {
+    flex: 1; /* Asegura que el contenido principal ocupe todo el espacio visible disponible, así el footer siempre pegado en la parte inferior de la pantalla */
+}
+
+header {
+    background: linear-gradient(to right, #0aedfd, #030300);
+    padding: 20px 0;
+    color: white;
+}
+
+nav {
+    background-color: black;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 1rem;
+}
+
+nav ul li a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+#plantillaSecundaria {
+    padding: 20px;
+}
+
+footer {
+    background-color: #343a40;
+    color: #ffffff;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 2rem;
+    position: flex;
+    bottom: 0;
+    width: 100%;
+}
+
+.perfil-img {
+    width: 40px; 
+    height: 40px; 
+}

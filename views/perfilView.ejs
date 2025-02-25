@@ -1,0 +1,57 @@
+<link rel="stylesheet" type="text/css" href="/css/perfil.css">
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <div class="col-3 image-container" style="position: relative;">
+
+            <img id='imagenPerfil' src="/images/Perfil/<%= usuario.imagenPerfil %>" alt="Imagen" class="img-fluid">
+
+            <a href="#" class="position-absolute top-0 end-0 p-2">
+                <i class="bi bi-pencil-square" onclick="document.getElementById('formularioImagenPerfil').click();"></i>
+                <!-- Al hacer click en el icono es como hacer click en el formulario -->
+            </a>
+
+            <input type="file" id="formularioImagenPerfil" name="formularioImagenPerfil" style="display: none;"
+                accept="image/*" onchange="cambiarImagen(event)"> <!-- Solo se acepta imagenes o gif -->
+
+        </div>
+
+
+        <div class="col-9">
+
+            <h3>Datos personales</h3>
+
+            <p id="nombre">
+                Nombre: 
+                <%= usuario.nombre %> 
+
+                <a href="#" class="ms-2">
+                    <i class="bi bi-pencil-square" onclick="document.getElementById('formularioNombre').click();"></i>
+                </a>
+
+            </p>
+
+            <input type="text" id="formularioNombre" name="formularioNombre" style="display: none;" onclick="cambiarNombre()"> <!-- Campo para cambiar nombre oculto -->
+
+
+            <p id="contrasenia">
+                Contraseña: 
+                ***********
+                <a href="#" class="ms-2">
+                    <i class="bi bi-pencil-square" onclick="document.getElementById('formularioContrasenia').click();"></i>
+                </a>
+
+            </p>
+
+            <input type="password" id="formularioContrasenia" name="formularioContrasenia" style="display: none;" onclick="cambiarContrasenia()"> <!-- Campo para cambiar contraseña oculto -->
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="/js/perfilCliente.js"></script>

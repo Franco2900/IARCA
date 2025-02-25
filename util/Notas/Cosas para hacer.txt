@@ -1,0 +1,16 @@
+ARREGLAR
+Si por algún motivo el sitio web del que se esta extrayendo información se cae o la conexión a internet del usuario final se corta no hay una manera para manejar dicha excepción.
+
+ACTUALIZAR
+Hay scripts que esperan un tiempo determinado para continuar la ejecución. Hay que actualizarlos con el módulo chokidar que sirve especificamente para ejecutar código cuando detecta cambios en un archivo o usar writeFyleSync(). Usar esto último cortaría el asincronismo pero como literalmente tarda 1 o 2 segundos en escribir un archivo no hay mucho problema en usarlo.
+
+MEJORAR
+Fijarse como mejorar la velocidad de extracción de datos.
+
+Cada vez que se extraen datos, iniciar un temporizador que se corta cuando se termina de extraer los datos. Este tiempo se guarda en algún lado (a determinar) junto con todas las veces anteriores. De esta forma, se puede calcular el tiempo promedio de extracción.
+
+Agregar una barra de progreso para que el usuario pueda ver como va la extracción.
+
+Agregar bases de datos y login
+
+Añadir API para compartir la información que tenemos en vez de que la tengan que descargar. En dicho caso, es obligatorio añadir las bases de datos y los usuarios para que no venga cualquiera a tocar la info que tenemos. De todas las bases de datos que consultamos, solo DOAJ tenía API de consulta gratuita, la otras no tenían o eran de paga. Hay que mostrar porque somos mejores dando el ejemplo. Investigar esto porque según “Legalidad y éticas del web scraping” si al recopilar información de un sitio y luego mostrarlo en el tuyo, reducis el valor del primero te podes comer un garrón legal.

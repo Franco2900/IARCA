@@ -1,0 +1,189 @@
+<link rel="stylesheet" type="text/css" href="/css/home.css">
+
+<p>Este sitio sirve para saber cuál es la cantidad de revistas cientificas que existen en la Republica Argentina. Para 
+saber esto extraemos la información de distintos repositorios disponibles en la web.</p>
+
+<p>Los sitios web de los que extraemos información son: </p>
+
+<!-- Fila 1 de repositorios -->
+<div class="row text-center imagenes">
+
+    <div class="col-md-4">
+        <a href="/repositorio/CAICYT">
+            <img src="/images/style/CAICYT.jpg"> <br/>
+            CAICYT
+        </a>
+    </div>
+
+
+    <div class="col-md-4">
+        <a href="/repositorio/Latindex">
+            <img src="/images/style/Latindex.jpg"> <br/>
+            Latindex
+        </a>
+    </div>
+
+
+    <div class="col-md-4">
+        <a href="/repositorio/DOAJ">
+            <img src="/images/style/DOAJ.jpg"> <br/>
+            DOAJ
+        </a>
+    </div>
+
+</div>
+
+
+<!-- Fila 2 de repositorios -->
+<div class="row text-center imagenes">
+
+    <div class="col-md-4">
+        <a href="/repositorio/Redalyc">
+            <img src="/images/style/Redalyc.jpg"> <br/>
+            Redalyc
+        </a>
+    </div>
+
+
+    <div class="col-md-4">
+        <a href="/repositorio/Biblat">
+            <img src="/images/style/Biblat.jpg"> <br/>
+            Biblat
+        </a>
+    </div>
+
+
+    <div class="col-md-4">
+        <a href="/repositorio/Scimago">
+            <img src="/images/style/Scimago.jpg"> <br/>
+            Scimago
+        </a>
+    </div>
+
+</div>
+
+
+<!-- Fila 3 de repositorios -->
+<div class="row text-center imagenes">
+
+    <div class="col-md-4">
+        <a href="/repositorio/Scielo">
+            <img src="/images/style/Scielo.jpg"> <br/>
+            Scielo
+        </a>
+    </div>
+
+    <div class="col-md-4">
+        <a href="/repositorio/Web of Science">
+            <img src="/images/style/Web of Science.jpg"> <br/>
+            Web of Science
+        </a>
+    </div>
+
+    <div class="col-md-4">
+        <a href="/repositorio/Dialnet">
+            <img src="/images/style/Dialnet.jpg"> <br/>
+            Dialnet
+        </a>
+    </div>
+
+</div>
+
+<br></br>
+
+
+<!-- Listado de revistas -->
+<p class="text-center">El listado completo de las revistas de todos los sitios web se puede ver aquí</p>
+
+<div class="row text-center imagenes">
+
+    <div class="col-md-4"></div>
+
+    <div class="col-md-4">
+        <a href="/Listado de revistas/">
+            <img src="/images/style/Listado de revistas.jpg" style="width: 70%;">
+            <br/>
+            Listado de revistas
+        </a>
+    </div>
+
+    <div class="col-md-4"></div>
+
+</div>
+
+<br></br>
+
+
+<!-- Tabla de estado -->
+<table id="tablaEstadosDeLasRevistas" class="text-center table table-light table-bordered">
+    
+    <caption>Se considera que una revista tiene datos desactualizados si ya pasaron más de 365 días desde su última actualización</caption>
+    
+    <thead>
+      <tr>
+        <th>Revista</th>
+        <th>Cantidad de revistas</th>
+        <th>Estado</th>
+        <th>Ultima actualización (DD/MM/YY)</th>
+      </tr>
+    </thead>
+
+    
+    <tbody>
+        <tr>
+            <td>CAICYT</td>
+            <td><%= cantidadRevistas.CAICYT %></td>
+            <td style="background-color: <%= colorEstado.CAICYT %>;"><%= estado.CAICYT %></td>
+            <td><%= fechaUltimaModificacion.CAICYT %></td>
+        </tr>
+        <tr>
+            <td>Latindex</td>
+            <td><%= cantidadRevistas.Latindex %></td>
+            <td style="background-color: <%= colorEstado.Latindex %>;"><%= estado.Latindex %></td>
+            <td><%= fechaUltimaModificacion.Latindex %></td>
+        </tr>
+        <tr>
+            <td>DOAJ</td>
+            <td><%= cantidadRevistas.DOAJ %></td>
+            <td style="background-color: <%= colorEstado.DOAJ %>;"><%= estado.DOAJ %></td>
+            <td><%= fechaUltimaModificacion.DOAJ %></td>
+        </tr>
+        <tr>
+            <td>Redalyc</td>
+            <td><%= cantidadRevistas.Redalyc %></td>
+            <td style="background-color: <%= colorEstado.Redalyc %>;"><%= estado.Redalyc %></td>
+            <td><%= fechaUltimaModificacion.Redalyc %></td>
+        </tr>
+        <tr>
+            <td>Biblat</td>
+            <td><%= cantidadRevistas.Biblat %></td>
+            <td style="background-color: <%= colorEstado.Biblat %>;"><%= estado.Biblat %></td>
+            <td><%= fechaUltimaModificacion.Biblat %></td>
+        </tr>
+        <tr>
+            <td>Scimago</td>
+            <td><%= cantidadRevistas.Scimago %></td>
+            <td style="background-color: <%= colorEstado.Scimago %>;"><%= estado.Scimago %></td>
+            <td><%= fechaUltimaModificacion.Scimago %></td>
+        </tr>
+        <tr>
+            <td>Scielo</td>
+            <td><%= cantidadRevistas.Scielo %></td>
+            <td style="background-color: <%= colorEstado.Scielo %>;"><%= estado.Scielo %></td>
+            <td><%= fechaUltimaModificacion.Scielo %></td>
+        </tr>
+        <tr>
+            <td>Web of Science</td>
+            <td><%= cantidadRevistas["Web of Science"] %></td>
+            <td style="background-color: <%= colorEstado["Web of Science"] %>;"><%= estado["Web of Science"] %></td>
+            <td><%= fechaUltimaModificacion["Web of Science"] %></td>
+        </tr>
+        <tr>
+            <td>Dialnet</td>
+            <td><%= cantidadRevistas.Dialnet %></td>
+            <td style="background-color: <%= colorEstado.Dialnet %>;"><%= estado.Dialnet %></td>
+            <td><%= fechaUltimaModificacion.Dialnet %></td>
+        </tr>
+    </tbody>
+
+</table>

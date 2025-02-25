@@ -1,0 +1,64 @@
+<h1 style="text-align: center;"><%= repositorio %></h1>
+
+<img src="/images/style/<%= repositorio %>.jpg" class="mx-auto d-block border border-dark"/> <br/>
+
+<div class="row">
+
+    <!--<div class="col-md-6 text-start">
+        BOTON CAMBIAR FONDO
+    </div>-->
+
+    <div class="col-md-12 text-end">
+
+        <button id="botonDescargarCSV" onclick="descargarCSV('<%= repositorio %>')">
+            Descargar CSV
+            <span class="bi bi-download"></span>
+        </button>
+
+        <button id="botonDescargarJSON" onclick="descargarJSON('<%= repositorio %>')">
+            Descargar JSON
+            <span class="bi bi-download"></span>
+        </button>
+
+    </div>
+
+</div>
+
+<!-- Texto descriptivo -->
+<p>Estas son todas las revistas argentinas que se pudieron encontrar en todos los sitios web</p>
+
+<!-- Botones para manejar la tabla --> 
+<p>Página <span id="paginaActual">1</span> de <span id="cantidadPaginasDeNavegacion"><%= cantidadPaginasDeNavegacion %></span></p>
+
+<button id="botonPrimeraPagina" onclick="primerPagina('<%= repositorio %>')"> <<< </button>
+<button id="botonAnterior"      onclick="anteriorPagina('<%= repositorio %>')"> < </button>
+<input id="buscarPaginaEspecifica" type="number" placeholder="Ingrese página a buscar" onchange="buscarPaginaEspecifica('<%= repositorio %>')">
+<button id="botonSiguiente"     onclick="siguientePagina('<%= repositorio %>')"> > </button>
+<button id="botonUltimaPagina"  onclick="ultimaPagina('<%= repositorio %>')"> >>> </button>     
+
+<br></br>
+
+<!-- Tabla con las revistas del repositorio -->
+<%- tabla %>
+
+<!-- Datos sobre el repositorio -->
+<p>Cantidad de revistas en <%= repositorio %>: <%= cantidadRevistasRepositorio %></p>
+<p>Última actualización: <%= fechaUltimaModicacion %> (DD/MM/YY)</p>
+
+<% if (tiempoPromedioDeActualizacion >= 60) { 
+    let minutos  = Math.floor( tiempoPromedioDeActualizacion / 60 ); <!-- Pequeño codigo JavaScript en la plantilla EJS -->
+    let segundos = tiempoPromedioDeActualizacion % 60;
+%>
+    <p>Tiempo promedio de actualización: <%= minutos %> minutos <%= segundos %> segundos</p>
+<% } else { %>
+    <p>Tiempo promedio de actualización: <%= tiempoPromedioDeActualizacion %> segundos</p>
+<% } %>
+
+
+<!-- El boton más importante de todos (solo lo pueden ver los usuarios logueados) -->
+<% if (usuario.nombre) { %>
+    <p><button id="actualizarCatalogo" onclick="actualizarCatalogo('<%= repositorio %>')">Actualizar catálogo de revistas</button></p>
+    <span id="estadoDeLaActualización"></span>
+<% } %>
+
+<script src="/js/repositorioCliente.js"></script>
