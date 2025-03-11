@@ -2,14 +2,50 @@ const puerto = 5000;
 
 
 function descargarCSV(repositorio) 
-{
-    window.location.href = `http://localhost:${puerto}/repositorio/${repositorio}/descargarCSV`;
+{ 
+    fetch(`http://localhost:${puerto}/repositorio/${repositorio}/descargarCSV`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+        return response.blob(); // Convierte la respuesta en un Blob (binary large object) para la descarga
+    })
+    .then(blob => {
+        const link = document.createElement('a'); // Crea un enlace para descargar el archivo
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `${repositorio}.csv`;
+        link.click(); // Hace click en el enlace
+    })
+    .catch(error => {
+    
+        alert("Error al descargar el archivo: " + error.message);
+        console.error(error);
+    });
 }
 
 
 function descargarJSON(repositorio) 
 {
-    window.location.href = `http://localhost:${puerto}/repositorio/${repositorio}/descargarJSON`;
+    fetch(`http://localhost:${puerto}/repositorio/${repositorio}/descargarJSON`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+        return response.blob(); // Convierte la respuesta en un Blob (binary large object) para la descarga
+    })
+    .then(blob => {
+        const link = document.createElement('a'); // Crea un enlace para descargar el archivo
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `${repositorio}.json`;
+        link.click(); // Hace click en el enlace
+    })
+    .catch(error => {
+    
+        alert("Error al descargar el archivo: " + error.message);
+        console.error(error);
+    });
 }
 
 
@@ -28,7 +64,7 @@ function siguientePagina(repositorio)
         })
         .then( response => 
         {
-            // Si la respuesta no es exitosa, lanza un error
+            // Si la respuesta no es exitosa, lanza un mensaje de error y se va al catch
             if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
 
             return response.json();
@@ -42,7 +78,7 @@ function siguientePagina(repositorio)
         })
         .catch(error => 
         {
-            console.error('Error:', error);
+            console.log(error);
         });
     }
 
@@ -77,7 +113,7 @@ function anteriorPagina(repositorio)
         })
         .catch(error => 
         {
-            console.error('Error:', error);
+            console.log(error);
         });
     }
 }
@@ -111,7 +147,7 @@ function buscarPaginaEspecifica(repositorio)
         })
         .catch(error => 
         {
-            console.error('Error:', error);
+            console.log(error);
         });
     }
 
@@ -120,58 +156,67 @@ function buscarPaginaEspecifica(repositorio)
 
 function primerPagina(repositorio)
 {
-    fetch(`http://localhost:${puerto}/repositorio/${repositorio}/primerPagina`,
-    { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-    })
-    .then( response => 
-    {
-        if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+    let paginaActual   = Number(document.getElementById("paginaActual").innerText);
 
-        return response.json();
-    })
-    .then( data => 
+    if( paginaActual != 1 )
     {
-        console.log(data);
+        fetch(`http://localhost:${puerto}/repositorio/${repositorio}/primerPagina`,
+        { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+        })
+        .then( response => 
+        {
+            if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
 
-        document.getElementById("tablaRevistas").innerHTML = data.tabla;
-        document.getElementById("paginaActual").innerText = 1;
-    })
-    .catch(error => 
-    {
-        console.error('Error:', error);
-    });
+            return response.json();
+        })
+        .then( data => 
+        {
+            console.log(data);
+
+            document.getElementById("tablaRevistas").innerHTML = data.tabla;
+            document.getElementById("paginaActual").innerText = 1;
+        })
+        .catch(error => 
+        {
+            console.log(error);
+        });
+    }
 
 }
 
 
 function ultimaPagina(repositorio)
 {
+    let paginaActual   = Number(document.getElementById("paginaActual").innerText);
     let cantidadPaginasDeNavegacion = Number(document.getElementById("cantidadPaginasDeNavegacion").innerText);
 
-    fetch(`http://localhost:${puerto}/repositorio/${repositorio}/ultimaPagina`,
-    { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-    })
-    .then( response => 
+    if( paginaActual < cantidadPaginasDeNavegacion )
     {
-        if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+        fetch(`http://localhost:${puerto}/repositorio/${repositorio}/ultimaPagina`,
+        { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+        })
+        .then( response => 
+        {
+            if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
 
-        return response.json();
-    })
-    .then( data => 
-    {
-        console.log(data);
+            return response.json();
+        })
+        .then( data => 
+        {
+            console.log(data);
 
-        document.getElementById("tablaRevistas").innerHTML = data.tabla;
-        document.getElementById("paginaActual").innerText  = cantidadPaginasDeNavegacion;
-    })
-    .catch(error => 
-    {
-        console.error('Error:', error);
-    });
+            document.getElementById("tablaRevistas").innerHTML = data.tabla;
+            document.getElementById("paginaActual").innerText  = cantidadPaginasDeNavegacion;
+        })
+        .catch( error => 
+        {
+            console.log(error);
+        });
+    }
 
 }
 
@@ -207,7 +252,7 @@ function actualizarCatalogo(repositorio)
     })
     .catch(error => 
     {
-        console.error('Error:', error);
+        console.error(error);
 
         // Muestro mensaje de error al usuario
         estadoDeLaActualización.innerHTML = 

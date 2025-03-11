@@ -2,25 +2,31 @@ const fs         = require('fs');        // Módulo para leer y escribir archivo
 const puppeteer  = require('puppeteer'); // Módulo para web scrapping
 const jsdom      = require('jsdom');     // Módulo para filtrar la información extraida con web scrapping
 const csvtojson  = require('csvtojson'); // Módulo para pasar texto csv a json
-const path = require('path');            // Módulo para trabajar con rutas
+const path       = require('path');      // Módulo para trabajar con rutas
 
 // El web scrapping de Redalyc es especial porque se hace todo en la misma URL, para ver el resto de las revistas se actualiza el sitio
 // Busco los enlaces de todas las revistas
 async function extraerInfoRepositorio()
 {
-    const browser  = await puppeteer.launch({headless: false}); // Inicio puppeter
-   
+    const browser  = await puppeteer.launch({ // Inicio puppeter
+        headless: 'new',
+        executablePath: path.join(__dirname, '../../puppeteer-cache/chrome/win64-121.0.6167.85/chrome-win64/chrome.exe'),
+    }); 
+
     try
     {
         const page     = await browser.newPage();
         page.setDefaultNavigationTimeout(120000);                // Indico el tiempo limite para conectarse a un sitio web en milisegundos. Con cero quita el límite de tiempo (no es recomendable poner en 0 porque puede quedar en un bucle infinito en caso de error)
         await page.goto(`https://www.redalyc.org/pais.oa?id=9`); // URL del sitio web al que se le hace web scrapping
         await page.waitForSelector(".wrapper");                  // Espera a que el elemento indicado se cargue en el sitio web
-        
+       
+        // EN LA ÚLTIMA ACTUALIZACIÓN SACARÓN LA OPCIÓN DE ELEGIR EL TAMAÑO DE LAS PÁGINAS
+        /*
         await page.click('#pageSize');                                       // Hago click en la opción de tamaño
         await page.waitForSelector('#pageSize option');                      // Espero a que se cargue
         await page.select('#pageSize', '50');                                // Selecciono que se muestre de 50 revistas a la vez
         await page.waitForSelector("div.container-cards div:nth-child(50)"); // Espero a que se carguen las 50 revistas
+        */
 
         var html = await page.content();                         // Guardo el HTML extraido en esta variable  
         
@@ -28,9 +34,10 @@ async function extraerInfoRepositorio()
 
         // Averiguo la cantidad de revistas y páginas para saber como proceder con la extracción de datos
         const cantidadRevistas = parseInt(document.getElementsByClassName("elemento-filtro")[0].getElementsByClassName("ng-binding")[1].textContent.trim().replaceAll("(", "").replaceAll(")", "") );
+        console.log(cantidadRevistas)
         console.log("Cantidad de revistas: " + cantidadRevistas);
 
-        var cantidadPaginas = Math.ceil(cantidadRevistas / 50);
+        var cantidadPaginas = Math.ceil(cantidadRevistas / 15);
         console.log("Cantidad de páginas: " + cantidadPaginas);
 
 
@@ -84,38 +91,22 @@ async function extraerInfoRepositorio()
  
         }
 
-
         const csvFilePath  = path.join(__dirname + '/../Repositorios/Redalyc.csv')
         const jsonFilePath = path.join(__dirname + '/../Repositorios/Redalyc.json');
+        
+        await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
+    
+        const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito
+    
+        await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
 
-        // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
-        fs.writeFile(csvFilePath, info, error => 
-        { 
-            if(error) console.log(error);
-        })
-
-
-        setTimeout(function () { // Le indico al programa que espere 5 segundos antes de seguir porque tarda en crearse el archivo .csv
-
-            // Parseo de CSV a JSON
-            csvtojson({delimiter: [";"],}).fromFile(csvFilePath).then((json) => // La propiedad delimiter indica porque caracter debe separar
-            { 
-                fs.writeFile(jsonFilePath, JSON.stringify(json), error => 
-                { 
-                    if(error) console.log(error);
-                })
-            })
-
-        }, 5000);
+        console.log("Termina la extracción de datos de Redalyc");
     }
     catch(error)
     {
-        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        console.log("HUBO UN ERROR");
-        console.error(error);
-        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        throw new Error('Error durante la extracción de revistas de Redalyc: ' + error.message); // Lanza un error hacia arriba (hacia el archivo que lo llamo)
     }
-
+    
     await browser.close(); // cierro puppeter
 }
 

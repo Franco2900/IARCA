@@ -9,10 +9,10 @@ const upload = multer({ storage: multer.memoryStorage() }); // Creo una instanci
 const { getPerfil, postCambiarImagen, postCambiarNombre, postCambiarContrasenia } = require('../controllers/perfilController.js');
 
 // Métodos de util.js
-const { autentificar } = require('../util/util.js');
+const { autentificarUsuario } = require('../util/util.js');
 
 // Rutas URL de: /perfil
-router.get('/', autentificar, getPerfil);
+router.get('/', autentificarUsuario, getPerfil);
 router.post('/cambiarImagen', upload.single('imagenPerfil'), postCambiarImagen);
 router.post('/cambiarNombre', postCambiarNombre);
 router.post('/cambiarContrasenia', postCambiarContrasenia);

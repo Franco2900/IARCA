@@ -1,16 +1,22 @@
-const fs = require("fs"); // Módulo para leer y escribir archivos
-const puppeteer = require("puppeteer"); // Módulo para web scrapping
-const jsdom = require("jsdom"); // Módulo para filtrar la información extraida con web scrapping
-const path = require('path'); // Módulo para trabajar con rutas
-const chokidar = require('chokidar'); // Módulo para detectar cambios en un archivo o la creación del mismo
+// Módulos
+const fs         = require("fs");        // Módulo para leer y escribir archivos
+const puppeteer  = require("puppeteer"); // Módulo para web scrapping
+const jsdom      = require("jsdom");     // Módulo para filtrar la información extraida con web scrapping
+const path       = require('path');      // Módulo para trabajar con rutas
 const csvtojson  = require('csvtojson'); // Módulo para pasar texto csv a json
 
 
 // Busco cuantas páginas devuelve la consulta a Latindex (cada página tiene entre 1 y 20 revistas)
-async function obtenerUrls() {
+async function obtenerUrls() 
+{  
   const urls = [];
-  try {
-    const browser = await puppeteer.launch({ headless: "new" });
+  
+  try 
+  {
+    const browser  = await puppeteer.launch({ // Inicio puppeter
+      headless: 'new',
+      executablePath: path.join(__dirname, '../../puppeteer-cache/chrome/win64-121.0.6167.85/chrome-win64/chrome.exe'),
+    }); 
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(0);
 
@@ -24,6 +30,7 @@ async function obtenerUrls() {
     } = new jsdom.JSDOM(body);
 
     var filtroHTML = document.querySelectorAll("ul")[0];
+    
     filtroHTML.querySelectorAll("li font a[href]").forEach((element) => {
       const href = element.getAttribute("href");
       //console.log("HREF", href);
@@ -33,58 +40,31 @@ async function obtenerUrls() {
     await page.close();
     await browser.close();
     return urls;
-  } catch (error) {
+  } 
+  catch (error) 
+  {
     console.error("Error:", error);
     throw error; // Lanza el error para manejarlo en el contexto que llama a esta función
   }
+
 }
 
-// Busco los enlaces de cada revista que devuelva la consulta a Latindex
-async function buscarEnlacesARevistas(paths) {
-  try {
-    //const paths = await obtenerPaths();
-    const browser = await puppeteer.launch({ headless: "new" });
-    const page = await browser.newPage();
-    page.setDefaultNavigationTimeout(5000); // Establece un tiempo de espera predeterminado
 
-    const enlaces = [];
-
-    for (const path of paths) {
-      console.log("PATH:", path);
-      try {
-        await page.goto(path);
-        await page.waitForSelector("a.registro.cboxElement", { timeout: 5000 }); // Espera a que aparezca el siguiente enlace
-
-        const href = await page.evaluate(() => {
-          const aElement = document.querySelector("a.registro.cboxElement");
-          return aElement ? aElement.getAttribute("href") : null;
-        });
-
-        console.log("Href del siguiente enlace:", href);
-        enlaces.push(href);
-      } catch (error) {
-        console.error("Error en page.goto para el path:", path, error.message);
-        // Continúa con el siguiente path si hay un error de tiempo de espera
-        continue;
-      }
-    }
-
-    //console.log('ENLACES Cantidad obtenida:', enlaces.length);
-    await browser.close();
-    return enlaces;
-  } catch (error) {
-    console.error("Error obteniendo enlaces:", error);
-    throw error;
-  }
-}
 // Extraigo la info de una revista
-async function extraerInfoRevista(urls) {
-  const browser = await puppeteer.launch({ headless: "new" });
+async function extraerInfoRevista(urls) 
+{
+  const browser  = await puppeteer.launch({ // Inicio puppeter
+    headless: 'new',
+    executablePath: path.join(__dirname, '../../puppeteer-cache/chrome/win64-121.0.6167.85/chrome-win64/chrome.exe'),
+  }); 
   const registros = [];
 
-  for (const url of urls) {
+  for (const url of urls) 
+  {
     const page = await browser.newPage();
-    try {
+    
+    try 
+    {
       console.log(`Procesando enlace: ${url}`);
       page.setDefaultNavigationTimeout(0);
       await page.goto(url);
@@ -133,83 +113,60 @@ async function extraerInfoRevista(urls) {
         url
       });
 
-    } catch (error) {
+    } 
+    catch (error) 
+    {
       console.error(`Error al procesar enlace: ${url}`);
       console.error(error);
       // Continúa con el siguiente URL si hay un error
       continue;
 
-    } finally {
+    } 
+    finally 
+    {
       await page.close();
     }
+
   }
+
   await browser.close();
   return registros;
 }
 
+
 // Extraigo la info de todas las revistas de la consulta
-async function extraerInfoRepositorio() {
-  console.log("Comienza la extracción de datos de Scielo");
-    const urls = await obtenerUrls();
-  //const urls = ["http://www.scielo.org.ar/scielo.php?script=sci_serial&pid=1851-8265&lng=es&nrm=iso"];
-  const registros = await extraerInfoRevista(urls);
-  //
-  console.log("REVISTAS CONSULTADAS: " + urls.length);
-  console.log("REGISTROS OBTENIDOS: " + registros.length);
-
- // Crear archivo JSON
- /*const jsonFilePath = "./Revistas/Scielo.json";
- fs.writeFileSync(jsonFilePath, JSON.stringify(registros, null, 4));
- console.log(`Archivo JSON creado: ${jsonFilePath}`);
-
- // Crear archivo CSV
- const csvData = registros
-   .map((registro) => `${registro.titulo};${registro.instituto};${registro.issnImpreso};${registro.issnEnLinea}`)
-   .join("\n");
- const csvFilePath = "./Revistas/Scielo.csv";
- fs.writeFileSync(csvFilePath, `Titulo;Instituto;ISSN;ISSN-e\n${csvData}`);
- console.log(`Archivo CSV creado: ${csvFilePath}`);*/
-
-  // Paso los datos de los objetos a string
-  let info = "Título;ISSN impresa;ISSN en linea;Instituto;URL" + "\n";
-  for(let i = 0; i < registros.length; i++){
-    info += `${registros[i].titulo};${registros[i].issnImpreso};${registros[i].issnEnLinea};${registros[i].instituto};${registros[i].url}` + "\n";
-  }
-
- const jsonFilePath = path.join(__dirname + '/../Repositorios/Scielo.json');
- const csvFilePath  = path.join(__dirname + '/../Repositorios/Scielo.csv');
-
-  // Con todos los datos en string, escribo la info en formato csv y después uso el modulo csvtojson para crear el archivo .json
+async function extraerInfoRepositorio() 
+{
   try
   {
-    let vigilante = fs.watch(csvFilePath, function () { // // Se ejecutara cuando detecte un cambio en el archivo (en caso de que si exista el archivo .csv)
+    console.log("Comienza la extracción de datos de Scielo");
+    const urls      = await obtenerUrls();
+    const registros = await extraerInfoRevista(urls);
+
+    console.log("REVISTAS CONSULTADAS: " + urls.length);
+    console.log("REGISTROS OBTENIDOS: " + registros.length);
+
+    // Paso los datos de los objetos a string
+    let info = "Título;ISSN impresa;ISSN en linea;Instituto;URL" + "\n";
+    for(let i = 0; i < registros.length; i++)
+    {
+      info += `${registros[i].titulo};${registros[i].issnImpreso};${registros[i].issnEnLinea};${registros[i].instituto};${registros[i].url}` + "\n";
+    }
+
+    const jsonFilePath = path.join(__dirname, '../Repositorios/Scielo.json');
+    const csvFilePath  = path.join(__dirname, '../Repositorios/Scielo.csv');
+
+    await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
       
-      csvtojson({delimiter: [";"],}).fromFile(csvFilePath).then((json) => // La propiedad delimiter indica porque caracter debe separar
-      { 
-        fs.writeFileSync(jsonFilePath, JSON.stringify(json), error => {if(error) console.log(error);})
-      })
-
-      vigilante.close();
-    });
+    const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito
+      
+    await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
   }
-  catch(error)
+  catch (error)     
   {
-    let vigilante = chokidar.watch(csvFilePath); // Archivo que le indico que vigile
-
-    vigilante.on('add', function(path) { // Se ejecutara cuando detecte la creación del archivo (en caso de que no exista el archivo .csv)
-    
-      csvtojson({delimiter: [";"],}).fromFile(csvFilePath).then((json) =>
-      { 
-        fs.writeFileSync(jsonFilePath, JSON.stringify(json), error => {if(error) console.log(error);})
-      })
-  
-      vigilante.close();    // Dejo de vigilar
-    });
+    throw new Error('Error durante la extracción de revistas de Scielo: ' + error.message); // Lanza un error hacia arriba (hacia el archivo que lo llamo)
   }
 
-  fs.writeFileSync(csvFilePath, info); // Escribo el archivo
-
- console.log("Termina la extracción de datos de Scielo");
 }
 
 exports.extraerInfoRepositorio = extraerInfoRepositorio;

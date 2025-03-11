@@ -1,14 +1,19 @@
+// Módulos
 const fs         = require('fs');        // Módulo para leer y escribir archivos
 const puppeteer  = require('puppeteer'); // Módulo para web scrapping
 const jsdom      = require('jsdom');     // Módulo para filtrar la información extraida con web scrapping
 const csvtojson  = require('csvtojson'); // Módulo para pasar texto csv a json
-const chokidar   = require('chokidar');  // Módulo para detectar cambios en un archivo o la creación del mismo
 const path       = require('path');      // Módulo para trabajar con rutas
 
 // Busco cuantas páginas devuelve la consulta a Biblat
-async function obtenerPaths() {
-  try {
-    const browser = await puppeteer.launch({ headless: "new" });
+async function obtenerPaths() 
+{
+  try 
+  {
+    const browser  = await puppeteer.launch({ // Inicio puppeter
+      headless: 'new',
+      executablePath: path.join(__dirname, '../../puppeteer-cache/chrome/win64-121.0.6167.85/chrome-win64/chrome.exe'),
+    }); 
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(0);
 
@@ -66,9 +71,12 @@ async function obtenerPaths() {
 async function buscarEnlacesARevistas(paths) {
   try {
     //const paths = await obtenerPaths();
-    const browser = await puppeteer.launch({ headless: "new" });
+    const browser  = await puppeteer.launch({ // Inicio puppeter
+      headless: 'new',
+      executablePath: path.join(__dirname, '../../puppeteer-cache/chrome/win64-121.0.6167.85/chrome-win64/chrome.exe'),
+    }); 
     const page = await browser.newPage();
-    page.setDefaultNavigationTimeout(5000); // Establece un tiempo de espera predeterminado
+    page.setDefaultNavigationTimeout(7000); // Establece un tiempo de espera predeterminado
 
     const enlaces = [];
 
@@ -101,9 +109,15 @@ async function buscarEnlacesARevistas(paths) {
     throw error;
   }
 }
+
+
 // Extraigo la info de una revista
-async function extraerInfoRevista(enlaces) {
-  const browser = await puppeteer.launch({ headless: "new" });
+async function extraerInfoRevista(enlaces) 
+{
+  const browser  = await puppeteer.launch({ // Inicio puppeter
+    headless: 'new',
+    executablePath: path.join(__dirname, '../../puppeteer-cache/chrome/win64-121.0.6167.85/chrome-win64/chrome.exe'),
+  }); 
   const registros = [];
 
   for (const enlace of enlaces) {
@@ -146,78 +160,52 @@ async function extraerInfoRevista(enlaces) {
 }
 
 // Extraigo la info de todas las revistas de la consulta
-async function extraerInfoRepositorio() {
-  console.log("Comienza la extracción de datos de Biblat");
-  const paths = await obtenerPaths();
-  const enlaces = await buscarEnlacesARevistas(paths);
-  //const enlaces = ['https://biblat.unam.mx/es/revista/salud-colectiva/articulo/concentracion'];
-  const registros = await extraerInfoRevista(enlaces);
-
-  console.log("CANTIDAD DE REVISTAS: " + paths.length);
-  console.log("REVISTAS CONSULTADAS: " + enlaces.length);
-  console.log("REGISTROS OBTENIDOS: " + registros.length);
-
-  // Crear archivo JSON
-  /*const jsonFilePath = './Revistas/Biblat.json';
-  fs.writeFileSync(jsonFilePath, JSON.stringify(registros, null, 2));
-  console.log(`Archivo JSON creado: ${jsonFilePath}`);
-
-  // Crear archivo CSV
-  const csvData = registros.map(registro => `${registro.titulo};${registro.issn}`).join('\n');
-  const csvFilePath = './Revistas/Biblat.csv';
-  fs.writeFileSync(csvFilePath, `Título;ISSN\n${csvData}`);
-  console.log(`Archivo CSV creado: ${csvFilePath}`);*/
-
-
-  // Paso los datos de los objetos a string
-  let cantidadRevistasSinISSN = 0;
-  let info = "Título;ISSN impresa;ISSN en linea;Instituto;URL" + "\n";
-  for(let i = 0; i < registros.length; i++){
-
-    if(registros[i].issn != null) {
-      info += `${registros[i].titulo};${registros[i].issn};;;${registros[i].enlace}` + "\n"; // Elimino las revistas que no tengan ISSN
-    } 
-    else{
-      cantidadRevistasSinISSN++;
-    }
-  }
-
-  console.log("Cantidad de revistas eliminadas por no tener ISSN: " + cantidadRevistasSinISSN);
-
-  const jsonFilePath = path.join(__dirname + '/../Repositorios/Biblat.json');
-  const csvFilePath  = path.join(__dirname + '/../Repositorios/Biblat.csv');
-
-  // Con todos los datos en string, escribo la info en formato .csv y después uso el modulo csvtojson para crear el archivo .json
+async function extraerInfoRepositorio() 
+{
   try
   {
-    let vigilante = fs.watch(csvFilePath, function () { // // Se ejecutara cuando detecte un cambio en el archivo (en caso de que si exista el archivo .csv)
-      
-      csvtojson({delimiter: [";"],}).fromFile(csvFilePath).then((json) => // La propiedad delimiter indica porque caracter debe separar
-      { 
-        fs.writeFileSync(jsonFilePath, JSON.stringify(json), error => {if(error) console.log(error);})
-      })
+    console.log("Comienza la extracción de datos de Biblat");
+    const paths = await obtenerPaths();
+    const enlaces = await buscarEnlacesARevistas(paths);
+    //const enlaces = ['https://biblat.unam.mx/es/revista/salud-colectiva/articulo/concentracion'];
+    const registros = await extraerInfoRevista(enlaces);
 
-      vigilante.close();
-    });
+    console.log("CANTIDAD DE REVISTAS: " + paths.length);
+    console.log("REVISTAS CONSULTADAS: " + enlaces.length);
+    console.log("REGISTROS OBTENIDOS: " + registros.length);
+
+
+    // Paso los datos de los objetos a string
+    let cantidadRevistasSinISSN = 0;
+    let info = "Título;ISSN impresa;ISSN en linea;Instituto;URL" + "\n";
+    for(let i = 0; i < registros.length; i++){
+
+      if(registros[i].issn != null) {
+        info += `${registros[i].titulo};${registros[i].issn};;;${registros[i].enlace}` + "\n"; // Elimino las revistas que no tengan ISSN
+      } 
+      else{
+        cantidadRevistasSinISSN++;
+      }
+    }
+
+    console.log("Cantidad de revistas eliminadas por no tener ISSN: " + cantidadRevistasSinISSN);
+
+    const jsonFilePath = path.join(__dirname + '/../Repositorios/Biblat.json');
+    const csvFilePath  = path.join(__dirname + '/../Repositorios/Biblat.csv');
+
+    await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
+      
+    const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito
+      
+    await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
+
+    console.log("Termina la extracción de datos de Biblat");
   }
   catch(error)
   {
-    let vigilante = chokidar.watch(csvFilePath); // Archivo que le indico que vigile
-
-    vigilante.on('add', function(path) { // Se ejecutara cuando detecte la creación del archivo (en caso de que no exista el archivo .csv)
-    
-      csvtojson({delimiter: [";"],}).fromFile(csvFilePath).then((json) =>
-      { 
-        fs.writeFileSync(jsonFilePath, JSON.stringify(json), error => {if(error) console.log(error);})
-      })
-
-      vigilante.close();    // Dejo de vigilar
-    });
+    throw new Error('Error durante la extracción de revistas de Biblat: ' + error.message); // Lanza un error hacia arriba (hacia el archivo que lo llamo)
   }
 
-  fs.writeFileSync(csvFilePath, info); // Escribo el archivo
-
-  console.log("Termina la extracción de datos de Biblat");
 }
 
 exports.extraerInfoRepositorio = extraerInfoRepositorio;

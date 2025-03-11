@@ -1,0 +1,72 @@
+<h1 style="text-align: center;">Listado final</h1>
+
+<div class="row">
+
+    <div class="col-md-4"></div>
+
+    <div class="col-md-4">
+        <img src="/images/style/Listado final.jpg" class="mx-auto d-block border border-dark" style="width: 70%;"/> 
+        <br/>
+    </div>
+
+    <div class="col-md-4"></div>
+
+</div>
+
+
+<div class="row">
+
+    <div class="col-md-12 text-end">
+
+        <button id="botonDescargarCSV" onclick="descargarCSV()">
+            Descargar CSV
+            <span class="bi bi-download"></span>
+        </button>
+
+        <button id="botonDescargarJSON" onclick="descargarJSON()">
+            Descargar JSON
+            <span class="bi bi-download"></span>
+        </button>
+
+    </div>
+
+</div>
+
+<!-- Texto descriptivo -->
+<p>Este es el listado final que pudimos conseguir al combinar y filtrar los datos recopilados de todos los repositorios web</p>
+
+<!-- Botones para manejar la tabla --> 
+<p>Página <span id="paginaActual">1</span> de <span id="cantidadPaginasDeNavegacion"><%= cantidadPaginasDeNavegacion %></span></p>
+
+<button id="botonPrimeraPagina" onclick="primerPagina()"> <<< </button>
+<button id="botonAnterior"      onclick="anteriorPagina()"> < </button>
+<input id="buscarPaginaEspecifica" type="number" placeholder="Ingrese página a buscar" onchange="buscarPaginaEspecifica()">
+<button id="botonSiguiente"     onclick="siguientePagina()"> > </button>
+<button id="botonUltimaPagina"  onclick="ultimaPagina()"> >>> </button>     
+
+<br></br>
+
+<!-- Tabla con las revistas del listado final -->
+<%- tabla %>
+ 
+<!-- Datos sobre el listado final -->
+<p>Cantidad de revistas en el listado final: <%= cantidadRevistas %></p>
+<p>Última actualización: <%= fechaUltimaModicacion %> (DD/MM/YY)</p>
+
+<% if (tiempoPromedioDeActualizacion >= 60) { 
+    let minutos  = Math.floor( tiempoPromedioDeActualizacion / 60 ); <!-- Pequeño codigo JavaScript en la plantilla EJS -->
+    let segundos = tiempoPromedioDeActualizacion % 60;
+%>
+    <p>Tiempo promedio de actualización: <%= minutos %> minutos <%= segundos %> segundos</p>
+<% } else { %>
+    <p>Tiempo promedio de actualización: <%= tiempoPromedioDeActualizacion %> segundos</p>
+<% } %>
+
+
+<!-- El boton más importante de todos (solo lo pueden ver los usuarios logueados) -->
+<% if (usuario.nombre) { %>
+    <p><button id="actualizarCatalogo" onclick="actualizarCatalogo()">Actualizar catálogo de revistas</button></p>
+    <span id="estadoDeLaActualización"></span>
+<% } %>
+
+<script src="/js/listadoFinalCliente.js"></script>

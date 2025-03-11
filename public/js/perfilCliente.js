@@ -18,8 +18,9 @@ function cambiarImagen(event)
 
             // Petición al servidor usando fetch 
             fetch(`http://localhost:${puerto}/perfil/cambiarImagen`, 
-            { method: 'POST', 
-              body: formData 
+            { 
+                method: 'POST', 
+                body: formData 
             })
             .then(response => response.json())
             .then(data => {

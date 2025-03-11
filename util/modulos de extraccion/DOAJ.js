@@ -1,97 +1,42 @@
+// Módulos
 const fs             = require('fs');        // Módulo para leer y escribir archivos
-const XMLHttpRequest = require('xhr2');      // Módulo para comunicarse con las APIs
 const csvtojson      = require('csvtojson')  // Módulo para pasar texto csv a json
-var mysql            = require('mysql')      // Módulo para trabajar con la base de datos MySQL
+const path           = require('path');      // Módulo para trabajar con rutas
 
-/*
-var conexion = mysql.createConnection({ // Creo una conexión a la base de datos
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'basedepracticasbarc'
-})
 
-conexion.connect(function (error) { // Me conecto a la base de datos
-    
-    if (error) console.log('Problemas de conexion con mysql')
-    else 
+async function extraerInfoRepositorio(paginaActual = 1, revista = 1, info = "Título;ISSN impresa;ISSN en linea;Instituto;Editora;URL\n") 
+{
+    const API_URL = "https://doaj.org/api/"; 
+
+    try 
     {
-        console.log('Se inicio conexión');
+        const response = await fetch(`${API_URL}/search/journals/Argentina?page=${paginaActual}&pageSize=100`);
+        const respuestaJSON = await response.json();  // Parseo la respuesta de la API a JSON
 
-        // Con la función query introducimos los comandos SQL
-        // Siempre que llamamos a query debemos pasarle, además del string con el comando SQL, un segundo parámetro que se trata de una función que se llama en caso de error
+        // Ya que cada consulta solo puede devolver una página con un máximo de 100 revistas, me fijo cuantas páginas me falta consultar
+        const cantidadPaginas = Math.ceil(respuestaJSON.total / respuestaJSON.pageSize);
+        let limite = respuestaJSON.pageSize;
 
-        // Si existe la tabla, la borro. Esto lo hago para actualizar los datos correctamente
-        conexion.query('DROP TABLE IF EXISTS articulo', (error, resultado) => 
-        {
-        if (error) console.log(error)
-        })
+        // Si es la última página, me fijo cuantas revistas quedan en la página
+        if(paginaActual == cantidadPaginas) limite = respuestaJSON.total - respuestaJSON.pageSize * (cantidadPaginas - 1)
+
+        console.log(`Comienza la extracción de datos de la página ${paginaActual} de ${cantidadPaginas}`);
+        info = filtro(info, limite, revista, respuestaJSON);
+        console.log(`Termina la extracción de datos de la página ${paginaActual} de ${cantidadPaginas}`);
+
+        revista += limite;
+
+        if (paginaActual < cantidadPaginas) await extraerInfoRepositorio(paginaActual + 1, revista, info);
+        else                                await escribirInfo(info);
         
-        // Creo la tabla si no existe
-        conexion.query(  
-            `CREATE TABLE IF NOT EXISTS DOAJ 
-            (
-                ID               INT PRIMARY KEY AUTO_INCREMENT,
-                ISSN_impreso     VARCHAR(50),
-                ISSN_electronico VARCHAR(50),
-                Instituto        VARCHAR(50)
-            )`, 
-            function (error, resultado) {
-            if (error) 
-            {
-                console.log(error)
-                return
-            }
-            // NOTA: No importa como escribamos las tablas. En MySQL se pasan automaticamente a minusculas (lo mismo pasa con las bases de datos)
-        })
+    } 
+    catch (error)     
+    {
+        throw new Error('Error durante la extracción de revistas de DOAJ: ' + error.message); // Lanza un error hacia arriba (hacia el archivo que lo llamo)
     }
-})
-*/
 
-
-function extraerInfoRepositorio(paginaActual = 1, revista = 1, info = "Título;ISSN impresa;ISSN en linea;Instituto;Editora;URL\n")
-{    
-    const API_URL = "https://doaj.org/api/"; // URL a la que vamos a pedir los datos
-
-    const xhttp = new XMLHttpRequest(); // Creo un objeto de la clase XMLHttpRequest para poder hacer el intercambio de datos
-
-    xhttp.open("GET", `${API_URL}/search/journals/Argentina?page=${paginaActual}&pageSize=100`, true); // Crea la solicitud al servidor
-    xhttp.send();   // Envía la solicitud al servidor
-
-    // Recibo la respuesta del servidor
-    xhttp.onreadystatechange = function() // El atributo onreadystatechange define una función que se invoca cada vez que cambia el atributo readyState
-    {      
-        // El atributo readyState es el estado de un objeto de la clase XMLHttpRequest, y el atributo status define el estado de una solicitud al servidor
-        if (this.readyState == 4 && this.status == 200) // cuando esta condición se cumple, significa que la respuesta del servidor ya se recibió y que no hubo problemas
-        { 
-            // response es la respuesta del servidor
-            const respuestaJSON = JSON.parse(this.response); // Las APIs se suelen comunicar en JSON, así que parseo la respuesta a JSON
-        
-            // Ya que cada consulta solo puede devolver una página con un máximo de 100 revistas, me fijo cuantas páginas me falta consultar
-            var cantidadPaginas = Math.ceil(respuestaJSON.total/respuestaJSON.pageSize);
-            var limite          = respuestaJSON.pageSize;
-
-            if(paginaActual == cantidadPaginas) 
-            {
-                auxCantidadPaginas = cantidadPaginas
-                limite = respuestaJSON.total - (respuestaJSON.pageSize * (--auxCantidadPaginas));
-            }
-            
-            console.log(`Comienza la extracción de datos de la página ${paginaActual} de ${cantidadPaginas}`);
-            console.log(`PÁGINA: ${paginaActual}`);
-            info = filtro(info, limite, revista, respuestaJSON);
-            console.log(`Termina la extracción de datos de la página ${paginaActual} de ${cantidadPaginas}`);
-
-            revista += limite
-
-            // Si no termine de consultar todas las páginas, vuelvo a hacer la consulta pero en la página siguiente y con la info que ya obtuvimos
-            if(paginaActual != cantidadPaginas) extraerInfoRepositorio(++paginaActual, revista, info);
-            
-            if(paginaActual == cantidadPaginas) escribirInfo(info);
-        }
-    };
-    
 }
+
 
 
 function filtro(info, limite, revista, respuestaJSON)
@@ -138,22 +83,6 @@ function filtro(info, limite, revista, respuestaJSON)
         console.log(`URL: ${urlRevista}`);
         console.log(`***********************************************************************************`);
 
-
-        /*const registro = {
-            ISSN_impreso:      pissn,
-            ISSN_electronico:  eissn,
-            Instituto:         nombreInstituto
-        }
-        
-        // Inserto la nueva revista
-        conexion.query('INSERT INTO doaj SET ?', registro, function (error, resultado) {
-            if (error) 
-            {
-              console.log(error)
-              return
-            }
-        })*/
-
         revista++;
     }
 
@@ -161,36 +90,22 @@ function filtro(info, limite, revista, respuestaJSON)
 }
 
 
-function escribirInfo(info)
+async function escribirInfo(info)
 {
-    // Escribo la info en el archivo .csv
-    fs.writeFileSync('../Repositorios/DOAJ.csv', info, error => 
-    { 
-        if(error) console.log(error);
-    })
+    console.log("Escribiendo archivos");
 
+    const csvFilePath  = path.join(__dirname, '../Repositorios/DOAJ.csv')
+    const jsonFilePath = path.join(__dirname, '../Repositorios/DOAJ.json');
 
-    setTimeout(function () { // Lo que esta acá se va a ejecutar después de 5 segundos porque tarda en crearse el archivo .csv. Mientras tanto se ejecuta el código que hay despues de esto
+    await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
+    
+    const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito
+    
+    await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
 
-        // Parseo de CSV a JSON
-        csvtojson({delimiter: [";"],}).fromFile('../Repositorios/DOAJ.csv').then((json) => // La propiedad delimiter indica porque caracter debe separar
-        { 
-            fs.writeFile('../Repositorios/DOAJ.json', JSON.stringify(json), error => 
-            { 
-                if(error) console.log(error);
-            })
-        })
-        
-        //setTimeout(() => ordenamiento(), 20000); // ANDA PERO LO DEJO COMENTADO PARA QUE VAYA MÁS RÁPIDO
-
-    }, 5000);
-
-    //ESTO ES PARA DEBUGEAR, GUARDA EL JSON CRUDO EN UN TXT ASI LO PONEMOS DESPUES EN JSONVIEWER
-    /*fs.writeFile('./Revistas/DOAJ.txt', this.response, error => 
-    { 
-        if(error) console.log(error);
-    })*/
+    console.log("Termina la extracción de datos de DOAJ");
 }
+
 
 
 class Revista {
@@ -204,53 +119,6 @@ class Revista {
     }
 
 }
-
-function ordenamiento()
-{
-    var revistas = [];
-    var archivoJSON = require('../Revistas/DOAJ.json');
     
-     // Paso el texto a objetos para poder hacer el ordenamiento por alfabeto
-    for(let i = 0; i < archivoJSON.length; i++){
-        revistas.push(new Revista(archivoJSON[i].Título, archivoJSON[i]['ISSN impresa'], archivoJSON[i]['ISSN en linea'], archivoJSON[i]['Instituto'], archivoJSON[i]['Editora']) );
-    }
-
-    // Ordeno alfabeticamente las revistas según el título
-    for (let i = 1; i < revistas.length; i++) 
-    {
-        for (let j = 0; j < revistas.length - 1; j++) 
-        {
-            if (revistas[j].titulo.toLowerCase() > revistas[j + 1].titulo.toLowerCase()) 
-            {
-                let auxRevista  = new Revista();
-                auxRevista      = revistas[j];
-                revistas[j]     = revistas[j + 1];
-                revistas[j + 1] = auxRevista;
-            }
-        }
-    }
-
-    info = "Título;ISSN impresa;ISSN en linea;Instituto;Editora\n";
-    for(let i = 0; i < revistas.length; i++){
-        info += `${revistas[i].titulo};${revistas[i].pissn};${revistas[i].eissn};${revistas[i].nombreInstituto};${revistas[i].editora}\n`;
-    }
-
-    // Creo otra vez el archivo, pero esta vez con los datos ordenados
-    fs.writeFile('./SGE_Arg/Revistas/DOAJ.csv', info, error => { 
-        if(error) console.log(error);
-    })
-
-    setTimeout(function () 
-    {
-        csvtojson({delimiter: [";"],}).fromFile('./SGE_Arg/Revistas/DOAJ.csv').then((json) => 
-        { 
-            fs.writeFile('./SGE_Arg/Revistas/DOAJ.json', JSON.stringify(json), error => 
-            { 
-                if(error) console.log(error);
-            })
-        })
-    }, 5000);
-}
-
 
 exports.extraerInfoRepositorio = extraerInfoRepositorio;

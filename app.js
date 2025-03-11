@@ -44,13 +44,14 @@ app.use('/bootstrapICONS', express.static('node_modules/bootstrap-icons/font'));
 
 
 // Rutas de navegación web
-app.use('/',            require('./routes/homeRoutes.js') );
-app.use('/contacto',    require('./routes/contactoRoutes.js') );
-app.use('/login',       require('./routes/loginRoutes.js') );
-app.use('/logout',      require('./routes/logoutRoutes.js') );
-app.use('/perfil',      require('./routes/perfilRoutes.js') );
-app.use('/repositorio', require('./routes/repositorioRoutes.js') );
-app.use('/info',        require('./routes/infoRoutes.js') );
+app.use('/',              require('./routes/homeRoutes.js') );
+app.use('/contacto',      require('./routes/contactoRoutes.js') );
+app.use('/login',         require('./routes/loginRoutes.js') );
+app.use('/logout',        require('./routes/logoutRoutes.js') );
+app.use('/perfil',        require('./routes/perfilRoutes.js') );
+app.use('/repositorio',   require('./routes/repositorioRoutes.js') );
+app.use('/info',          require('./routes/infoRoutes.js') );
+app.use('/listadoFinal', require('./routes/listadoFinalRoutes.js') );
 
 
 // Inicio el servidor
