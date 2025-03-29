@@ -93,23 +93,28 @@ async function crearListado() {
         let cantidadRevistasRepetidas = 0;
 
         let revistasUnicas         = new Set(); // Un set es un array pero sin valores repetidos
-        let issnElectronicosUnicos = new Set(); 
-        let issnImpresosUnicos     = new Set();
+        let issnUnicos = new Set();
         let infoRevistasEliminadas = "";
 
         revistas.forEach(revista => {
 
-            if (revista.issnEnLinea !== revista.issnImpreso &&                 // Elimino todas las revistas que tengan lo mismo tanto en el ISSN en linea como en el ISSN impreso, ejemplo: https://www.latindex.org/latindex/Solr/Busqueda?idModBus=0&buscar=Visi%C3%B3n+de+futuro&submit=Buscar
-                !(revista.issnEnLinea === '' && revista.issnImpreso === '') && // Elimino todas las revistas que tienen ambos ISSN vacios
-                (revista.issnEnLinea === '' || !issnElectronicosUnicos.has(revista.issnEnLinea)) &&  // Elimino las revistas con el mismo ISSN electronico (dicho ISSN no debe ser '')
-                (revista.issnImpreso === '' || !issnImpresosUnicos.has(revista.issnImpreso))         // Elimino las revistas con el mismo ISSN impreso (dicho ISSN no debe ser '')
-                //!issnElectronicosUnicos.has(revista.issnImpreso) &&            // Elimino las revistas que tengan el ISSN en linea repetido pero en el campo de ISSN impreso
-                //!issnImpresosUnicos.has(revista.issnEnLinea)                   // Elimino las revistas que tengan el ISSN impreso repetido pero en el campo de ISSN en linea
+            if 
+            (
+                revista.issnEnLinea !== revista.issnImpreso                  // Elimino todas las revistas que tengan lo mismo tanto en el ISSN en linea como en el ISSN impreso, ejemplo: https://www.latindex.org/latindex/Solr/Busqueda?idModBus=0&buscar=Visi%C3%B3n+de+futuro&submit=Buscar
+                &&
+                !(revista.issnEnLinea === '' && revista.issnImpreso === '')  // Elimino todas las revistas que tienen ambos ISSN vacios'')
+                &&
+                (
+                    (revista.issnEnLinea !== '' && !issnUnicos.has(revista.issnEnLinea)  && !issnUnicos.has(revista.issnImpreso) )  // Elimino las revistas con el mismo ISSN electronico (dicho ISSN no debe ser '')
+                    || 
+                    (revista.issnImpreso  !== '' && !issnUnicos.has(revista.issnImpreso) && !issnUnicos.has(revista.issnEnLinea) ) // Elimino las revistas con el mismo ISSN impreso (dicho ISSN no debe ser '')
                 )
+            )
             {
                 revistasUnicas.add(revista);
-                issnElectronicosUnicos.add(revista.issnEnLinea); // Añado el ISSN a un set para asegurarme con el if de que no haya un ISSN repetido
-                issnImpresosUnicos.add(revista.issnImpreso);
+
+                if(revista.issnEnLinea !== '') issnUnicos.add(revista.issnEnLinea);
+                if(revista.issnImpreso !== '') issnUnicos.add(revista.issnImpreso);
 
                 //console.log(`Revista añadida: ${revista.titulo}, \nISSN impreso: ${revista.issnImpreso}, \nISSN en línea: ${revista.issnEnLinea}, \nInstituto: ${revista.instituto}\n`)
             
@@ -127,18 +132,18 @@ async function crearListado() {
 
                 let razonEliminacion = "";
 
-                if (revista.issnEnLinea === revista.issnImpreso)                   razonEliminacion = "ISSN impreso y en línea son iguales";
+                /*if (revista.issnEnLinea === revista.issnImpreso)                   razonEliminacion = "ISSN impreso y en línea son iguales";
                 else if (revista.issnEnLinea === '' && revista.issnImpreso === '') razonEliminacion = "ISSN impreso y en línea están vacíos";
                 else if (revista.issnEnLinea !== '' && issnElectronicosUnicos.has(revista.issnEnLinea)) razonEliminacion = "ISSN en línea repetido";
-                else if (revista.issnImpreso !== '' && issnImpresosUnicos.has(revista.issnImpreso))     razonEliminacion = "ISSN impreso repetido";
+                else if (revista.issnImpreso !== '' && issnImpresosUnicos.has(revista.issnImpreso))     razonEliminacion = "ISSN impreso repetido";*/
                 //else if (issnElectronicosUnicos.has(revista.issnImpreso))          razonEliminacion = "ISSN en línea repetido en el campo de ISSN impreso";
                 //else if (issnImpresosUnicos.has(revista.issnEnLinea))              razonEliminacion = "ISSN impreso repetido en el campo de ISSN en línea";
                 
                 //console.log(`Revista eliminada: ${revista.titulo}, \nISSN impreso: ${revista.issnImpreso}, \nISSN en línea: ${revista.issnEnLinea}, \nInstituto: ${revista.instituto}`);
                 //console.log(`Motivo de eliminación: ${razonEliminacion}\n`);
 
-                infoRevistasEliminadas += `Revista eliminada: ${revista.titulo}, \nISSN impreso: ${revista.issnImpreso}, \nISSN en línea: ${revista.issnEnLinea}, \nInstituto: ${revista.instituto}\n`;
-                infoRevistasEliminadas += `Motivo de eliminación: ${razonEliminacion}\n\n`;
+                /*  infoRevistasEliminadas += `Revista eliminada: ${revista.titulo}, \nISSN impreso: ${revista.issnImpreso}, \nISSN en línea: ${revista.issnEnLinea}, \nInstituto: ${revista.instituto}\n`;
+                infoRevistasEliminadas += `Motivo de eliminación: ${razonEliminacion}\n\n`;*/
             }
 
         });
