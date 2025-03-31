@@ -3,7 +3,8 @@
 // Clase para pasar el texto de los archivos JSON a objetos
 class Revista {
     
-    constructor(
+    constructor
+    (
         tituloRevista, issnImpreso, issnEnLinea, instituto, 
         caicyt,   url_caicyt,
         doaj,     url_doaj,
@@ -14,30 +15,22 @@ class Revista {
         wos,      url_wos,
         biblat,   url_biblat,
         dialnet,  url_dialnet,
-    ) {
+    ) 
+    {
         this.tituloRevista = tituloRevista;
         this.issnImpreso   = issnImpreso;
         this.issnEnLinea   = issnEnLinea;
         this.instituto     = instituto;
 
-        this.caicyt        = caicyt;
-        this.url_caicyt    = url_caicyt;
-        this.doaj          = doaj;
-        this.url_doaj      = url_doaj;
-        this.latindex      = latindex;
-        this.url_latindex  = url_latindex;
-        this.redalyc       = redalyc;
-        this.url_redalyc   = url_redalyc;
-        this.scimago       = scimago;
-        this.url_scimago   = url_scimago;
-        this.scielo        = scielo;
-        this.url_scielo    = url_scielo;
-        this.wos           = wos;
-        this.url_wos       = url_wos;
-        this.biblat        = biblat;
-        this.url_biblat    = url_biblat;
-        this.dialnet       = dialnet;
-        this.url_dialnet   = url_dialnet;
+        this.caicyt        = caicyt;   this.url_caicyt    = url_caicyt;
+        this.doaj          = doaj;     this.url_doaj      = url_doaj;
+        this.latindex      = latindex; this.url_latindex  = url_latindex;
+        this.redalyc       = redalyc;  this.url_redalyc   = url_redalyc;
+        this.scimago       = scimago;  this.url_scimago   = url_scimago;
+        this.scielo        = scielo;   this.url_scielo    = url_scielo;
+        this.wos           = wos;      this.url_wos       = url_wos;
+        this.biblat        = biblat;   this.url_biblat    = url_biblat;
+        this.dialnet       = dialnet;  this.url_dialnet   = url_dialnet;
     }
 
     /*toString() {
@@ -65,24 +58,15 @@ function crearListadoDeRevistas( archivoJSON ){
                     archivoJSON[i]['ISSN en linea'], 
                     archivoJSON[i]['Instituto/Editorial'], 
 
-                    archivoJSON[i]['CAICYT'],
-                    archivoJSON[i]['URL_CAICYT'],
-                    archivoJSON[i]['DOAJ'],
-                    archivoJSON[i]['URL_DOAJ'],
-                    archivoJSON[i]['Latindex'],
-                    archivoJSON[i]['URL_Latindex'],
-                    archivoJSON[i]['Redalyc'],
-                    archivoJSON[i]['URL_Redalyc'],
-                    archivoJSON[i]['Scimago'],
-                    archivoJSON[i]['URL_Scimago'],
-                    archivoJSON[i]['Scielo'],
-                    archivoJSON[i]['URL_Scielo'],
-                    archivoJSON[i]['WoS'],
-                    archivoJSON[i]['URL_WoS'],
-                    archivoJSON[i]['Biblat'],
-                    archivoJSON[i]['URL_Biblat'],
-                    archivoJSON[i]['Dialnet'],
-                    archivoJSON[i]['URL_Dialnet'],
+                    archivoJSON[i]['CAICYT'],          archivoJSON[i]['URL_CAICYT'],
+                    archivoJSON[i]['DOAJ'],            archivoJSON[i]['URL_DOAJ'],
+                    archivoJSON[i]['Latindex'],        archivoJSON[i]['URL_Latindex'],
+                    archivoJSON[i]['Redalyc'],         archivoJSON[i]['URL_Redalyc'],
+                    archivoJSON[i]['Scimago'],         archivoJSON[i]['URL_Scimago'],
+                    archivoJSON[i]['Scielo'],          archivoJSON[i]['URL_Scielo'],
+                    archivoJSON[i]['WoS'],             archivoJSON[i]['URL_WoS'],
+                    archivoJSON[i]['Biblat'],          archivoJSON[i]['URL_Biblat'],
+                    archivoJSON[i]['Dialnet'],         archivoJSON[i]['URL_Dialnet'],
                 ) );
             }
         }
@@ -120,67 +104,36 @@ function armarTablaDeRevistas( arregloRevistas, numeroPagina ){
                 <th class="text-center">Dialnet</th>
 
             </tr>
-        </thead>`
+        </thead>
+    `
     
     if(numeroPagina > 1) numeroPagina = (numeroPagina * 20) - 19;
 
-    for(let i = 0; i < arregloRevistas.length; i++){
+    let repositorios = ['caicyt', 'doaj', 'latindex', 'redalyc', 'scimago', 'scielo', 'wos', 'biblat', 'dialnet'];
 
-        let caicyt;
-        if ( arregloRevistas[i].caicyt === "true" ) caicyt = `<td class="text-center"><a href="${arregloRevistas[i].url_caicyt}" target="_blank"> X </a></td>`;
-        else                                        caicyt = `<td></td>`;
-
-        let doaj;
-        if ( arregloRevistas[i].doaj === "true" ) doaj = `<td class="text-center"><a href="${arregloRevistas[i].url_doaj}" target="_blank"> X </a></td>`;
-        else                                      doaj = `<td></td>`;
-
-        let latindex;
-        if ( arregloRevistas[i].latindex === "true" ) latindex = `<td class="text-center"><a href="${arregloRevistas[i].url_latindex}" target="_blank"> X </a></td>`;
-        else                                          latindex = `<td></td>`;
-
-        let redalyc;
-        if ( arregloRevistas[i].redalyc === "true" ) redalyc = `<td class="text-center"><a href="${arregloRevistas[i].url_redalyc}" target="_blank"> X </a></td>`;
-        else                                         redalyc = `<td></td>`;
-
-        let scimago;
-        if ( arregloRevistas[i].scimago === "true" ) scimago = `<td class="text-center"><a href="${arregloRevistas[i].url_scimago}" target="_blank"> X </a></td>`;
-        else                                         scimago = `<td></td>`;
-
-        let scielo;
-        if ( arregloRevistas[i].scielo === "true" ) scielo = `<td class="text-center"><a href="${arregloRevistas[i].url_scielo}" target="_blank"> X </a></td>`;
-        else                                        scielo = `<td></td>`;
-
-        let wos;
-        if ( arregloRevistas[i].wos === "true" ) wos = `<td class="text-center"><a href="${arregloRevistas[i].url_wos}" target="_blank"> X </a></td>`;
-        else                                     wos = `<td></td>`;
-
-        let biblat;
-        if ( arregloRevistas[i].biblat === "true" ) biblat = `<td class="text-center"><a href="${arregloRevistas[i].url_biblat}" target="_blank"> X </a></td>`;
-        else                                        biblat = `<td></td>`;
-
-        let dialnet;
-        if ( arregloRevistas[i].dialnet === "true" ) dialnet = `<td class="text-center"><a href="${arregloRevistas[i].url_dialnet}" target="_blank"> X </a></td>`;
-        else                                         dialnet = `<td></td>`;
-
-
+    for(let i = 0; i < arregloRevistas.length; i++)
+    {
         tabla += `<tr>
                     <td class="text-center">${numeroPagina}</td>
                     <td>${arregloRevistas[i].tituloRevista}</td>
                     <td class="text-center">${arregloRevistas[i].issnImpreso}</td>
                     <td class="text-center">${arregloRevistas[i].issnEnLinea}</td>
-                    <td>${arregloRevistas[i].instituto}</td>
+                    <td>${arregloRevistas[i].instituto}</td>`
 
-                    ${caicyt}
-                    ${doaj}
-                    ${latindex}
-                    ${redalyc}
-                    ${scimago}
-                    ${scielo}
-                    ${wos}
-                    ${biblat}
-                    ${dialnet}
-                 </tr>`
+        repositorios.forEach(repositorio => {
+
+            if( arregloRevistas[i][repositorio] === "true" && arregloRevistas[i][`url_${repositorio}`] !== "null" )
+                tabla += `<td class="text-center"><a href="${arregloRevistas[i][`url_${repositorio}`]}" target="_blank"> X </a></td>`;
+            
+            else if ( arregloRevistas[i][repositorio] === "true" && arregloRevistas[i][`url_${repositorio}`] === "null" )
+                tabla += `<td class="text-center"> X </td>`;
+            else
+
+                tabla += `<td></td>`;
+
+        })
         
+        tabla += `</tr>`
         numeroPagina++;
     }
 

@@ -18,7 +18,7 @@ repositoriosWeb.forEach(repositorio => {
     try 
     {
       archivosJSON.push( require(path.join(__dirname, `../Repositorios/${repositorio}.json`)) );
-      archivosEncontrados[repositorio] = true;
+      archivosEncontrados[repositorio] = true; // EJ: archivosEncontrados['CAICYT'] = true significa que el archivo json de CAICYT esta disponible
       console.log(`Repositorio web incluido en el listado: ${repositorio}`);
     } 
     catch (error) 
@@ -35,54 +35,34 @@ repositoriosWeb.forEach(repositorio => {
 // Clase para pasar el texto de los archivos JSON a objetos y así poder hacer el ordenamiento
 class Revista 
 {
-    constructor(titulo, issnImpreso, issnEnLinea, instituto) 
+    constructor(titulo, issnImpreso, issnEnLinea, instituto, url) 
     {
         this.titulo = titulo;
         this.issnImpreso = issnImpreso;
         this.issnEnLinea = issnEnLinea;
         this.instituto   = instituto;
-        
-        // Estos atributos son para saber en que repositorios web se encuentra la revista
-        this.CAICYT      = false;
-        this.DOAJ        = false;
-        this.Latindex    = false;
-        this.Redalyc     = false;
-        this.Scimago     = false;
-        this.Scielo      = false;
-        this.WoS         = false;
-        this.Biblat      = false;
-        this.Dialnet     = false;
+        this.url = url;
     }
 
     toString() 
     {
-        console.log(`Título: ${this.titulo}, ISSN impreso: ${this.issnImpreso}, ISSN en línea: ${this.issnEnLinea}, Instituto: ${this.instituto}`);
-        console.log(`Repositorios: CAICYT: ${this.CAICYT}, DOAJ: ${this.DOAJ}, Latindex: ${this.Latindex}, Redalyc: ${this.Redalyc}, Scimago: ${this.Scimago}, Scielo: ${this.Scielo}, WoS: ${this.WoS}, Biblat: ${this.Biblat}, Dialnet: ${this.Dialnet}`);
+        console.log(`Título: ${this.titulo}, ISSN impreso: ${this.issnImpreso}, ISSN en línea: ${this.issnEnLinea}, Instituto: ${this.instituto}, URL: ${this.url}`);
     }
 }
 
 
-// Actualiza las variables de los atributos en función de los archivos JSON
-function actualizarRepositorios(revista, repositorio, archivoJSON) 
-{
-    archivoJSON.forEach(item => {
-        if (item.Título === revista.titulo) {
-            revista[repositorio] = true;
-        }
-    });
-}
-
 
 // Recorro cada revista de la que hayamos extraido información y creo una lista con el título y el ISSN impreso y/o electronico.
-// Una revista puede aparecer en distintos repositorios web, por eso se chequea el ISSN para que en la lista solo pueda aparecer una vez cada revista.
+// Una revista puede aparecer en distintos repositorios web, por eso se chequea el ISSN para que en la listado final solo pueda aparecer una vez cada revista.
 async function crearListado() {
 
     try
     {
         // Creo una lista inicial poniendo todas las revistas de todos los repositorios web en un solo arreglo
         let revistas = archivosJSON.flat().map(revista => {
-            return new Revista(revista.Título, revista['ISSN impresa'], revista['ISSN en linea'], revista['Instituto']);
+            return new Revista(revista.Título, revista['ISSN impresa'], revista['ISSN en linea'], revista['Instituto'], revista['URL']);
         });
+        
 
         console.log("***********************************************************");
         console.log("Cantidad de revistas a filtrar: " + revistas.length);
@@ -90,11 +70,11 @@ async function crearListado() {
         // Ordeno alfabeticamente las revistas según el título.
         revistas.sort((A, B) => A.titulo.localeCompare(B.titulo));
 
+        // Recorro todas las revistas y aplico distintos filtros para que al final solo me quede una lista en la que cada revista tiene un ISSN único
         let cantidadRevistasRepetidas = 0;
 
-        let revistasUnicas         = new Set(); // Un set es un array pero sin valores repetidos
-        let issnUnicos = new Set();
-        let infoRevistasEliminadas = "";
+        let revistasUnicas = new Set(); // Un set es un array pero sin valores repetidos
+        let issnUnicos     = new Set();
 
         revistas.forEach(revista => {
 
@@ -115,64 +95,37 @@ async function crearListado() {
 
                 if(revista.issnEnLinea !== '') issnUnicos.add(revista.issnEnLinea);
                 if(revista.issnImpreso !== '') issnUnicos.add(revista.issnImpreso);
-
-                //console.log(`Revista añadida: ${revista.titulo}, \nISSN impreso: ${revista.issnImpreso}, \nISSN en línea: ${revista.issnEnLinea}, \nInstituto: ${revista.instituto}\n`)
-            
-                // Actualiza las variables de los atributos en función de los archivos JSON
-                repositoriosWeb.forEach((repositorio, index) => {
-                    if (archivosEncontrados[repositorio]) {
-                        actualizarRepositorios(revista, repositorio, archivosJSON[index]);
-                    }
-                });
-            
             }
             else
             {
                 cantidadRevistasRepetidas++;
-
-                let razonEliminacion = "";
-
-                /*if (revista.issnEnLinea === revista.issnImpreso)                   razonEliminacion = "ISSN impreso y en línea son iguales";
-                else if (revista.issnEnLinea === '' && revista.issnImpreso === '') razonEliminacion = "ISSN impreso y en línea están vacíos";
-                else if (revista.issnEnLinea !== '' && issnElectronicosUnicos.has(revista.issnEnLinea)) razonEliminacion = "ISSN en línea repetido";
-                else if (revista.issnImpreso !== '' && issnImpresosUnicos.has(revista.issnImpreso))     razonEliminacion = "ISSN impreso repetido";*/
-                //else if (issnElectronicosUnicos.has(revista.issnImpreso))          razonEliminacion = "ISSN en línea repetido en el campo de ISSN impreso";
-                //else if (issnImpresosUnicos.has(revista.issnEnLinea))              razonEliminacion = "ISSN impreso repetido en el campo de ISSN en línea";
-                
-                //console.log(`Revista eliminada: ${revista.titulo}, \nISSN impreso: ${revista.issnImpreso}, \nISSN en línea: ${revista.issnEnLinea}, \nInstituto: ${revista.instituto}`);
-                //console.log(`Motivo de eliminación: ${razonEliminacion}\n`);
-
-                /*  infoRevistasEliminadas += `Revista eliminada: ${revista.titulo}, \nISSN impreso: ${revista.issnImpreso}, \nISSN en línea: ${revista.issnEnLinea}, \nInstituto: ${revista.instituto}\n`;
-                infoRevistasEliminadas += `Motivo de eliminación: ${razonEliminacion}\n\n`;*/
             }
 
         });
 
-        fs.writeFile(path.join(__dirname, "revistasAñadidas.json"), JSON.stringify(Array.from(revistasUnicas)), (err) => {
-            if (err) console.error('Error al escribir el archivo:', err);
-            else     console.log('Archivo escrito exitosamente');
+
+        
+        // Una vez que me queda el listado final en el que cada revista tiene un ISSN único, lleno el listado con datos nuevos
+        // En esta ocasión añado nuevos atributos: CAICYT, DOAJ, Redalyc, etc. los cuales me sirven para saber si una revista se encuentra en dicho repositorio
+        repositoriosWeb.forEach((repositorioNombre) =>{
+            
+            revistasUnicas.forEach(revistaUnica => {
+                revistaUnica[repositorioNombre] = buscarRevistaEnRepositorio(revistaUnica.titulo, revistaUnica.issnEnLinea, revistaUnica.issnImpreso, repositorioNombre);
+            });
+
         });
 
-        fs.writeFile(path.join(__dirname, "revistasEliminadas.txt"), infoRevistasEliminadas, (err) => {
-            if (err) console.error('Error al escribir el archivo:', err);
-            else     console.log('Archivo escrito exitosamente');
+
+        // Agrego los URLs de las revistas
+        repositoriosWeb.forEach((repositorioNombre) =>{
+            
+            revistasUnicas.forEach(revistaUnica => {
+                revistaUnica['URL_' + repositorioNombre] = 
+                revistaUnica[repositorioNombre] ? 
+                buscarURL(revistaUnica.titulo, revistaUnica.issnEnLinea, revistaUnica.issnImpreso, repositorioNombre) : null;
+            });
+
         });
-
-
-        // Agrego los URLs de las revistas (creo nuevas propiedades que no estaban en el constructor ya que este esta hecho para que funcione con todos los archivos .json)
-        // NOTA: SI ALGUNO TIRA COMO RESULTADO UNDEFINED ES PORQUE TODAVÍA NO SE EXTRAE EL CAMPO URL DE DICHO repositorio WEB
-        revistasUnicas.forEach(revista => {
-            revista.URL_CAICYT   = revista.CAICYT   ? buscarURL(revista.issnEnLinea, revista.issnImpreso, "CAICYT") : "";
-            revista.URL_DOAJ     = revista.DOAJ     ? buscarURL(revista.issnEnLinea, revista.issnImpreso, "DOAJ") : "";
-            revista.URL_Latindex = revista.Latindex ? buscarURL(revista.issnEnLinea, revista.issnImpreso, "Latindex") : "";
-            revista.URL_Redalyc  = revista.Redalyc  ? buscarURL(revista.issnEnLinea, revista.issnImpreso, "Redalyc") : "";
-            revista.URL_Scimago  = revista.Scimago  ? buscarURL(revista.issnEnLinea, revista.issnImpreso, "Scimago") : "";
-            revista.URL_Scielo   = revista.Scielo   ? buscarURL(revista.issnEnLinea, revista.issnImpreso, "Scielo") : "";
-            revista.URL_WoS      = revista.WoS      ? buscarURL(revista.issnEnLinea, revista.issnImpreso, "Web of Science") : "";
-            revista.URL_Biblat   = revista.Biblat   ? buscarURL(revista.issnEnLinea, revista.issnImpreso, "Biblat") : "";
-            revista.URL_Dialnet  = revista.Dialnet  ? buscarURL(revista.issnEnLinea, revista.issnImpreso, "Dialnet") : "";
-        });
-
 
         console.log("***********************************************************");
         console.log("Cantidad de revistas repetidas y eliminadas por el filtro: " + cantidadRevistasRepetidas);
@@ -194,7 +147,7 @@ async function crearListado() {
             info += `;${revista.Redalyc};${revista.URL_Redalyc}`;
             info += `;${revista.Scimago};${revista.URL_Scimago}`;
             info += `;${revista.Scielo};${revista.URL_Scielo}`;
-            info += `;${revista.WoS};${revista.URL_WoS}`;
+            info += `;${revista['Web of Science']};${revista['URL_Web of Science']}`;
             info += `;${revista.Biblat};${revista.URL_Biblat}`;
             info += `;${revista.Dialnet};${revista.URL_Dialnet}`;
             
@@ -219,23 +172,50 @@ async function crearListado() {
 
 }
 
-function buscarURL(issnEnLinea, issnImpreso, nombreArchivoJSON)
+
+function buscarRevistaEnRepositorio(titulo, issnEnLinea, issnImpreso, nombreArchivoJSON)
 {
-    let URL = "";
+    let archivoJSON = require(path.join(__dirname, `../Repositorios/${nombreArchivoJSON}.json`))
+
+    let existeRevistaEnRepositorio = false;
+
+    for(let i = 0; i < archivoJSON.length; i++)
+    {
+        if
+        (
+            (archivoJSON[i]['Título'] == titulo) || 
+            (issnEnLinea && issnEnLinea !== "" && archivoJSON[i]['ISSN en linea'] == issnEnLinea) || 
+            (issnImpreso && issnImpreso !== "" && archivoJSON[i]['ISSN impresa'] == issnImpreso)
+        )
+        {
+            existeRevistaEnRepositorio = true;
+            break;
+        }
+    }
+
+    return existeRevistaEnRepositorio;
+}
+
+
+function buscarURL(titulo, issnEnLinea, issnImpreso, nombreArchivoJSON)
+{
+    let URL = null;
     let archivoJSON = require(path.join(__dirname, `../Repositorios/${nombreArchivoJSON}.json`))
 
     for(let i = 0; i < archivoJSON.length; i++)
     {
-        //console.log(archivoJSON[i].issnEnLinea + "; ISSN en linea: " +  issnEnLinea);
-        //console.log(archivoJSON[i].issnImpreso + "; ISSN impreso: " + issnImpreso);
-        if(archivoJSON[i]['ISSN en linea'] == issnEnLinea || archivoJSON[i]['ISSN impresa'] == issnImpreso)
+        if
+        (
+            (archivoJSON[i]['Título'] == titulo) || 
+            (issnEnLinea && issnEnLinea !== "" && archivoJSON[i]['ISSN en linea'] == issnEnLinea) || 
+            (issnImpreso && issnImpreso !== "" && archivoJSON[i]['ISSN impresa'] == issnImpreso)
+        )
         {
-            URL = archivoJSON[i].URL; 
-            i = archivoJSON.length;
+            if(archivoJSON[i].URL && archivoJSON[i].URL !== "") return archivoJSON[i].URL; 
+            else                                                return null;
         }
     }
 
-    return URL;
 }
 
 exports.crearListado = crearListado;
