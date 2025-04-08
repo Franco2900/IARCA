@@ -253,8 +253,8 @@ async function extraerInfoRepositorio()
     console.log("CANTIDAD DE REVISTAS EXTRAIDAS CON EXITO: " + cantidadRevistasExtraidas);
     console.log("CANTIDAD DE REVISTAS NO EXTRAIDAS: " + cantidadRevistasNoExtraidas);
 
-    const csvFilePath  = path.join(__dirname, '../Repositorios/CAICYT.csv');
-    const jsonFilePath = path.join(__dirname, '../Repositorios/CAICYT.json');
+    const csvFilePath  = path.join(__dirname, '../Repositorios/NBRA.csv');
+    const jsonFilePath = path.join(__dirname, '../Repositorios/NBRA.json');
 
     await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
     

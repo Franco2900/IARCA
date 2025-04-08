@@ -14,7 +14,7 @@ async function getHome(req, res)
 
 
     // Calculo los datos a usar en la tabla de estado de los repositorios
-    let repositorios = ['CAICYT', 'Latindex', 'DOAJ', 'Redalyc', 'Biblat', 'Scimago', 'Scielo', 'Web of Science', 'Dialnet'];
+    let repositorios = ['NBRA', 'Latindex', 'DOAJ', 'Redalyc', 'Biblat', 'Scimago', 'Scielo', 'Web of Science', 'Dialnet'];
     let cantidadRevistas = {};
     let fechaUltimaModificacion = {};
     let estado = {};

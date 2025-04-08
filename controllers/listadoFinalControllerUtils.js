@@ -6,7 +6,7 @@ class Revista {
     constructor
     (
         tituloRevista, issnImpreso, issnEnLinea, instituto, 
-        caicyt,   url_caicyt,
+        nbra,     url_nbra,
         doaj,     url_doaj,
         latindex, url_latindex,
         redalyc,  url_redalyc,
@@ -22,7 +22,7 @@ class Revista {
         this.issnEnLinea   = issnEnLinea;
         this.instituto     = instituto;
 
-        this.caicyt        = caicyt;   this.url_caicyt    = url_caicyt;
+        this.nbra          = nbra;     this.url_nbra      = url_nbra;
         this.doaj          = doaj;     this.url_doaj      = url_doaj;
         this.latindex      = latindex; this.url_latindex  = url_latindex;
         this.redalyc       = redalyc;  this.url_redalyc   = url_redalyc;
@@ -58,7 +58,7 @@ function crearListadoDeRevistas( archivoJSON ){
                     archivoJSON[i]['ISSN en linea'], 
                     archivoJSON[i]['Instituto/Editorial'], 
 
-                    archivoJSON[i]['CAICYT'],          archivoJSON[i]['URL_CAICYT'],
+                    archivoJSON[i]['NBRA'],          archivoJSON[i]['URL_NBRA'],
                     archivoJSON[i]['DOAJ'],            archivoJSON[i]['URL_DOAJ'],
                     archivoJSON[i]['Latindex'],        archivoJSON[i]['URL_Latindex'],
                     archivoJSON[i]['Redalyc'],         archivoJSON[i]['URL_Redalyc'],
@@ -93,7 +93,7 @@ function armarTablaDeRevistas( arregloRevistas, numeroPagina ){
                 <th class="text-center">ISSN electronico</th>
                 <th class="text-center">Instituto/Editorial</th>
 
-                <th class="text-center">CAICYT</th>
+                <th class="text-center">NBRA</th>
                 <th class="text-center">DOAJ</th>
                 <th class="text-center">Latindex</th>
                 <th class="text-center">Redalyc</th>
@@ -109,7 +109,7 @@ function armarTablaDeRevistas( arregloRevistas, numeroPagina ){
     
     if(numeroPagina > 1) numeroPagina = (numeroPagina * 20) - 19;
 
-    let repositorios = ['caicyt', 'doaj', 'latindex', 'redalyc', 'scimago', 'scielo', 'wos', 'biblat', 'dialnet'];
+    let repositorios = ['nbra', 'doaj', 'latindex', 'redalyc', 'scimago', 'scielo', 'wos', 'biblat', 'dialnet'];
 
     for(let i = 0; i < arregloRevistas.length; i++)
     {

@@ -7,7 +7,7 @@ const path      = require('path');      // Módulo para trabajar con paths
 // DIALNET TIENE TODOS LOS ISSN EN ISSN IMPRESOS PORQUE NO HACE DIFERENCIA POR TIPOS DE ISSN
 // SCIMAGO CREO QUE EXTRAE LOS ISSN AL REVES PERO NO HAY FORMA DE SABER SI ES UN ISSN ELECTRONICO O IMPRESO
 
-let repositoriosWeb     = ['CAICYT', 'DOAJ', 'Latindex', 'Redalyc', 'Scimago', 'Scielo', 'Web of Science', 'Biblat', 'Dialnet'];
+let repositoriosWeb     = ['NBRA', 'DOAJ', 'Latindex', 'Redalyc', 'Scimago', 'Scielo', 'Web of Science', 'Biblat', 'Dialnet'];
 let archivosJSON        = []; // Almaceno los archivo JSON disponibles acá
 let archivosEncontrados = {};
 
@@ -17,7 +17,7 @@ repositoriosWeb.forEach(repositorio => {
     try 
     {
       archivosJSON.push( require(path.join(__dirname, `../Repositorios/${repositorio}.json`)) );
-      archivosEncontrados[repositorio] = true; // EJ: archivosEncontrados['CAICYT'] = true significa que el archivo json de CAICYT esta disponible
+      archivosEncontrados[repositorio] = true; // EJ: archivosEncontrados['NBRA'] = true significa que el archivo json de NBRA esta disponible
       console.log(`Repositorio web incluido en el listado: ${repositorio}`);
     } 
     catch (error) 
@@ -104,7 +104,7 @@ async function crearListado() {
 
 
         // Una vez que me queda el listado final en el que cada revista tiene un ISSN único, lleno el listado con datos nuevos
-        // En esta ocasión añado nuevos atributos: CAICYT, DOAJ, Redalyc, etc. los cuales me sirven para saber si una revista se encuentra en dicho repositorio
+        // En esta ocasión añado nuevos atributos: NBRA, DOAJ, Redalyc, etc. los cuales me sirven para saber si una revista se encuentra en dicho repositorio
         // Al mismo tiempo obtengo las URLs que llevan a dichos repositorios
 
         repositoriosWeb.forEach((repositorioNombre) =>{ // Recorro todos los repositorios
@@ -214,14 +214,14 @@ async function crearListado() {
 
         // Armo el listado
         // Encabezado
-        var info = "Título;ISSN impresa;ISSN en linea;Instituto/Editorial;CAICYT;URL_CAICYT;DOAJ;URL_DOAJ;Latindex;URL_Latindex;Redalyc;URL_Redalyc;Scimago;URL_Scimago;Scielo;URL_Scielo;WoS;URL_WoS;Biblat;URL_Biblat;Dialnet;URL_Dialnet\n";
+        var info = "Título;ISSN impresa;ISSN en linea;Instituto/Editorial;NBRA;URL_NBRA;DOAJ;URL_DOAJ;Latindex;URL_Latindex;Redalyc;URL_Redalyc;Scimago;URL_Scimago;Scielo;URL_Scielo;WoS;URL_WoS;Biblat;URL_Biblat;Dialnet;URL_Dialnet\n";
 
         // Cuerpo
         revistasUnicas.forEach(revista => {
             // Los datos de la revista: Titulo, ISSN impreso, ISSN en línea, Instituto
             info += `${revista.titulo};${revista.issnImpreso};${revista.issnEnLinea};${revista.instituto}`;
             
-            info += `;${revista.CAICYT};${revista.URL_CAICYT}`;
+            info += `;${revista.NBRA};${revista.URL_NBRA}`;
             info += `;${revista.DOAJ};${revista.URL_DOAJ}`;
             info += `;${revista.Latindex};${revista.URL_Latindex}`;
             info += `;${revista.Redalyc};${revista.URL_Redalyc}`;
