@@ -1,4 +1,8 @@
 {
+  "name": "IARCA",
+  "bin": {
+    "app": "app.js" 
+  },
   "scripts": {
     "start": "nodemon app.js"
   },
@@ -13,6 +17,16 @@
       "."
     ],
     "ext": "js,json,csv"
+  },
+  "pkg": {
+    "assets": [
+      "views/*.ejs",
+      "public/css/*.css",
+      "public/images/styles/*.jpg",
+      "public/js/*.js",
+      "util/**/*"
+    ],
+    "targets": ["node18-win-x64"]
   },
   "dependencies": {
     "axios": "^1.8.1",
