@@ -35,12 +35,12 @@ app.use(
 
 
 // Rutas de atajo a archivos
-app.use('/images', express.static('public/images'));
-app.use('/css',    express.static('public/css'));
-app.use('/js',     express.static('public/js'));
-app.use('/bootstrapCSS',   express.static('node_modules/bootstrap/dist/css'));  // Bootstrap
-app.use('/bootstrapJS',    express.static('node_modules/bootstrap/dist/js'));
-app.use('/bootstrapICONS', express.static('node_modules/bootstrap-icons/font'));
+app.use('/images',         express.static( path.join(__dirname, 'public/images')) ); 
+app.use('/css',            express.static( path.join(__dirname, 'public/css')) );
+app.use('/js',             express.static( path.join(__dirname, 'public/js')) );
+app.use('/bootstrapCSS',   express.static( path.join(__dirname, 'node_modules/bootstrap/dist/css')) );  
+app.use('/bootstrapJS',    express.static( path.join(__dirname, 'node_modules/bootstrap/dist/js')) );
+app.use('/bootstrapICONS', express.static( path.join(__dirname, 'node_modules/bootstrap-icons/font')) );
 
 
 // Rutas de navegación web
@@ -51,11 +51,11 @@ app.use('/logout',        require('./routes/logoutRoutes.js') );
 app.use('/perfil',        require('./routes/perfilRoutes.js') );
 app.use('/repositorio',   require('./routes/repositorioRoutes.js') );
 app.use('/info',          require('./routes/infoRoutes.js') );
-app.use('/listadoFinal', require('./routes/listadoFinalRoutes.js') );
+app.use('/listadoFinal',  require('./routes/listadoFinalRoutes.js') );
 
 
 // Inicio el servidor
-const servidor = app.listen(puerto, () => {
+const servidor = app.listen(puerto, 'localhost', () => {
     console.log('Servidor web iniciado en el puerto ' + puerto);
 });
 

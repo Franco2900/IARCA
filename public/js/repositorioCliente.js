@@ -1,9 +1,8 @@
-const puerto = 5000;
-
+const dominio = 'isco.unla.edu.ar';
 
 function descargarCSV(repositorio) 
 { 
-    fetch(`http://localhost:${puerto}/repositorio/${repositorio}/descargarCSV`, {
+    fetch(`http://${dominio}/repositorio/${repositorio}/descargarCSV`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
@@ -27,7 +26,7 @@ function descargarCSV(repositorio)
 
 function descargarJSON(repositorio) 
 {
-    fetch(`http://localhost:${puerto}/repositorio/${repositorio}/descargarJSON`, {
+    fetch(`http://${dominio}/repositorio/${repositorio}/descargarJSON`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
@@ -56,7 +55,7 @@ function siguientePagina(repositorio)
 
     if( paginaActual < cantidadPaginasDeNavegacion )
     {
-        fetch(`http://localhost:${puerto}/repositorio/${repositorio}/siguientePagina`,
+        fetch(`http://${dominio}/repositorio/${repositorio}/siguientePagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -92,7 +91,7 @@ function anteriorPagina(repositorio)
 
     if(paginaActual > 1)
     {
-        fetch(`http://localhost:${puerto}/repositorio/${repositorio}/anteriorPagina`,
+        fetch(`http://${dominio}/repositorio/${repositorio}/anteriorPagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -126,7 +125,7 @@ function buscarPaginaEspecifica(repositorio)
 
     if(paginaBuscada >= 1   &&  paginaBuscada <= cantidadPaginasDeNavegacion)
     {
-        fetch(`http://localhost:${puerto}/repositorio/${repositorio}/buscarPaginaEspecifica`,
+        fetch(`http://${dominio}/repositorio/${repositorio}/buscarPaginaEspecifica`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -160,7 +159,7 @@ function primerPagina(repositorio)
 
     if( paginaActual != 1 )
     {
-        fetch(`http://localhost:${puerto}/repositorio/${repositorio}/primerPagina`,
+        fetch(`http://${dominio}/repositorio/${repositorio}/primerPagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -194,7 +193,7 @@ function ultimaPagina(repositorio)
 
     if( paginaActual < cantidadPaginasDeNavegacion )
     {
-        fetch(`http://localhost:${puerto}/repositorio/${repositorio}/ultimaPagina`,
+        fetch(`http://${dominio}/repositorio/${repositorio}/ultimaPagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -233,7 +232,7 @@ function actualizarCatalogo(repositorio)
     // Hago invisible el boton de actualizar catalogo
     document.getElementById("actualizarCatalogo").style.display="none"; 
 
-    fetch(`http://localhost:${puerto}/repositorio/${repositorio}/actualizarCatalogo`,
+    fetch(`http://${dominio}/repositorio/${repositorio}/actualizarCatalogo`,
     { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
