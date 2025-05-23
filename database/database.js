@@ -1,13 +1,15 @@
-// Modulo para usar mysql
-const mysql = require('mysql2/promise');
+// Variables de entorno
+require('dotenv').config(); // Carga las variables de .env en process.env
+
+// Modulos
+const mysql = require('mysql2/promise'); // Permite usar mysql
 
 // Creo la conexión a la base de datos 
 const db = mysql.createPool({ 
-    host: 'localhost', 
-    user: 'root', 
-    password: '', 
-    database: 'iarca' 
+    host:     process.env.DB_HOST, 
+    user:     process.env.DB_USER, 
+    password: process.env.DB_PASSWORD, 
+    database: process.env.DB_NAME
 });
 
-// Exporto la conexión para que pueda ser usado en otro archivo
 module.exports = db;

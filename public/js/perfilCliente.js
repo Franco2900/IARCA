@@ -1,4 +1,4 @@
-const dominio = 'isco.unla.edu.ar';
+const dominio = window.location.origin;
 
 function cambiarImagen(event) 
 {
@@ -17,7 +17,7 @@ function cambiarImagen(event)
             console.log('Haciendo solicitud');
 
             // Petición al servidor usando fetch 
-            fetch(`http://${dominio}/perfil/cambiarImagen`, 
+            fetch(`${dominio}/perfil/cambiarImagen`, 
             { 
                 method: 'POST', 
                 body: formData 
@@ -51,7 +51,7 @@ function cambiarNombre()
         const datos = { nuevoNombre: nuevoNombre.trim() };
 
         // Petición al servidor usando fetch 
-        fetch(`http://${dominio}/perfil/cambiarNombre`, 
+        fetch(`${dominio}/perfil/cambiarNombre`, 
         { method: 'POST', 
           headers: { 'Content-Type': 'application/json' }, 
           body: JSON.stringify(datos) 
@@ -79,7 +79,7 @@ function cambiarContrasenia()
         const datos = { nuevaContrasenia: nuevaContrasenia };
 
         // Petición al servidor usando fetch 
-        fetch(`http://${dominio}/perfil/cambiarContrasenia`, 
+        fetch(`${dominio}/perfil/cambiarContrasenia`, 
         { method: 'POST', 
           headers: { 'Content-Type': 'application/json' }, 
           body: JSON.stringify(datos) 

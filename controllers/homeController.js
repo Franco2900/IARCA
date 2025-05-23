@@ -2,16 +2,14 @@
 const path = require( 'path' ); // Módulo para trabajar con rutas de archivos y directorios
 const fs   = require('fs');
 
+// Metodos importados de 'util.js'
+const { logURL } = require('../util/util.js');
+
 async function getHome(req, res)
 {
-    // Logging
-    console.log('***********************************************************');
-    console.log('Ruta: GET / \n');
+    logURL(`GET`, `/`);
 
-
-    const usuario = req.session;
     const body = 'homeView';  // Vista a usar
-
 
     // Calculo los datos a usar en la tabla de estado de los repositorios
     let repositorios = ['NBRA', 'Latindex', 'DOAJ', 'Redalyc', 'Biblat', 'Scimago', 'Scielo', 'Web of Science', 'Dialnet'];
@@ -65,7 +63,7 @@ async function getHome(req, res)
     }
 
 
-    res.render('layout', {usuario, body, cantidadRevistas, fechaUltimaModificacion, estado, colorEstado } ); 
+    res.render('layout', {body, cantidadRevistas, fechaUltimaModificacion, estado, colorEstado } ); 
 }
 
 module.exports = { getHome };

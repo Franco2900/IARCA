@@ -1,22 +1,21 @@
 const { iniciarSesion } = require('../models/usuarioModel');
 
+// Metodos importados de 'util.js'
+const { logURL } = require('../util/util.js');
+
 async function getLogin(req, res)
 {
-    // Logging
-    console.log('***********************************************************');
-    console.log('Ruta: GET /login \n');
+    logURL(`GET`, `/login`);
 
-    const usuario = req.session;
-    const body = 'loginView';  // Vista a usar
+    const body = 'loginView';  // Vista a usarz
 
-    res.render('layout', {usuario, body} ); 
+    res.render('layout', {body} ); 
 }
 
 
 async function postLogin(req, res) 
 {
-    console.log('***********************************************************');
-    console.log('Ruta: POST /login \n');
+    logURL(`POST`, `/login`);
     console.log('Datos ingresados por el usuario');
     console.log(req.body);
 

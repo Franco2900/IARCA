@@ -5,7 +5,7 @@ const xlsx = require('xlsx');       // Módulo para trabajar con archivos excel
 const csvtojson  = require('csvtojson'); // Módulo para pasar texto csv a json
 
 // Metodos exportados de 'util.js'
-const { calcularTiempoPromedio } = require('../util/util.js');
+const { calcularTiempoPromedio, logURL } = require('../util/util.js');
 const { crearListadoDeRevistas, armarTablaDeRevistas } = require('./repositorioControllerUtils.js');
 
 async function getRepositorio(req, res)
@@ -13,11 +13,8 @@ async function getRepositorio(req, res)
     //console.log(req.params); // Los datos de una ruta dinamica se almacenan aquí
     let repositorio = req.params.repositorio;
 
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: GET /repositorio/${repositorio} \n`);
+    logURL(`GET`, `/repositorio/${repositorio}`);
 
-    const usuario = req.session;
     const body = 'repositorioView';  // Vista a usar
 
     // Datos que va a usar la plantilla
@@ -63,7 +60,7 @@ async function getRepositorio(req, res)
         tiempoPromedioDeActualizacion = archivoTiempo[0].TiempoPromedio;
     }
 
-    res.render('layout', { usuario, body, repositorio, cantidadRevistasRepositorio, cantidadPaginasDeNavegacion, tabla, fechaUltimaModicacion, tiempoPromedioDeActualizacion } ); 
+    res.render('layout', { body, repositorio, cantidadRevistasRepositorio, cantidadPaginasDeNavegacion, tabla, fechaUltimaModicacion, tiempoPromedioDeActualizacion } ); 
 }
 
 
@@ -72,9 +69,7 @@ async function getDescargarCSV(req, res)
 {
     let repositorio = req.params.repositorio;
 
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: GET /repositorio/${repositorio}/descargarCSV \n`);
+    logURL(`GET`, `/repositorio/${repositorio}/descargarCSV`);
 
     if( fs.existsSync( path.join(__dirname, `../util/Repositorios/${repositorio}.csv`)) ) 
         res.download( path.join(__dirname, `../util/Repositorios/${repositorio}.csv`) );
@@ -89,9 +84,7 @@ async function getDescargarJSON(req, res)
 { 
     let repositorio = req.params.repositorio;
 
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: GET /repositorio/${repositorio}/descargarJSON \n`);
+    logURL(`GET`, `/repositorio/${repositorio}/descargarJSON`);
 
     if( fs.existsSync( path.join(__dirname, `../util/Repositorios/${repositorio}.csv`)) ) 
         res.download( path.join(__dirname, `../util/Repositorios/${repositorio}.json`) );
@@ -106,9 +99,7 @@ async function postSiguientePagina(req, res)
 { 
     let repositorio = req.params.repositorio;
 
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: POST /repositorio/${repositorio}/siguientePagina \n`);
+    logURL(`POST`, `/repositorio/${repositorio}/siguientePagina`);
 
     if ( fs.existsSync( path.join(__dirname, `../util/Repositorios/${repositorio}.json`) ) )
     {
@@ -152,9 +143,7 @@ async function postAnteriorPagina(req, res)
 { 
     let repositorio = req.params.repositorio;
 
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: POST /repositorio/${repositorio}/anteriorPagina \n`);
+    logURL(`POST`, `/repositorio/${repositorio}/anteriorPagina`);
 
     if ( fs.existsSync( path.join(__dirname, `../util/Repositorios/${repositorio}.json`) ) )
     {
@@ -195,9 +184,7 @@ async function postBuscarPaginaEspecifica(req, res)
 { 
     let repositorio = req.params.repositorio;
 
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: POST /repositorio/${repositorio}/buscarPaginaEspecifica \n`);
+    logURL(`POST`, `/repositorio/${repositorio}/buscarPaginaEspecifica`);
 
     if ( fs.existsSync( path.join(__dirname, `../util/Repositorios/${repositorio}.json`) ) )
     {
@@ -239,9 +226,7 @@ async function postPrimerPagina(req, res)
 { 
     let repositorio = req.params.repositorio;
 
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: POST /repositorio/${repositorio}/primerPagina \n`);
+    logURL(`POST`, `/repositorio/${repositorio}/primerPagina`);
 
     if ( fs.existsSync( path.join(__dirname, `../util/Repositorios/${repositorio}.json`) ) )
     {
@@ -271,10 +256,7 @@ async function postUltimaPagina(req, res)
 { 
     let repositorio = req.params.repositorio;
 
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: POST /repositorio/${repositorio}/ultimaPagina \n`);
-
+    logURL(`POST`, `/repositorio/${repositorio}/ultimaPagina`);
 
     if ( fs.existsSync( path.join(__dirname, `../util/Repositorios/${repositorio}.json`) ) )
     {
@@ -306,10 +288,8 @@ async function postUltimaPagina(req, res)
 async function postActualizarCatalogo(req, res)
 {
     let repositorio = req.params.repositorio;
-
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: POST /repositorio/${repositorio}/actualizarCatalogo \n`);
+    
+    logURL(`POST`, `/repositorio/${repositorio}/actualizarCatalogo`);
 
     try
     {

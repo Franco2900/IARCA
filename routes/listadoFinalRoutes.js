@@ -1,28 +1,17 @@
+// URL base: http://DOMINIO/listadoFinal/
+
 // Modulos
-var express = require('express');
-var router  = express.Router();
+const router = require('express').Router(); // Permite definir rutas
 
-// Métodos del controller
-const 
-{ 
-    getListadoFinal, 
-    getDescargarCSV, getDescargarJSON,
-    postSiguientePagina, postAnteriorPagina,
-    postBuscarPaginaEspecifica,
-    postPrimerPagina, postUltimaPagina,
-    postActualizarCatalogo,
-} 
- = require('../controllers/listadoFinalController');
-
-// Rutas URL de: /listadoFinal
-router.get( '/',              getListadoFinal );
-router.get( '/descargarCSV',  getDescargarCSV);
-router.get( '/descargarJSON', getDescargarJSON);
-router.post('/siguientePagina',        postSiguientePagina);
-router.post('/anteriorPagina',         postAnteriorPagina);
-router.post('/buscarPaginaEspecifica', postBuscarPaginaEspecifica);
-router.post('/primerPagina',           postPrimerPagina);
-router.post('/ultimaPagina',           postUltimaPagina);
-router.post('/actualizarCatalogo',     postActualizarCatalogo);
+// Defino las rutas de navegación del usuario
+router.get ( '/',                       require('../controllers/listadoFinalController').getListadoFinal );
+router.get ( '/descargarCSV',           require('../controllers/listadoFinalController').getDescargarCSV);
+router.get ( '/descargarJSON',          require('../controllers/listadoFinalController').getDescargarJSON );
+router.post( '/siguientePagina',        require('../controllers/listadoFinalController').postSiguientePagina );
+router.post( '/anteriorPagina',         require('../controllers/listadoFinalController').postAnteriorPagina);
+router.post( '/buscarPaginaEspecifica', require('../controllers/listadoFinalController').postBuscarPaginaEspecifica );
+router.post( '/primerPagina',           require('../controllers/listadoFinalController').postPrimerPagina );
+router.post( '/ultimaPagina',           require('../controllers/listadoFinalController').postUltimaPagina );
+router.post( '/actualizarCatalogo',     require('../controllers/listadoFinalController').postActualizarCatalogo );
 
 module.exports = router;

@@ -1,8 +1,8 @@
-const dominio = 'isco.unla.edu.ar';
+const dominio = window.location.origin;
 
 function descargarCSV() 
 {
-    fetch(`http://${dominio}/listadoFinal/descargarCSV`, {
+    fetch(`${dominio}/listadoFinal/descargarCSV`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
@@ -13,7 +13,7 @@ function descargarCSV()
     .then(blob => {
         const link = document.createElement('a'); // Crea un enlace para descargar el archivo
         link.href = window.URL.createObjectURL(blob);
-        link.download = `Listado final.json`;
+        link.download = `Listado final.csv`;
         link.click(); // Hace click en el enlace
     })
     .catch(error => {
@@ -27,7 +27,7 @@ function descargarCSV()
 
 function descargarJSON() 
 {
-    fetch(`http://${dominio}/listadoFinal/descargarJSON`, {
+    fetch(`${dominio}/listadoFinal/descargarJSON`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
@@ -57,7 +57,7 @@ function siguientePagina()
 
     if( paginaActual < cantidadPaginasDeNavegacion )
     {
-        fetch(`http://${dominio}/listadoFinal/siguientePagina`,
+        fetch(`${dominio}/listadoFinal/siguientePagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -93,7 +93,7 @@ function anteriorPagina()
 
     if(paginaActual > 1)
     {
-        fetch(`http://${dominio}/listadoFinal/anteriorPagina`,
+        fetch(`${dominio}/listadoFinal/anteriorPagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -128,7 +128,7 @@ function buscarPaginaEspecifica()
 
     if(paginaBuscada >= 1   &&  paginaBuscada <= cantidadPaginasDeNavegacion)
     {
-        fetch(`http://${dominio}/listadoFinal/buscarPaginaEspecifica`,
+        fetch(`${dominio}/listadoFinal/buscarPaginaEspecifica`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -163,7 +163,7 @@ function primerPagina()
 
     if( paginaActual != 1 )
     {
-        fetch(`http://${dominio}/listadoFinal/primerPagina`,
+        fetch(`${dominio}/listadoFinal/primerPagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -197,7 +197,7 @@ function ultimaPagina()
 
     if( paginaActual < cantidadPaginasDeNavegacion )
     {
-        fetch(`http://${dominio}/listadoFinal/ultimaPagina`,
+        fetch(`${dominio}/listadoFinal/ultimaPagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -237,7 +237,7 @@ function actualizarCatalogo()
     // Hago invisible el boton de actualizar catalogo
     document.getElementById("actualizarCatalogo").style.display="none"; 
 
-    fetch(`http://${dominio}/listadoFinal/actualizarCatalogo`,
+    fetch(`${dominio}/listadoFinal/actualizarCatalogo`,
     { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 

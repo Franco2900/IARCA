@@ -2,17 +2,14 @@
 const path = require( 'path' ); // Módulo para trabajar con rutas de archivos y directorios
 const fs   = require('fs');     // Módulo para escribir, leer, borrar y renombrar archivos
 
-// Metodos exportados de 'util.js'
-const { calcularTiempoPromedio } = require('../util/util.js');
+// Metodos importados de 'util.js'
+const { calcularTiempoPromedio, logURL } = require('../util/util.js');
 const { crearListadoDeRevistas, armarTablaDeRevistas } = require('./listadoFinalControllerUtils.js');
 
 async function getListadoFinal(req, res)
 {
-    // Logging
-    console.log('***********************************************************');
-    console.log('Ruta: GET /listadoFinal \n');
+    logURL(`GET`, `/listadoFinal`);
 
-    const usuario = req.session;
     const body = 'listadoFinalView';  // Vista a usar
 
     // Datos que va a usar la plantilla
@@ -58,16 +55,14 @@ async function getListadoFinal(req, res)
         tiempoPromedioDeActualizacion = archivoTiempo[0].TiempoPromedio;
     }
 
-    res.render('layout', {usuario, body, cantidadRevistas, cantidadPaginasDeNavegacion, tabla, fechaUltimaModicacion, tiempoPromedioDeActualizacion} ); 
+    res.render('layout', {body, cantidadRevistas, cantidadPaginasDeNavegacion, tabla, fechaUltimaModicacion, tiempoPromedioDeActualizacion} ); 
 }
 
 
 
 async function getDescargarCSV(req, res)
 {
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: GET /listadoFinal/descargarCSV \n`);
+    logURL(`GET`, `/listadoFinal/descargarCSV`);
 
     if( fs.existsSync( path.join(__dirname, `../util/Listado final/Listado final.csv`)) ) 
         res.download( path.join(__dirname, `../util/Listado final/Listado final.csv`) );
@@ -80,9 +75,7 @@ async function getDescargarCSV(req, res)
 
 async function getDescargarJSON(req, res)
 { 
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: GET /listadoFinal/descargarJSON \n`);
+    logURL(`GET`, `/listadoFinal/descargarJSON`);
 
     if( fs.existsSync( path.join(__dirname, `../util/Listado final/Listado final.json`)) ) 
         res.download( path.join(__dirname, `../util/Listado final/Listado final.json`) );
@@ -95,9 +88,7 @@ async function getDescargarJSON(req, res)
 
 async function postSiguientePagina(req, res)
 { 
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: GET /listadoFinal/siguientePagina \n`);
+    logURL(`POST`, `/listadoFinal/siguientePagina`);
 
     
     const archivoJSON   = require(`../util/Listado final/Listado final.json`);
@@ -132,10 +123,7 @@ async function postSiguientePagina(req, res)
 
 async function postAnteriorPagina(req, res)
 { 
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: GET /listadoFinal/anteriorPagina \n`);
-
+    logURL(`POST`, `/listadoFinal/anteriorPagina`);
 
     const archivoJSON   = require(`../util/Listado final/Listado final.json`);
     let listadoRevistas = crearListadoDeRevistas(archivoJSON); 
@@ -165,10 +153,7 @@ async function postAnteriorPagina(req, res)
 
 async function postBuscarPaginaEspecifica(req, res)
 { 
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: GET /listadoFinal/buscarPaginaEspecifica \n`);
-
+    logURL(`POST`, `/listadoFinal/buscarPaginaEspecifica`);
 
     const archivoJSON   = require(`../util/Listado final/Listado final.json`);
     let listadoRevistas = crearListadoDeRevistas(archivoJSON); 
@@ -200,10 +185,7 @@ async function postBuscarPaginaEspecifica(req, res)
 
 async function postPrimerPagina(req, res)
 { 
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: GET /listadoFinal/primerPagina \n`);
-
+    logURL(`POST`, `/listadoFinal/primerPagina`);
 
     const archivoJSON   = require(`../util/Listado final/Listado final.json`);
     let listadoRevistas = crearListadoDeRevistas(archivoJSON); 
@@ -223,9 +205,7 @@ async function postPrimerPagina(req, res)
 
 async function postUltimaPagina(req, res)
 { 
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: GET /listadoFinal/ultimaPagina \n`);
+    logURL(`POST`, `/listadoFinal/ultimaPagina`);
 
 
     const archivoJSON   = require(`../util/Listado final/Listado final.json`);
@@ -249,9 +229,7 @@ async function postUltimaPagina(req, res)
 
 async function postActualizarCatalogo(req, res)
 {
-    // Logging
-    console.log('***********************************************************');
-    console.log(`Ruta: GET /listadoFinal/actualizarCatalogo \n`);
+    logURL(`POST`, `/listadoFinal/actualizarCatalogo`);
 
     try
     {
@@ -299,9 +277,12 @@ async function postActualizarCatalogo(req, res)
 
 module.exports = { 
     getListadoFinal, 
-    getDescargarCSV, getDescargarJSON, 
-    postSiguientePagina, postAnteriorPagina,
+    getDescargarCSV, 
+    getDescargarJSON, 
+    postSiguientePagina, 
+    postAnteriorPagina,
     postBuscarPaginaEspecifica, 
-    postPrimerPagina,postUltimaPagina,
+    postPrimerPagina,
+    postUltimaPagina,
     postActualizarCatalogo,
 };

@@ -1,6 +1,16 @@
-// Modulos
+// ================== MÓDULOS Y DEPENDENCIAS ==================
 const path = require( 'path' ); // Módulo para trabajar con rutas de archivos y directorios
 const fs   = require('fs');     // Módulo para escribir, leer, borrar y renombrar archivos
+
+
+// ================== VARIABLES DE ENTORNO ==================
+require('dotenv').config(); // Carga las variables del archivo .env en process.env
+const puerto  = process.env.PUERTO;
+const dominio = process.env.DOMINIO;
+
+
+// ================== FUNCIONES ÚTILES ==================
+// Estas son funciones que son utilizadas por múltiples archivos.
 
 
 // Redirige a la página de login si el usuario no está logueado 
@@ -26,7 +36,7 @@ function obtenerNombreNuevoArchivo(nombreOriginal)
 };
 
 
-
+// Calcula el tiempo promedio que le toma a un repositorio actualizarse
 function calcularTiempoPromedio(repositorio)
 {
     let tiempoPromedio = 0;
@@ -61,8 +71,16 @@ function calcularTiempoPromedio(repositorio)
 }
 
 
+// Indica la URL en la que se encuentra el usuario web actualmente
+function logURL(metodo, ruta) {
+    console.log('***********************************************************');
+    console.log(`URL actual: ${metodo} ${dominio}:${puerto}${ruta} \n`);
+}
+
+
 module.exports = { 
     autentificarUsuario,
     obtenerNombreNuevoArchivo,
     calcularTiempoPromedio,
+    logURL,
 };

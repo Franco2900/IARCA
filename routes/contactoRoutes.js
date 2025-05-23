@@ -1,11 +1,9 @@
+// URL base: http://DOMINIO/contacto/
+
 // Modulos
-var express = require('express');
-var router  = express.Router();
+const router = require('express').Router(); // Permite definir rutas
 
-// Métodos del controller
-const { getContacto } = require('../controllers/contactoController');
-
-// Rutas URL de: /contacto
-router.get('/', getContacto);
+// Defino las rutas de navegación del usuario
+router.get( '/', require('../controllers/contactoController').getContacto );
 
 module.exports = router;

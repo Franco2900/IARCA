@@ -1,11 +1,9 @@
+// URL base: http://DOMINIO/info/
+
 // Modulos
-var express = require('express');
-var router  = express.Router();
+const router = require('express').Router(); // Permite definir rutas
 
-// Métodos del controller
-const { getInfo } = require('../controllers/infoController');
-
-// Rutas URL de: /info
-router.get('/', getInfo);
+// Defino las rutas de navegación del usuario
+router.get( '/', require('../controllers/infoController').getInfo );
 
 module.exports = router;

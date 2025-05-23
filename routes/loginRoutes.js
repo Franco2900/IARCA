@@ -1,12 +1,10 @@
+// URL base: http://DOMINIO/login/
+
 // Modulos
-var express = require('express');
-var router  = express.Router();
+const router = require('express').Router(); // Permite definir rutas
 
-// Métodos del controller
-const { getLogin, postLogin } = require('../controllers/loginController');
-
-// Rutas URL de: /login
-router.get('/', getLogin);
-router.post('/', postLogin);
+// Defino las rutas de navegación del usuario
+router.get ('/', require('../controllers/loginController').getLogin );
+router.post('/', require('../controllers/loginController').postLogin );
 
 module.exports = router;

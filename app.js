@@ -1,40 +1,58 @@
-// Modulos
-const express    = require( 'express' );         // Modulo para la navegación web y creación del servidor
-const session    = require( 'express-session' ); // Modulo para usar variables de sesions
-const bodyParser = require( 'body-parser' )      // Módulo para trabajar con las solicitudes POST
-const cors       = require( 'cors' );            // Módulo para permitir las solicitudes de otros navegadores web a nuestro servidor
-const path       = require( 'path' );            // Módulo para trabajar con rutas de archivos y directorios
+// ================== MÓDULOS Y DEPENDENCIAS ==================
+const express      = require( 'express' );         // Modulo para la navegación web y creación del servidor
+const session      = require( 'express-session' ); // Modulo para usar variables de sesions
+const bodyParser   = require( 'body-parser' )      // Módulo para trabajar con las solicitudes POST
+const cors         = require( 'cors' );            // Módulo para permitir las solicitudes de otros navegadores web a nuestro servidor
+const path         = require( 'path' );            // Módulo para trabajar con rutas de archivos y directorios
+const randomstring = require( 'randomstring' );    // Modulo para generar string al azar
+
+// ================== CONFIGURACIÓN DE LA APP ==================
+const app = express();  // Inicialización de la aplicación Express
+
+// Variables de entorno
+require('dotenv').config(); // Carga las variables del archivo .env en process.env
+const puerto  = process.env.PUERTO;
+const dominio = process.env.DOMINIO;
 
 
-// Variables globales
-const app    = express();
-const puerto = 5000;
-
-
-// Motor de plantillas
+// ================== CONFIGURACIÓN DEL MOTOR DE PLANTILLAS ==================
 app.set( 'views', path.join(__dirname, 'views') ); // Indico que las vistas estan en la carpeta 'views'
 app.set( 'view engine', 'ejs' );                   // Indico que motor de plantillas uso
 
 
-// Middleware
+// ================== MIDDLEWARES GLOBALES ================== 
+// Los middlewares en Express son funciones que se ejecutan antes de que una solicitud 
+// llegue a una ruta específica. Estos se aplican a **todas** las solicitudes de la aplicación
+
 app.use( bodyParser.urlencoded({ extended: true }) ); // Permite el uso de formularios HTML y pone sus datos a disposición en req.body
 app.use( express.json() );                            // Permite parsear los datos que llegan al servidor como JSON
 app.use( cors() );                                    // Habilita CORS (Cross-Origin Resource Sharing)
 
 
-app.use(
-    session({  // Permite el uso de variables de sesión
-        secret: `${Math.floor(Math.random() * 101)}`,   // ID de la sesion   
-        resave: false,          
-        saveUninitialized: true,        
-        cookie: {
-            maxAge: 1000 * 60 * 60 * 24 // Duración de las cookies = 1 dia
-        }
+// Defino la sesión
+app.use(session({                    
+    secret: randomstring.generate(), // Clave secreta usada para firmar y validar la cookie de sesión.
+    resave: false,                   // Evita que la sesión se guarde de nuevo en el servidor si no ha sido modificada.
+    saveUninitialized: false,        // No guarda sesiones de usuarios no autenticados
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24  // Duración de la cookie de sesión: 1 dia
     }
-));
+}));
 
 
-// Rutas de atajo a archivos
+// Asigna la información del usuario a res.locals para que esté disponible en todas las vistas.
+app.use((req, res, next) => {
+    res.locals.usuario = req.session;
+    next(); 
+});
+
+
+// ================== MIDDLEWARES PARA RUTAS ESPECÍFICAS ==================
+// Algunos middlewares solo se aplican a ciertas rutas, permitiendo modificar 
+// su comportamiento sin afectar a toda la aplicación. 
+
+// ================== ARCHIVOS ESTÁTICOS ==================
+// Express envia los archivos en estas rutas directamente sin pasar por lógica adicional del servidor.
 app.use('/images',         express.static( path.join(__dirname, 'public/images')) ); 
 app.use('/css',            express.static( path.join(__dirname, 'public/css')) );
 app.use('/js',             express.static( path.join(__dirname, 'public/js')) );
@@ -42,8 +60,7 @@ app.use('/bootstrapCSS',   express.static( path.join(__dirname, 'node_modules/bo
 app.use('/bootstrapJS',    express.static( path.join(__dirname, 'node_modules/bootstrap/dist/js')) );
 app.use('/bootstrapICONS', express.static( path.join(__dirname, 'node_modules/bootstrap-icons/font')) );
 
-
-// Rutas de navegación web
+// ================== RUTAS DE NAVEGACIÓN DEL USUARIO ==================
 app.use('/',              require('./routes/homeRoutes.js') );
 app.use('/contacto',      require('./routes/contactoRoutes.js') );
 app.use('/login',         require('./routes/loginRoutes.js') );
@@ -54,9 +71,10 @@ app.use('/info',          require('./routes/infoRoutes.js') );
 app.use('/listadoFinal',  require('./routes/listadoFinalRoutes.js') );
 
 
-// Inicio el servidor
-const servidor = app.listen(puerto, 'localhost', () => {
-    console.log('Servidor web iniciado en el puerto ' + puerto);
+// ================== INICIO DEL SERVIDOR ==================
+const servidor = app.listen(puerto, () => {
+    console.info(`Aplicación iniciada en el puerto: ${puerto}`);
+    console.info(`Servidor corriendo en el dominio: ${dominio}`);
 });
 
 module.exports = app;

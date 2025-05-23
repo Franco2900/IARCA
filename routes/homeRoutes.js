@@ -1,11 +1,9 @@
+// URL base: http://DOMINIO/
+
 // Modulos
-var express = require('express');
-var router  = express.Router();
+const router = require('express').Router(); // Permite definir rutas
 
-// Métodos del controller
-const { getHome } = require('../controllers/homeController');
-
-// Rutas URL de: /
-router.get('/', getHome);
+// Defino las rutas de navegación del usuario
+router.get( '/', require('../controllers/homeController').getHome );
 
 module.exports = router;

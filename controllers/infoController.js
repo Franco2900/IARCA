@@ -1,13 +1,13 @@
+// Metodos importados de 'util.js'
+const { logURL } = require('../util/util.js');
+
 async function getInfo(req, res)
 {
-    // Logging
-    console.log('***********************************************************');
-    console.log('Ruta: GET /info \n');
+    logURL(`GET`, `/info`);
 
-    const usuario = req.session;
     const body = 'infoView';  // Vista a usar
 
-    res.render('layout', {usuario, body} ); 
+    res.render('layout', {body} ); 
 }
 
 module.exports = { getInfo };

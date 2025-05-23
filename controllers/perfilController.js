@@ -2,29 +2,25 @@
 const path = require('path'); // Módulo para trabajar con rutas de archivos y directorios
 const fs   = require('fs');   // Módulo para escribir, leer, borrar y renombrar archivos
 
-const { obtenerNombreNuevoArchivo } = require('../util/util.js');
+const { obtenerNombreNuevoArchivo, logURL } = require('../util/util.js');
 const { cambiarImagen, existeUsuario, cambiarNombre, cambiarContrasenia } = require('../models/usuarioModel.js');
 
 
 
 async function getPerfil(req, res)
 {
-    // Logging
-    console.log('***********************************************************');
-    console.log('Ruta: GET /perfil \n');
+    logURL(`GET`, `/perfil`);
 
-    const usuario = req.session;
     const body = 'perfilView';  // Vista a usar
 
-    res.render('layout', {usuario, body} ); 
+    res.render('layout', {body} ); 
 }
 
 
 
 async function postCambiarImagen(req, res) 
 {
-    console.log('***********************************************************');
-    console.log('Ruta: POST /perfil/cambiarImagen \n');
+    logURL(`POST`, `/perfil/cambiarImagen`);
     
     if (req.file) console.log('Archivo recibido:', req.file);
     else          return res.status(400).send('No se recibió ningún archivo.');
@@ -70,8 +66,7 @@ async function postCambiarImagen(req, res)
 
 async function postCambiarNombre(req, res) 
 {
-    console.log('***********************************************************');
-    console.log('Ruta: POST /perfil/cambiarNombre \n');
+    logURL(`POST`, `/perfil/cambiarNombre`);
 
     if (req.body.nuevoNombre) console.log('Nuevo nombre recibido:', req.body.nuevoNombre);
     else                      res.status(400).send('No se recibió ningún nombre.');
@@ -101,8 +96,7 @@ async function postCambiarNombre(req, res)
 
 async function postCambiarContrasenia(req, res) 
 {
-    console.log('***********************************************************');
-    console.log('Ruta: POST /perfil/cambiarContrasenia \n');
+    logURL(`POST`, `/perfil/cambiarContrasenia`);
 
     if (req.body.nuevaContrasenia) console.log('Nueva contraseña recibida:', req.body.nuevaContrasenia);
     else                           res.status(400).send('No se recibió ninguna contraseña.');
