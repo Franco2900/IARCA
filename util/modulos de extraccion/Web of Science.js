@@ -18,10 +18,10 @@ async function extraerInfoRevistas()
 
 
     const browser  = await puppeteer.launch({ // Inicio puppeter
-      headless: false,
+      headless: 'new',
       defaultViewport: null,
       executablePath: '/usr/bin/google-chrome',
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--start-maximized']
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
     
     const page = await browser.newPage();
