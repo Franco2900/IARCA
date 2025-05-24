@@ -52,8 +52,9 @@ async function extraerRevista(enlace, tiempo)
 {
   var respuesta;
   const browser  = await puppeteer.launch({ // Inicio puppeter
-    headless: false,
-    executablePath: path.join(__dirname, '../../puppeteer-cache/chrome/win64-121.0.6167.85/chrome-win64/chrome.exe'),
+    headless: 'new',
+    executablePath: '/usr/bin/google-chrome',
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
   });
 
 

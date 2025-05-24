@@ -1,2 +1,0 @@
-puppeteer-cache/chrome/win64-121.0.6167.85/chrome-win64/chrome.dll filter=lfs diff=lfs merge=lfs -text
-IARCA.exe filter=lfs diff=lfs merge=lfs -text
