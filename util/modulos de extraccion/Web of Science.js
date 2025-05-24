@@ -19,7 +19,6 @@ async function extraerInfoRevistas()
 
     const browser  = await puppeteer.launch({ // Inicio puppeter
       headless: 'new',
-      defaultViewport: null,
       executablePath: '/usr/bin/google-chrome',
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
