@@ -13,11 +13,9 @@ async function extraerInfoRevistas()
       executablePath: '/usr/bin/google-chrome',
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--start-maximized']
     });
-
     
     const page = await browser.newPage();
-    
-    
+
     // Ir a la página de búsqueda
     page.setDefaultNavigationTimeout(120000);
     await page.goto('https://mjl.clarivate.com/search-results');
@@ -77,7 +75,7 @@ async function extraerInfoRevistas()
 
     //Se selecciona la mayor cantidad de revistas por pagina para reducir el tiempo de extraccion
     const selector = 'body > cdx-app > mat-sidenav-container > mat-sidenav-content > main > can-home-page > div > div > div > mat-sidenav-container > mat-sidenav-content > app-journal-search-results > div:nth-child(3) > div:nth-child(11) > mat-paginator > div > div > div.mat-mdc-paginator-page-size.ng-star-inserted > mat-form-field';
-    const opcion50 = '/html/body/div[5]/div[2]/div/div/mat-option[3]';
+    const opcion50 = '//mat-option[3]/span';
     //await page.waitForSelector('.mat-form-field');
     await page.waitForSelector(selector);
     await page.click(selector);
