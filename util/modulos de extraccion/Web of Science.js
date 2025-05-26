@@ -7,21 +7,13 @@ const path       = require('path');      // Módulo para trabajar con rutas
 
 async function extraerInfoRevistas() 
 {
-
-    //esta opcion es para ver la extraccion en el navegador, es necesario en este modulo de extraccion
-    //ya que se necesita controlar la ubicacion de los componentes y orden de aparicion
-    /*const browser = await puppeteer.launch({ 
-      headless: 'new', 
-      defaultViewport: null,
-      args: ['--start-maximized']
-    });*/
-
-
     const browser  = await puppeteer.launch({ // Inicio puppeter
       headless: 'new',
+      defaultViewport: null,
       executablePath: '/usr/bin/google-chrome',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--start-maximized']
     });
+
     
     const page = await browser.newPage();
     
