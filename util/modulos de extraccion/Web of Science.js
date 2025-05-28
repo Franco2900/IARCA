@@ -1,3 +1,7 @@
+// Variables de entorno
+require('dotenv').config(); // Carga las variables del archivo .env en process.envs
+const google = process.env.GOOGLE_PATH;
+
 // Módulos
 const puppeteer  = require('puppeteer');
 const fs         = require('fs');        // Módulo para leer y escribir archivos
@@ -10,7 +14,7 @@ async function extraerInfoRevistas()
     const browser  = await puppeteer.launch({ // Inicio puppeter
       headless: 'new',
       defaultViewport: null,
-      executablePath: '/usr/bin/google-chrome',
+      executablePath: google,
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--start-maximized']
     });
     

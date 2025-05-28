@@ -1,3 +1,8 @@
+// Variables de entorno
+require('dotenv').config(); // Carga las variables del archivo .env en process.envs
+const google = process.env.GOOGLE_PATH;
+
+// Módulos
 const fs         = require('fs');        // Módulo para leer y escribir archivos
 const puppeteer  = require('puppeteer'); // Módulo para web scrapping
 const jsdom      = require('jsdom');     // Módulo para filtrar la información extraida con web scrapping
@@ -10,7 +15,7 @@ async function extraerInfoRepositorio()
 {
     const browser  = await puppeteer.launch({ // Inicio puppeter
         headless: 'new',
-        executablePath: '/usr/bin/google-chrome',
+        executablePath: google,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     }); 
 

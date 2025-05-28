@@ -1,3 +1,7 @@
+// Variables de entorno
+require('dotenv').config(); // Carga las variables del archivo .env en process.envs
+const google = process.env.GOOGLE_PATH;
+
 // Módulos
 const fs         = require('fs');        // Módulo para leer y escribir archivos
 const puppeteer  = require('puppeteer'); // Módulo para web scrapping
@@ -12,7 +16,7 @@ async function obtenerPaths()
   {
     const browser  = await puppeteer.launch({ // Inicio puppeter
       headless: 'new',
-      executablePath: '/usr/bin/google-chrome',
+      executablePath: google,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     }); 
     const page = await browser.newPage();
@@ -74,7 +78,7 @@ async function buscarEnlacesARevistas(paths) {
     //const paths = await obtenerPaths();
     const browser  = await puppeteer.launch({ // Inicio puppeter
       headless: 'new',
-      executablePath: '/usr/bin/google-chrome',
+      executablePath: google,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     }); 
     const page = await browser.newPage();
@@ -118,7 +122,7 @@ async function extraerInfoRevista(enlaces)
 {
   const browser  = await puppeteer.launch({ // Inicio puppeter
     headless: 'new',
-    executablePath: '/usr/bin/google-chrome',
+    executablePath: google,
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   }); 
   const registros = [];
