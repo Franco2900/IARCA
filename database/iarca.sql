@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `iarca`
 --
+CREATE SCHEMA IF NOT EXISTS iarca;
+USE iarca;
 
 -- --------------------------------------------------------
 
