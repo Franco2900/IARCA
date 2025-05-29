@@ -17,7 +17,7 @@ function cambiarImagen(event)
             console.log('Haciendo solicitud');
 
             // Petición al servidor usando fetch 
-            fetch(`${dominio}/perfil/cambiarImagen`, 
+            fetch(`${dominio}/iarca/perfil/cambiarImagen`, 
             { 
                 method: 'POST', 
                 body: formData 
@@ -51,7 +51,7 @@ function cambiarNombre()
         const datos = { nuevoNombre: nuevoNombre.trim() };
 
         // Petición al servidor usando fetch 
-        fetch(`${dominio}/perfil/cambiarNombre`, 
+        fetch(`${dominio}/iarca/perfil/cambiarNombre`, 
         { method: 'POST', 
           headers: { 'Content-Type': 'application/json' }, 
           body: JSON.stringify(datos) 
@@ -79,7 +79,7 @@ function cambiarContrasenia()
         const datos = { nuevaContrasenia: nuevaContrasenia };
 
         // Petición al servidor usando fetch 
-        fetch(`${dominio}/perfil/cambiarContrasenia`, 
+        fetch(`${dominio}/iarca/perfil/cambiarContrasenia`, 
         { method: 'POST', 
           headers: { 'Content-Type': 'application/json' }, 
           body: JSON.stringify(datos) 
