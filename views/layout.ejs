@@ -27,14 +27,14 @@
 
         <ul class="list-inline">
 
-            <li class="list-inline-item"><a href="/"><i class="bi bi-house-door"></i>Inicio</a></li>
-            <li class="list-inline-item"><a href="/contacto"><i class="bi bi-telephone"></i>Contacto</a></li>
-            <li class="list-inline-item"><a href="/info"><i class="bi bi-book"></i>Acerca de</a></li>
+            <li class="list-inline-item"><a href="/iarca/"><i class="bi bi-house-door"></i>Inicio</a></li>
+            <li class="list-inline-item"><a href="/iarca/contacto"><i class="bi bi-telephone"></i>Contacto</a></li>
+            <li class="list-inline-item"><a href="/iarca/info"><i class="bi bi-book"></i>Acerca de</a></li>
 
             <% if (!usuario.nombre) { %>
-                <li class="list-inline-item"><a href="/login"><i class="bi bi-box-arrow-in-right"></i>Iniciar Sesión</a></li>
+                <li class="list-inline-item"><a href="/iarca/login"><i class="bi bi-box-arrow-in-right"></i>Iniciar Sesión</a></li>
             <% } else { %>
-                <li class="list-inline-item"><a href="/logout"><i class="bi bi-box-arrow-left"></i>Cerrar Sesión</a></li>
+                <li class="list-inline-item"><a href="/iarca/logout"><i class="bi bi-box-arrow-left"></i>Cerrar Sesión</a></li>
             <% } %>
 
         </ul>
@@ -48,7 +48,7 @@
                     <ul class="navbar-nav">
 
                         <li class="nav-item">
-                            <a class="nav-link" href="/perfil">
+                            <a class="nav-link" href="/iarca/perfil">
                                 <%= usuario.nombre %>
                             </a>
                         </li>
@@ -73,7 +73,7 @@
     <!-- Footer -->
     <footer class="text-center Footer">
         <p>&copy; 2025 IARCA. Desarrollado por Franco Ariel Figueroa y Juan Leandro Gauna</p>
-        <p><a href="/contacto">Contáctanos</a> para más información.</p>
+        <p><a href="/iarca/contacto">Contáctanos</a> para más información.</p>
     </footer>
 
 

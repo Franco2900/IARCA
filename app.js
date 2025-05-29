@@ -61,14 +61,14 @@ app.use('/bootstrapJS',    express.static( path.join(__dirname, 'node_modules/bo
 app.use('/bootstrapICONS', express.static( path.join(__dirname, 'node_modules/bootstrap-icons/font')) );
 
 // ================== RUTAS DE NAVEGACIÓN DEL USUARIO ==================
-app.use('/',              require('./routes/homeRoutes.js') );
-app.use('/contacto',      require('./routes/contactoRoutes.js') );
-app.use('/login',         require('./routes/loginRoutes.js') );
-app.use('/logout',        require('./routes/logoutRoutes.js') );
-app.use('/perfil',        require('./routes/perfilRoutes.js') );
-app.use('/repositorio',   require('./routes/repositorioRoutes.js') );
-app.use('/info',          require('./routes/infoRoutes.js') );
-app.use('/listadoFinal',  require('./routes/listadoFinalRoutes.js') );
+app.use('/iarca/',              require('./routes/homeRoutes.js') );
+app.use('/iarca/contacto',      require('./routes/contactoRoutes.js') );
+app.use('/iarca/login',         require('./routes/loginRoutes.js') );
+app.use('/iarca/logout',        require('./routes/logoutRoutes.js') );
+app.use('/iarca/perfil',        require('./routes/perfilRoutes.js') );
+app.use('/iarca/repositorio',   require('./routes/repositorioRoutes.js') );
+app.use('/iarca/info',          require('./routes/infoRoutes.js') );
+app.use('/iarca/listadoFinal',  require('./routes/listadoFinalRoutes.js') );
 
 
 // ================== INICIO DEL SERVIDOR ==================
