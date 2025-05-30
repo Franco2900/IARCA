@@ -230,7 +230,7 @@ function actualizarCatalogo()
     // Muestro el gif de reloj
     let estadoDeLaActualización = document.getElementById('estadoDeLaActualización');
     estadoDeLaActualización.innerHTML = `
-        <img src="/images/style/esperando.gif" class="mx-auto d-block border border-dark" />
+        <img src="images/style/esperando.gif" class="mx-auto d-block border border-dark" />
         <h2 style="text-align: center;">Actualizando datos. Espere por favor</h2>
     `;
 
