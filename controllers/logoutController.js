@@ -7,7 +7,7 @@ async function getLogout(req, res)
 
     req.session.destroy((error) => { 
         if (error) return res.status(500).send('Error al cerrar sesión'); 
-        res.redirect('/'); 
+        res.redirect('/iarca/'); 
     });
     
 }
