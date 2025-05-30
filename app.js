@@ -53,12 +53,12 @@ app.use((req, res, next) => {
 
 // ================== ARCHIVOS ESTÁTICOS ==================
 // Express envia los archivos en estas rutas directamente sin pasar por lógica adicional del servidor.
-app.use('/images',         express.static( path.join(__dirname, 'public/images')) ); 
-app.use('/css',            express.static( path.join(__dirname, 'public/css')) );
-app.use('/js',             express.static( path.join(__dirname, 'public/js')) );
-app.use('/bootstrapCSS',   express.static( path.join(__dirname, 'node_modules/bootstrap/dist/css')) );  
-app.use('/bootstrapJS',    express.static( path.join(__dirname, 'node_modules/bootstrap/dist/js')) );
-app.use('/bootstrapICONS', express.static( path.join(__dirname, 'node_modules/bootstrap-icons/font')) );
+app.use('/iarca/images',         express.static( path.join(__dirname, 'public/images')) ); 
+app.use('/iarca/css',            express.static( path.join(__dirname, 'public/css')) );
+app.use('/iarca/js',             express.static( path.join(__dirname, 'public/js')) );
+app.use('/iarca/bootstrapCSS',   express.static( path.join(__dirname, 'node_modules/bootstrap/dist/css')) );  
+app.use('/iarca/bootstrapJS',    express.static( path.join(__dirname, 'node_modules/bootstrap/dist/js')) );
+app.use('/iarca/bootstrapICONS', express.static( path.join(__dirname, 'node_modules/bootstrap-icons/font')) );
 
 // ================== RUTAS DE NAVEGACIÓN DEL USUARIO ==================
 app.use('/iarca/',              require('./routes/homeRoutes.js') );

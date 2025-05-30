@@ -32,7 +32,7 @@ async function postLogin(req, res)
 
             res.send(`
                 <script>
-                    window.location.href = "/";
+                    window.location.href = "/iarca/";
                 </script>`);
         } 
 
@@ -42,7 +42,7 @@ async function postLogin(req, res)
             res.send(`
                 <script>
                     alert("Nombre o contraseña incorrectos");
-                    window.location.href = "/login/";
+                    window.location.href = "/iarca/login/";
                 </script>`);
         }
 

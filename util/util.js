@@ -74,7 +74,7 @@ function calcularTiempoPromedio(repositorio)
 // Indica la URL en la que se encuentra el usuario web actualmente
 function logURL(metodo, ruta) {
     console.log('***********************************************************');
-    console.log(`URL actual: ${metodo} ${dominio}:${puerto}${ruta} \n`);
+    console.log(`URL actual: ${metodo} ${dominio}:${puerto}/iarca${ruta} \n`);
 }
 
 
