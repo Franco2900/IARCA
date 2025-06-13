@@ -1,3 +1,7 @@
+// Variables de entorno
+require('dotenv').config(); // Carga las variables del archivo .env en process.envs
+const google = process.env.GOOGLE_PATH;
+
 // Módulos
 const fs         = require('fs');        // Módulo para leer y escribir archivos
 const puppeteer  = require('puppeteer'); // Módulo para web scrapping
@@ -12,7 +16,8 @@ async function obtenerPaths()
   {
     const browser  = await puppeteer.launch({ // Inicio puppeter
       headless: 'new',
-      executablePath: path.join(__dirname, '../../puppeteer-cache/chrome/win64-121.0.6167.85/chrome-win64/chrome.exe'),
+      executablePath: path.join(__dirname, google),
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
     }); 
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(0);
@@ -73,7 +78,8 @@ async function buscarEnlacesARevistas(paths) {
     //const paths = await obtenerPaths();
     const browser  = await puppeteer.launch({ // Inicio puppeter
       headless: 'new',
-      executablePath: path.join(__dirname, '../../puppeteer-cache/chrome/win64-121.0.6167.85/chrome-win64/chrome.exe'),
+      executablePath: path.join(__dirname, google),
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
     }); 
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(7000); // Establece un tiempo de espera predeterminado
@@ -116,7 +122,8 @@ async function extraerInfoRevista(enlaces)
 {
   const browser  = await puppeteer.launch({ // Inicio puppeter
     headless: 'new',
-    executablePath: path.join(__dirname, '../../puppeteer-cache/chrome/win64-121.0.6167.85/chrome-win64/chrome.exe'),
+    executablePath: path.join(__dirname, google),
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
   }); 
   const registros = [];
 

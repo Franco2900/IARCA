@@ -1,3 +1,7 @@
+// Variables de entorno
+require('dotenv').config(); // Carga las variables del archivo .env en process.envs
+const google = process.env.GOOGLE_PATH;
+
 // Módulos
 const puppeteer  = require('puppeteer');
 const fs         = require('fs');        // Módulo para leer y escribir archivos
@@ -7,26 +11,15 @@ const path       = require('path');      // Módulo para trabajar con rutas
 
 async function extraerInfoRevistas() 
 {
-
-    //esta opcion es para ver la extraccion en el navegador, es necesario en este modulo de extraccion
-    //ya que se necesita controlar la ubicacion de los componentes y orden de aparicion
-    /*const browser = await puppeteer.launch({ 
-      headless: 'new', 
-      defaultViewport: null,
-      args: ['--start-maximized']
-    });*/
-
-
     const browser  = await puppeteer.launch({ // Inicio puppeter
-      headless: false,
-      executablePath: path.join(__dirname, '../../puppeteer-cache/chrome/win64-121.0.6167.85/chrome-win64/chrome.exe'),
+      headless: 'new',
       defaultViewport: null,
-      args: ['--start-maximized']
+      executablePath: path.join(__dirname, google),
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--start-maximized']
     });
     
     const page = await browser.newPage();
-    
-    
+
     // Ir a la página de búsqueda
     page.setDefaultNavigationTimeout(120000);
     await page.goto('https://mjl.clarivate.com/search-results');
@@ -86,7 +79,7 @@ async function extraerInfoRevistas()
 
     //Se selecciona la mayor cantidad de revistas por pagina para reducir el tiempo de extraccion
     const selector = 'body > cdx-app > mat-sidenav-container > mat-sidenav-content > main > can-home-page > div > div > div > mat-sidenav-container > mat-sidenav-content > app-journal-search-results > div:nth-child(3) > div:nth-child(11) > mat-paginator > div > div > div.mat-mdc-paginator-page-size.ng-star-inserted > mat-form-field';
-    const opcion50 = '/html/body/div[5]/div[2]/div/div/mat-option[3]';
+    const opcion50 = '//mat-option[3]/span';
     //await page.waitForSelector('.mat-form-field');
     await page.waitForSelector(selector);
     await page.click(selector);

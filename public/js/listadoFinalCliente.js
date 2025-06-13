@@ -2,7 +2,7 @@ const dominio = window.location.origin;
 
 function descargarCSV() 
 {
-    fetch(`${dominio}/listadoFinal/descargarCSV`, {
+    fetch(`${dominio}/iarca/listadoFinal/descargarCSV`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
@@ -27,7 +27,7 @@ function descargarCSV()
 
 function descargarJSON() 
 {
-    fetch(`${dominio}/listadoFinal/descargarJSON`, {
+    fetch(`${dominio}/iarca/listadoFinal/descargarJSON`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
@@ -57,7 +57,7 @@ function siguientePagina()
 
     if( paginaActual < cantidadPaginasDeNavegacion )
     {
-        fetch(`${dominio}/listadoFinal/siguientePagina`,
+        fetch(`${dominio}/iarca/listadoFinal/siguientePagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -93,7 +93,7 @@ function anteriorPagina()
 
     if(paginaActual > 1)
     {
-        fetch(`${dominio}/listadoFinal/anteriorPagina`,
+        fetch(`${dominio}/iarca/listadoFinal/anteriorPagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -128,7 +128,7 @@ function buscarPaginaEspecifica()
 
     if(paginaBuscada >= 1   &&  paginaBuscada <= cantidadPaginasDeNavegacion)
     {
-        fetch(`${dominio}/listadoFinal/buscarPaginaEspecifica`,
+        fetch(`${dominio}/iarca/listadoFinal/buscarPaginaEspecifica`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -163,7 +163,7 @@ function primerPagina()
 
     if( paginaActual != 1 )
     {
-        fetch(`${dominio}/listadoFinal/primerPagina`,
+        fetch(`${dominio}/iarca/listadoFinal/primerPagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -197,7 +197,7 @@ function ultimaPagina()
 
     if( paginaActual < cantidadPaginasDeNavegacion )
     {
-        fetch(`${dominio}/listadoFinal/ultimaPagina`,
+        fetch(`${dominio}/iarca/listadoFinal/ultimaPagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -230,14 +230,14 @@ function actualizarCatalogo()
     // Muestro el gif de reloj
     let estadoDeLaActualización = document.getElementById('estadoDeLaActualización');
     estadoDeLaActualización.innerHTML = `
-        <img src="/images/style/esperando.gif" class="mx-auto d-block border border-dark" />
+        <img src="images/style/esperando.gif" class="mx-auto d-block border border-dark" />
         <h2 style="text-align: center;">Actualizando datos. Espere por favor</h2>
     `;
 
     // Hago invisible el boton de actualizar catalogo
     document.getElementById("actualizarCatalogo").style.display="none"; 
 
-    fetch(`${dominio}/listadoFinal/actualizarCatalogo`,
+    fetch(`${dominio}/iarca/listadoFinal/actualizarCatalogo`,
     { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 

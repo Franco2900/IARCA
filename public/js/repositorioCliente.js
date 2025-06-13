@@ -2,7 +2,7 @@ const dominio = window.location.origin;
 
 function descargarCSV(repositorio) 
 { 
-    fetch(`${dominio}/repositorio/${repositorio}/descargarCSV`, {
+    fetch(`${dominio}/iarca/repositorio/${repositorio}/descargarCSV`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
@@ -26,7 +26,7 @@ function descargarCSV(repositorio)
 
 function descargarJSON(repositorio) 
 {
-    fetch(`${dominio}/repositorio/${repositorio}/descargarJSON`, {
+    fetch(`${dominio}/iarca/repositorio/${repositorio}/descargarJSON`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
@@ -55,7 +55,7 @@ function siguientePagina(repositorio)
 
     if( paginaActual < cantidadPaginasDeNavegacion )
     {
-        fetch(`${dominio}/repositorio/${repositorio}/siguientePagina`,
+        fetch(`${dominio}/iarca/repositorio/${repositorio}/siguientePagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -91,7 +91,7 @@ function anteriorPagina(repositorio)
 
     if(paginaActual > 1)
     {
-        fetch(`${dominio}/repositorio/${repositorio}/anteriorPagina`,
+        fetch(`${dominio}/iarca/repositorio/${repositorio}/anteriorPagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -125,7 +125,7 @@ function buscarPaginaEspecifica(repositorio)
 
     if(paginaBuscada >= 1   &&  paginaBuscada <= cantidadPaginasDeNavegacion)
     {
-        fetch(`${dominio}/repositorio/${repositorio}/buscarPaginaEspecifica`,
+        fetch(`${dominio}/iarca/repositorio/${repositorio}/buscarPaginaEspecifica`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -159,7 +159,7 @@ function primerPagina(repositorio)
 
     if( paginaActual != 1 )
     {
-        fetch(`${dominio}/repositorio/${repositorio}/primerPagina`,
+        fetch(`${dominio}/iarca/repositorio/${repositorio}/primerPagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -193,7 +193,7 @@ function ultimaPagina(repositorio)
 
     if( paginaActual < cantidadPaginasDeNavegacion )
     {
-        fetch(`${dominio}/repositorio/${repositorio}/ultimaPagina`,
+        fetch(`${dominio}/iarca/repositorio/${repositorio}/ultimaPagina`,
         { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
@@ -225,14 +225,14 @@ function actualizarCatalogo(repositorio)
     // Muestro el gif de reloj
     let estadoDeLaActualización = document.getElementById('estadoDeLaActualización');
     estadoDeLaActualización.innerHTML = `
-        <img src="/images/style/esperando.gif" class="mx-auto d-block border border-dark" />
+        <img src="images/style/esperando.gif" class="mx-auto d-block border border-dark" />
         <h2 style="text-align: center;">Actualizando datos. Espere por favor</h2>
     `;
 
     // Hago invisible el boton de actualizar catalogo
     document.getElementById("actualizarCatalogo").style.display="none"; 
 
-    fetch(`${dominio}/repositorio/${repositorio}/actualizarCatalogo`,
+    fetch(`${dominio}/iarca/repositorio/${repositorio}/actualizarCatalogo`,
     { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
