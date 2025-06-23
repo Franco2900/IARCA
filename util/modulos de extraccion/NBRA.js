@@ -183,60 +183,76 @@ async function extraerRevista(enlace)
 }
 
 
-
 // Extraigo la info de todas las revistas
 async function extraerInfoRepositorio() 
 {
   console.log("Comienza la extracción de datos de NBRA");
 
-  try
+  try 
   {
     const enlaces = await buscarEnlacesARevistas();
     console.log(`CANTIDAD DE REVISTAS ${enlaces.length}`);
 
-    var info = "Título;ISSN impresa;ISSN en linea;Área;Instituto;URL" + "\n"; // No usar las tildes inclinadas (` `) acá porque al ser la línea cabecera genera error al crear el archivo csv
+    let info = "Título;ISSN impresa;ISSN en linea;Área;Instituto;URL\n"; // Cabecera
 
-    var revistaActual = 0;
-    var cantidadRevistasExtraidas = 0;
-    var cantidadRevistasNoExtraidas = 0;
+    let cantidadRevistasExtraidas = 0;
+    let cantidadRevistasNoExtraidas = 0;
 
-    for (var i = 0; i < enlaces.length; i++) // Recorro todos los enlaces y obtengo la info de cada revista una por una
-    {
-      console.log(`EXTRAYENDO DATOS DE LA REVISTA ${++revistaActual} DE ${enlaces.length}`);
+    // Función auxiliar asincronica para procesar cada enlace
+    const procesarEnlace = async (enlace, indice) => {
 
-      try
+      console.log(`EXTRAYENDO DATOS DE LA REVISTA ${indice + 1} DE ${enlaces.length}`);
+
+      try 
       {
-        info += await extraerRevista(enlaces[i]);
-        cantidadRevistasExtraidas++
-      }
-      catch(error) // Si falla la extracción de una revista por X motivo, se pasa a extraer la siguiente
+        const resultado = await extraerRevista(enlace);
+        cantidadRevistasExtraidas++;
+        return resultado;
+      } 
+      catch (error) 
       {
         cantidadRevistasNoExtraidas++;
-        console.log(error);
+        console.error(error);
+        return ""; // Retorna cadena vacía en caso de error
       }
-    }      
 
-    console.log("CANTIDAD DE REVISTAS EXTRAIDAS CON EXITO: " + cantidadRevistasExtraidas);
-    console.log("CANTIDAD DE REVISTAS NO EXTRAIDAS: " + cantidadRevistasNoExtraidas);
+    };
+
+
+    // Procesa en lotes de 2
+    const loteSize = 2;
+
+    for (let i = 0; i < enlaces.length; i += loteSize) 
+    {
+      const lote = enlaces.slice(i, i + loteSize); // Divido el arreglo desde el enlace en que se quedo hasta el tamaño del lote
+      
+      const resultados = await Promise.all( // Mapeamos cada enlace a su tarea (con su índice real). Espera a que termine la extracción de todos los enlaces del lote para seguir con la iteración del for
+        lote.map((enlace, index) => procesarEnlace(enlace, i + index))
+      );
+
+      info += resultados.join("");
+    }
+
+    console.log("CANTIDAD DE REVISTAS EXTRAIDAS CON EXITO:", cantidadRevistasExtraidas);
+    console.log("CANTIDAD DE REVISTAS NO EXTRAIDAS:", cantidadRevistasNoExtraidas);
 
     const csvFilePath  = path.join(__dirname, '../Repositorios/NBRA.csv');
     const jsonFilePath = path.join(__dirname, '../Repositorios/NBRA.json');
 
-    await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
-    
-    const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito
+    await fs.promises.writeFile(csvFilePath, info); // Escribo el archivo CSV
+
+    const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON
   
     await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
   
     console.log("Termina la extracción de datos de CAICYT");
 
-  }
-  catch(error)
+  } 
+  catch (error) 
   {
-    throw new Error('Error durante la extracción de revistas de CAICYT: ' + error.message); // Lanza un error hacia arriba (hacia el archivo que lo llamo)
+    throw new Error('Error durante la extracción de revistas de CAICYT: ' + error.message);
   }
 
 }
-
 
 exports.extraerInfoRepositorio = extraerInfoRepositorio;

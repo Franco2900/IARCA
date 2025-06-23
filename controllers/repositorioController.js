@@ -5,7 +5,7 @@ const xlsx = require('xlsx');       // Módulo para trabajar con archivos excel
 const csvtojson  = require('csvtojson'); // Módulo para pasar texto csv a json
 
 // Metodos exportados de 'util.js'
-const { calcularTiempoPromedio, logURL } = require('../util/util.js');
+const { calcularTiempoActualizacion, calcularTiempoPromedio, logURL } = require('../util/util.js');
 const { crearListadoDeRevistas, armarTablaDeRevistas } = require('./repositorioControllerUtils.js');
 
 async function getRepositorio(req, res)
@@ -293,35 +293,13 @@ async function postActualizarCatalogo(req, res)
 
     try
     {
-        let tiempoEmpieza       = Date.now();
-        let archivoDeExtraccion = require(`../util/modulos de extraccion/${repositorio}.js`);
+        let tiempoEmpieza = Date.now();
         
         console.log(`Extrayendo datos del repositorio ${repositorio}`);
+        let archivoDeExtraccion = require(`../util/modulos de extraccion/${repositorio}.js`);
         await archivoDeExtraccion.extraerInfoRepositorio(); // Llamo al método de extracción dentro del archivo .js
     
-        let tiempoTermina = Date.now();
-        let segundos = Math.ceil( ( tiempoTermina - tiempoEmpieza) / 1000 );
-        
-        console.log(`Se tardo ${segundos} segundos en extraer los datos`);
-    
-        // Si existe el archivo de tiempo, se actualiza el archivo
-        if( fs.existsSync( path.join(__dirname, `../util/Tiempos/${repositorio}Tiempo.txt`) ) ) 
-        { 
-            fs.appendFileSync(path.join(__dirname, `../util/Tiempos/${repositorio}Tiempo.txt`), `${segundos};`, error => 
-            { 
-                if(error) console.log(error);
-            })
-        }
-        // Si no existe el archivo de tiempo, se lo crea
-        else
-        {
-            fs.writeFileSync(path.join(__dirname, `../util/Tiempos/${repositorio}Tiempo.txt`), `${segundos};`, error => 
-            { 
-                if(error) console.log(error);
-            })
-        }
-
-        calcularTiempoPromedio(repositorio);
+        calcularTiempoActualizacion(tiempoEmpieza, repositorio);
     
         res.status(200).json( { mensaje: "Actualización exitosa" } ); 
     }
