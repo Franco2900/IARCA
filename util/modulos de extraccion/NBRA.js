@@ -5,6 +5,10 @@ const fs        = require('fs');        // Módulo para leer y escribir archivos
 const csvtojson = require('csvtojson'); // Módulo para pasar texto csv a json
 const path      = require('path');      // Módulo para trabajar con rutas
 
+// Metodos importados
+const { calcularTiempoActualizacion } = require('../util.js');
+const { actualizarEstado } = require('../../models/estadoActualizacionModel.js');
+
 // Busco los enlaces de todas las revistas
 async function buscarEnlacesARevistas() 
 {
@@ -190,6 +194,8 @@ async function extraerInfoRepositorio()
 
   try 
   {
+    let tiempoEmpieza = Date.now();
+
     const enlaces = await buscarEnlacesARevistas();
     console.log(`CANTIDAD DE REVISTAS ${enlaces.length}`);
 
@@ -240,17 +246,20 @@ async function extraerInfoRepositorio()
     const jsonFilePath = path.join(__dirname, '../Repositorios/NBRA.json');
 
     await fs.promises.writeFile(csvFilePath, info); // Escribo el archivo CSV
-
     const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON
-  
     await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
-  
-    console.log("Termina la extracción de datos de CAICYT");
 
+    calcularTiempoActualizacion(tiempoEmpieza, 'NBRA'); // Registro el tiempo que tomo la actualización
+    
+    console.log("Termina la extracción de datos de CAICYT");
   } 
   catch (error) 
   {
     throw new Error('Error durante la extracción de revistas de CAICYT: ' + error.message);
+  }
+  finally
+  {
+    actualizarEstado(false, 'NBRA'); // Indico en la base de datos que este repositorio ya termino de actualizarse
   }
 
 }

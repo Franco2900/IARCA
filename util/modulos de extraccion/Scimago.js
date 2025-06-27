@@ -5,6 +5,10 @@ const xlsx       = require('xlsx');
 const path       = require('path'); // Módulo para trabajar con rutas
 const csvtojson  = require('csvtojson'); // Módulo para pasar texto csv a json
 
+// Metodos importados
+const { calcularTiempoActualizacion } = require('../util.js');
+const { actualizarEstado } = require('../../models/estadoActualizacionModel.js');
+
 async function descargarArchivo() 
 {
   const url = 'https://www.scimagojr.com/journalrank.php?country=AR&out=xls';
@@ -81,26 +85,41 @@ async function descargarArchivo()
 // Extraigo la info de todas las revistas de la consulta
 async function extraerInfoRepositorio() 
 {
-  const listaDeRevistas = await descargarArchivo();
-  console.log("CANTIDAD DE REVISTAS: " + listaDeRevistas.length);
-
-  // Paso los datos de los objetos a string
-  let info = "Título;ISSN impresa;ISSN en linea;Instituto;URL" + "\n";
-  for(let i = 0; i < listaDeRevistas.length; i++)
+  try
   {
-    info += `${listaDeRevistas[i].titulo};${listaDeRevistas[i].issnImpreso};${listaDeRevistas[i].issnEnLinea};${listaDeRevistas[i].instituto};https://www.scimagojr.com/journalsearch.php?q=${listaDeRevistas[i].sourceId}&tip=sid&clean=0` + "\n";
+    let tiempoEmpieza = Date.now();
+
+    console.log("Comienza la extracción de datos de Scimago");
+    const listaDeRevistas = await descargarArchivo();
+    console.log("CANTIDAD DE REVISTAS: " + listaDeRevistas.length);
+
+    // Paso los datos de los objetos a string
+    let info = "Título;ISSN impresa;ISSN en linea;Instituto;URL" + "\n";
+    for(let i = 0; i < listaDeRevistas.length; i++)
+    {
+      info += `${listaDeRevistas[i].titulo};${listaDeRevistas[i].issnImpreso};${listaDeRevistas[i].issnEnLinea};${listaDeRevistas[i].instituto};https://www.scimagojr.com/journalsearch.php?q=${listaDeRevistas[i].sourceId}&tip=sid&clean=0` + "\n";
+    }
+
+    const csvFilePath  = path.join(__dirname + '/../Repositorios/Scimago.csv');
+    const jsonFilePath = path.join(__dirname + '/../Repositorios/Scimago.json');
+
+    await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
+    const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito    
+    await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
+
+    calcularTiempoActualizacion(tiempoEmpieza, 'Scimago');
+
+    console.log("Termina la extracción de datos de Scimago");
+  }
+  catch (error)     
+  {
+    throw new Error('Error durante la extracción de revistas de Scimago: ' + error.message); // Lanza un error hacia arriba (hacia el archivo que lo llamo)
+  }
+  finally
+  {
+    actualizarEstado(false, 'Scimago'); // Indico en la base de datos que este repositorio ya termino de actualizarse
   }
 
-  const csvFilePath  = path.join(__dirname + '/../Repositorios/Scimago.csv');
-  const jsonFilePath = path.join(__dirname + '/../Repositorios/Scimago.json');
-
-  await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
-    
-  const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito
-    
-  await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
-
-  console.log("Termina la extracción de datos de Scimago");
 }
 
 exports.extraerInfoRepositorio = extraerInfoRepositorio;

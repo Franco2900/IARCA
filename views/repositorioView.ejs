@@ -39,7 +39,7 @@
 
 <!-- Datos sobre el repositorio -->
 <p>Cantidad de revistas en <%= repositorio %>: <%= cantidadRevistasRepositorio %></p>
-<p>Última actualización: <%= fechaUltimaModicacion %> (DD/MM/YY)</p>
+<p>Última actualización: <%= fechaUltimaModificacion %></p>
 
 <!-- Pequeño codigo JavaScript en la plantilla EJS -->
 <% if ( typeof tiempoPromedioDeActualizacion === "string" ) { %> 
@@ -60,14 +60,14 @@
 
 
 <!-- El boton más importante de todos (solo lo pueden ver los usuarios logueados) -->
-<% if (usuario.nombre && repositorio != "Dialnet") { %>
+<% if (usuario.nombre && repositorio != "Dialnet" && !actualizandose) { %>
     <p><button id="actualizarCatalogo" onclick="actualizarCatalogo('<%= repositorio %>')">Actualizar catálogo de revistas</button></p>
     <span id="estadoDeLaActualización"></span>
 <% } %>
 
 
 <!-- Solo para el caso especial de Dialnet en el que no podemos hacemos webscrapping o llamado a apis -->
-<% if (usuario.nombre && repositorio == "Dialnet") { %>
+<% if (usuario.nombre && repositorio == "Dialnet" && !actualizandose) { %>
     <br></br>
     <p>Dialnet tiene un sistema de protección que impide hacer consultas masivas, por lo cual no podemos extraer la información de su sitio web</p>
     <p>En su lugar, es necesario enviar un email a: dialnet@unirioja.es </p>
@@ -83,6 +83,11 @@
     </p>
 <% } %>
 
+
+<% if (usuario.nombre && actualizandose) { %>
+    <img src="images/style/esperando.gif" class="mx-auto d-block border border-dark" />
+    <h2 style="text-align: center;">Actualizando datos. Espere por favor</h2>
+<% } %>
 
 <br>
 <p><a href="/iarca/">Volver</a></p>

@@ -8,17 +8,23 @@ const puppeteer = require('puppeteer'); // Módulo para web scrapping
 const csvtojson = require('csvtojson')  // Módulo para pasar texto csv a json
 const path      = require('path');      // Módulo para trabajar con los path/rutas (Es un modelo núcleo de Node.js)
 
+// Metodos importados
+const { calcularTiempoActualizacion } = require('../util.js');
+const { actualizarEstado } = require('../../models/estadoActualizacionModel.js');
+
 // Se utiliza la función de descargar documentos de Latindex, esto es lo más cercano a una API que tiene el sitio web.
 async function extraerInfoRepositorio() {
 
-  const browser  = await puppeteer.launch({ // Inicio puppeter
-    headless: 'new',
-    executablePath: path.join(__dirname, google),
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
-
   try 
   {
+    let tiempoEmpieza = Date.now();
+
+    const browser  = await puppeteer.launch({ // Inicio puppeter
+      headless: 'new',
+      executablePath: path.join(__dirname, google),
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+  
     var page = await browser.newPage();
     page.setDefaultNavigationTimeout(120000);    // Indico el tiempo limite para conectarse a un sitio web en milisegundos. Con cero quita el límite de tiempo (no es recomendable poner en 0 porque puede quedar en un bucle infinito en caso de error)
     await page.goto(`https://www.latindex.org/latindex/bAvanzada/resultado?idMod=1&tema=0&subtema=0&region=0&pais=3&critCat=0&send=Buscar&page=1`); // URL del sitio web al que se accede
@@ -63,9 +69,7 @@ async function extraerInfoRepositorio() {
     const jsonFilePath = path.join(__dirname + '/../Repositorios/Latindex.json');
 
     await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
-
     const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito
-    
     await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
 
     // Elimino el archivo que descargue de Latindex
@@ -76,11 +80,17 @@ async function extraerInfoRepositorio() {
       });
     }
 
+    calcularTiempoActualizacion(tiempoEmpieza, "Latindex"); // Registro el tiempo que tomo la actualización
+    
     console.log("Termina la extracción de datos de Latindex");
   }
   catch(error)
   {
     throw new Error('Error durante la extracción de revistas de Latindex: ' + error.message); // Lanza un error hacia arriba (hacia el archivo que lo llamo)
+  }
+  finally
+  {
+    actualizarEstado(false, "Latindex"); // Indico en la base de datos que este repositorio ya termino de actualizarse
   }
 
 }

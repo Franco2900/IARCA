@@ -1,9 +1,16 @@
 <link rel="stylesheet" type="text/css" href="css/home.css">
 
-<p>Este sitio sirve para saber cuál es la cantidad de revistas cientificas que existen en la Republica Argentina. Para 
-saber esto extraemos la información de distintos repositorios disponibles en la web.</p>
+<p>El Indice Automatizado de Revistas Científicas Argentinas (IARCA) recupera el total de revistas científicas 
+    argentinas indizadas en nueve bases de datos de bibliografía científica. Esta aplicación extrae los registros de 
+    distintas fuentes de forma automatizada y la integra en un listado único.
+</p>
 
-<p>Los sitios web de los que extraemos información son: </p>
+<p>Entre todas las bases de datos se extrajo un total de <%= sumatoriaCantidadRevistas %> revistas y, después de 
+    realizar el correspondiente filtro, se determinó que hay en total <strong> <%= cantidadListadoFinal %> </strong>
+    de revistas científicas argentinas.
+</p>
+
+<p>Las bases de datos de las que extraemos información son: </p>
 
 <!-- Fila 1 de repositorios -->
 <div class="row text-center imagenes">

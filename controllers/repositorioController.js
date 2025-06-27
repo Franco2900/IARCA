@@ -4,9 +4,10 @@ const fs   = require('fs');     // Módulo para escribir, leer, borrar y renombr
 const xlsx = require('xlsx');       // Módulo para trabajar con archivos excel
 const csvtojson  = require('csvtojson'); // Módulo para pasar texto csv a json
 
-// Metodos exportados de 'util.js'
-const { calcularTiempoActualizacion, calcularTiempoPromedio, logURL } = require('../util/util.js');
+// Metodos importados
+const { logURL } = require('../util/util.js');
 const { crearListadoDeRevistas, armarTablaDeRevistas } = require('./repositorioControllerUtils.js');
+const { estadoActual, actualizarEstado } = require('../models/estadoActualizacionModel.js');
 
 async function getRepositorio(req, res)
 {
@@ -22,9 +23,11 @@ async function getRepositorio(req, res)
     let cantidadPaginasDeNavegacion = 0;
     let tiempoPromedioDeActualizacion = "No hay datos";
     let tabla = "<h2>No hay datos sobre este repositorio</h2>";
-    let fechaUltimaModicacion = "No hay datos";
+    let fechaUltimaModificacion = "No hay datos";
+    let actualizandose = false;
 
-    if ( fs.existsSync( path.join(__dirname, `../util/Repositorios/${repositorio}.json`) ) ) // Si existe el archivo JSON, se hace esto
+    // Si existe el archivo JSON con los datos del repositorio, se hace esto
+    if ( fs.existsSync( path.join(__dirname, `../util/Repositorios/${repositorio}.json`) ) ) 
     {
         // Borra la cache del archivo indicado para que cuando se lo vuevla a llamar al archivo no vuelva con datos viejos
         delete require.cache[require.resolve( path.join(__dirname, `../util/Repositorios/${repositorio}.json`) )]; 
@@ -42,16 +45,25 @@ async function getRepositorio(req, res)
             if(i == listadoRevistas.length-1)  break;
             else                               primeras20Revistas.push( listadoRevistas[i] );
         }
-
+ 
         tabla = armarTablaDeRevistas( primeras20Revistas, 1 );
 
-        // Más datos va a usar la plantilla
+        // Averigua la fecha y hora de la ultima actualización de los datos
         let estadisticasDelArchivo = fs.statSync( path.join(__dirname, `../util/Repositorios/${repositorio}.json`) );
-        fechaUltimaModicacion = estadisticasDelArchivo.mtime;
-        fechaUltimaModicacion = `${fechaUltimaModicacion.getDate()}/${fechaUltimaModicacion.getMonth()+1}/${fechaUltimaModicacion.getFullYear()}`;
+        fechaUltimaModificacion = estadisticasDelArchivo.mtime;
+
+        let dia      = String(fechaUltimaModificacion.getDate()).padStart(2, '0');
+        let mes      = String(fechaUltimaModificacion.getMonth() + 1).padStart(2, '0');
+        let anio     = fechaUltimaModificacion.getFullYear();
+        let hora     = String(fechaUltimaModificacion.getHours()).padStart(2, '0');
+        let minutos  = String(fechaUltimaModificacion.getMinutes()).padStart(2, '0');
+        let segundos = String(fechaUltimaModificacion.getSeconds()).padStart(2, '0');
+
+        fechaUltimaModificacion = `${dia}/${mes}/${anio} ${hora}:${minutos}:${segundos}`;
     }
 
 
+    // Si existe el archivo JSON con el tiempo promedio, se hace esto
     if( fs.existsSync( path.join(__dirname, `../util/Tiempos/${repositorio}TiempoPromedio.json`) ) )
     {
         delete require.cache[require.resolve( path.join(__dirname, `../util/Tiempos/${repositorio}TiempoPromedio.json`) )]; 
@@ -60,7 +72,10 @@ async function getRepositorio(req, res)
         tiempoPromedioDeActualizacion = archivoTiempo[0].TiempoPromedio;
     }
 
-    res.render('layout', { body, repositorio, cantidadRevistasRepositorio, cantidadPaginasDeNavegacion, tabla, fechaUltimaModicacion, tiempoPromedioDeActualizacion } ); 
+    // Averiguo si el repositorio esta actualizandose en este momento
+    actualizandose = await estadoActual(repositorio);
+
+    res.render('layout', { body, repositorio, cantidadRevistasRepositorio, cantidadPaginasDeNavegacion, tabla, fechaUltimaModificacion, tiempoPromedioDeActualizacion, actualizandose } ); 
 }
 
 
@@ -293,13 +308,11 @@ async function postActualizarCatalogo(req, res)
 
     try
     {
-        let tiempoEmpieza = Date.now();
-        
+        actualizarEstado(true, repositorio);
+
         console.log(`Extrayendo datos del repositorio ${repositorio}`);
         let archivoDeExtraccion = require(`../util/modulos de extraccion/${repositorio}.js`);
         await archivoDeExtraccion.extraerInfoRepositorio(); // Llamo al método de extracción dentro del archivo .js
-    
-        calcularTiempoActualizacion(tiempoEmpieza, repositorio);
     
         res.status(200).json( { mensaje: "Actualización exitosa" } ); 
     }
