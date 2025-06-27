@@ -9,6 +9,10 @@ const jsdom      = require('jsdom');     // Módulo para filtrar la información
 const csvtojson  = require('csvtojson'); // Módulo para pasar texto csv a json
 const path       = require('path');      // Módulo para trabajar con rutas
 
+// Metodos importados
+const { calcularTiempoActualizacion } = require('../util.js');
+const { actualizarEstado } = require('../../models/estadoActualizacionModel.js');
+
 // Busco cuantas páginas devuelve la consulta a Biblat
 async function obtenerPaths() 
 {
@@ -16,7 +20,7 @@ async function obtenerPaths()
   {
     const browser  = await puppeteer.launch({ // Inicio puppeter
       headless: 'new',
-      executablePath: google,
+      executablePath: path.join(__dirname, google),
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     }); 
     const page = await browser.newPage();
@@ -78,7 +82,7 @@ async function buscarEnlacesARevistas(paths) {
     //const paths = await obtenerPaths();
     const browser  = await puppeteer.launch({ // Inicio puppeter
       headless: 'new',
-      executablePath: google,
+      executablePath: path.join(__dirname, google),
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     }); 
     const page = await browser.newPage();
@@ -122,7 +126,7 @@ async function extraerInfoRevista(enlaces)
 {
   const browser  = await puppeteer.launch({ // Inicio puppeter
     headless: 'new',
-    executablePath: google,
+    executablePath: path.join(__dirname, google),
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   }); 
   const registros = [];
@@ -172,6 +176,8 @@ async function extraerInfoRepositorio()
   try
   {
     console.log("Comienza la extracción de datos de Biblat");
+    let tiempoEmpieza = Date.now();
+
     const paths = await obtenerPaths();
     const enlaces = await buscarEnlacesARevistas(paths);
     //const enlaces = ['https://biblat.unam.mx/es/revista/salud-colectiva/articulo/concentracion'];
@@ -193,7 +199,7 @@ async function extraerInfoRepositorio()
       else{
         cantidadRevistasSinISSN++;
       }
-    }
+    } 
 
     console.log("Cantidad de revistas eliminadas por no tener ISSN: " + cantidadRevistasSinISSN);
 
@@ -201,16 +207,20 @@ async function extraerInfoRepositorio()
     const csvFilePath  = path.join(__dirname + '/../Repositorios/Biblat.csv');
 
     await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
-      
-    const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito
-      
+    const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito      
     await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
 
+    calcularTiempoActualizacion(tiempoEmpieza, 'Biblat'); // Registro el tiempo que tomo la actualización
+    
     console.log("Termina la extracción de datos de Biblat");
   }
   catch(error)
   {
     throw new Error('Error durante la extracción de revistas de Biblat: ' + error.message); // Lanza un error hacia arriba (hacia el archivo que lo llamo)
+  }
+  finally
+  {
+    actualizarEstado(false, "Biblat"); // Indico en la base de datos que este repositorio ya termino de actualizarse
   }
 
 }

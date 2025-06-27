@@ -9,18 +9,24 @@ const jsdom      = require('jsdom');     // Módulo para filtrar la información
 const csvtojson  = require('csvtojson'); // Módulo para pasar texto csv a json
 const path       = require('path');      // Módulo para trabajar con rutas
 
+// Metodos importados
+const { calcularTiempoActualizacion } = require('../util.js');
+const { actualizarEstado } = require('../../models/estadoActualizacionModel.js');
+
 // El web scrapping de Redalyc es especial porque se hace todo en la misma URL, para ver el resto de las revistas se actualiza el sitio
 // Busco los enlaces de todas las revistas
 async function extraerInfoRepositorio()
 {
-    const browser  = await puppeteer.launch({ // Inicio puppeter
-        headless: 'new',
-        executablePath: google,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-    }); 
-
     try
     {
+        let tiempoEmpieza = Date.now();
+
+        const browser  = await puppeteer.launch({ // Inicio puppeter
+            headless: 'new',
+            executablePath: path.join(__dirname, google),
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        }); 
+
         const page     = await browser.newPage();
         page.setDefaultNavigationTimeout(120000);                // Indico el tiempo limite para conectarse a un sitio web en milisegundos. Con cero quita el límite de tiempo (no es recomendable poner en 0 porque puede quedar en un bucle infinito en caso de error)
         await page.goto(`https://www.redalyc.org/pais.oa?id=9`); // URL del sitio web al que se le hace web scrapping
@@ -99,19 +105,24 @@ async function extraerInfoRepositorio()
         const jsonFilePath = path.join(__dirname + '/../Repositorios/Redalyc.json');
         
         await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
-    
         const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito
-    
         await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
 
+        calcularTiempoActualizacion(tiempoEmpieza, 'Redalyc'); // Registro el tiempo que tomo la actualización
+
         console.log("Termina la extracción de datos de Redalyc");
+
+        await browser.close(); // cierro puppeter
     }
     catch(error)
     {
         throw new Error('Error durante la extracción de revistas de Redalyc: ' + error.message); // Lanza un error hacia arriba (hacia el archivo que lo llamo)
     }
-    
-    await browser.close(); // cierro puppeter
+    finally
+    {
+        actualizarEstado(false, 'Redalyc'); // Indico en la base de datos que este repositorio ya termino de actualizarse
+    }
+
 }
 
 exports.extraerInfoRepositorio = extraerInfoRepositorio;

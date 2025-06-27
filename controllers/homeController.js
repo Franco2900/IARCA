@@ -14,9 +14,11 @@ async function getHome(req, res)
     // Calculo los datos a usar en la tabla de estado de los repositorios
     let repositorios = ['NBRA', 'Latindex', 'DOAJ', 'Redalyc', 'Biblat', 'Scimago', 'Scielo', 'Web of Science', 'Dialnet'];
     let cantidadRevistas = {};
+    let sumatoriaCantidadRevistas = 0;
     let fechaUltimaModificacion = {};
     let estado = {};
     let colorEstado = {};
+    let cantidadListadoFinal = require( path.join(__dirname, `../util/Listado final/Listado final.json`) ).length;
 
     for(let i = 0; i < repositorios.length; i++)
     {
@@ -27,6 +29,7 @@ async function getHome(req, res)
 
             // CALCULO DE LA CANTIDAD DE REVISTAS
             cantidadRevistas[ `${repositorios[i]}` ] = archivoJSON.length;  // Agrego el dato de la cantidad de revistas en el objeto simple
+            sumatoriaCantidadRevistas += archivoJSON.length;
         
             // CALCULO LA FECHA DE ULTIMA ACTUALIZACIÓN DEL ARCHIVO
             let estadisticasDelArchivo = fs.statSync( path.join(__dirname, `../util/Repositorios/${repositorios[i]}.json`) ); // Me devuelve datos estadisticos del archivo
@@ -63,7 +66,7 @@ async function getHome(req, res)
     }
 
 
-    res.render('layout', {body, cantidadRevistas, fechaUltimaModificacion, estado, colorEstado } ); 
+    res.render('layout', {body, cantidadRevistas, sumatoriaCantidadRevistas, cantidadListadoFinal, fechaUltimaModificacion, estado, colorEstado } ); 
 }
 
 module.exports = { getHome };

@@ -8,13 +8,16 @@ const fs         = require('fs');        // Módulo para leer y escribir archivo
 const csvtojson  = require('csvtojson'); // Módulo para pasar texto csv a json
 const path       = require('path');      // Módulo para trabajar con rutas
 
+// Metodos importados
+const { calcularTiempoActualizacion } = require('../util.js');
+const { actualizarEstado } = require('../../models/estadoActualizacionModel.js');
 
 async function extraerInfoRevistas() 
 {
     const browser  = await puppeteer.launch({ // Inicio puppeter
       headless: 'new',
       defaultViewport: null,
-      executablePath: google,
+      executablePath: path.join(__dirname, google),
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--start-maximized']
     });
     
@@ -210,9 +213,11 @@ async function extraerInfoRevistas()
 // Extraigo la info de todas las revistas de la consulta
 async function extraerInfoRepositorio() 
 {
-
   try
   {
+    let tiempoEmpieza = Date.now();
+
+    console.log("Comienza la extracción de datos de Scimago");
     const listaDeRevistas = await extraerInfoRevistas();
     console.log("CANTIDAD DE REVISTAS: " + listaDeRevistas.length);
 
@@ -227,16 +232,20 @@ async function extraerInfoRepositorio()
     const jsonFilePath = path.join(__dirname + '/../Repositorios/Web of Science.json');
         
     await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
-    
     const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito
-    
     await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
 
-    console.log("Termina la extracción de datos de WoS");
+    calcularTiempoActualizacion(tiempoEmpieza, 'Web of Science');
+
+    console.log("Termina la extracción de datos de Web of Science");
   }
   catch(error)
   {
     throw new Error('Error durante la extracción de revistas de Web of Science: ' + error.message); // Lanza un error hacia arriba (hacia el archivo que lo llamo)
+  }
+  finally
+  {
+    actualizarEstado(false, 'Web of Science'); // Indico en la base de datos que este repositorio ya termino de actualizarse
   }
 
   return;

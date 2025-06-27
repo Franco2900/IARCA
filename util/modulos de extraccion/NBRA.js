@@ -1,201 +1,169 @@
-// Variables de entorno
-require('dotenv').config(); // Carga las variables del archivo .env en process.envs
-const google = process.env.GOOGLE_PATH;
-
 // Módulos
+const { request } = require('undici');
+const cheerio   = require('cheerio');   // Módulo para web scrapping como puppeteer pero enfocado a la velocidad (solo sirve para sitios estaticos)
 const fs        = require('fs');        // Módulo para leer y escribir archivos
-const puppeteer = require('puppeteer'); // Módulo para web scrapping
-const jsdom     = require('jsdom');     // Módulo para filtrar la información extraida con web scrapping
 const csvtojson = require('csvtojson'); // Módulo para pasar texto csv a json
 const path      = require('path');      // Módulo para trabajar con rutas
 
+// Metodos importados
+const { calcularTiempoActualizacion } = require('../util.js');
+const { actualizarEstado } = require('../../models/estadoActualizacionModel.js');
 
 // Busco los enlaces de todas las revistas
-async function buscarEnlacesARevistas(tiempo) 
+async function buscarEnlacesARevistas() 
 {
-  var enlaces = [];
-  const browser  = await puppeteer.launch({ // Inicio puppeter
-    headless: 'new',
-    executablePath: google,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
-  
-
-  const page = await browser.newPage();
-  page.setDefaultNavigationTimeout(tiempo);                    // Indico el tiempo limite para conectarse a un sitio web en milisegundos. Con cero quita el límite de tiempo (no es recomendable poner en 0 porque puede quedar en un bucle infinito en caso de error)
-  const response = await page.goto(`http://www.caicyt-conicet.gov.ar/sitio/comunicacion-cientifica/nucleo-basico/revistas-integrantes/`); // URL del sitio web al que se le hace web scrapping
-  const body = await response.text();                     // Guardo el HTML extraido en esta variable  
-
-  const { window: { document } } = new jsdom.JSDOM(body);     // inicio JSDOM y le paso el HTML extraido
-
-  const filtroHTML = document.getElementsByClassName("_self cvplbd"); // Hago un filtro al HTML extraido
-
-    // DEBUGEO
-    /*var titulos = "";
-    for(var i = 0; i < filtroHTML.length; i++){
-      titulos += filtroHTML[i].textContent.trim() + "\n";
-    }
-
-    fs.writeFile('./Revistas/auxCAICYT.csv', titulos, error => {
-      if (error) console.log(error);
-    })*/
-    // DEBUGEO
-
-  for (var i = 0; i < filtroHTML.length; i++) 
+  try 
   {
-    enlaces.push(filtroHTML[i].getAttribute("href"));        // obtengo los enlaces de las revistas
+    const url = 'https://www.caicyt-conicet.gov.ar/sitio/comunicacion-cientifica/nucleo-basico/revistas-integrantes/';
+    const { body } = await request(url); // Hago la solicitud
+    const html = await body.text();      // Obtengo el HTML del sitio web
+    const $ = cheerio.load(html);        // Cargo el HTML en cheerio
+
+    var enlaces = []; // Arreglo con los enlaces href a las revistas
+
+    $('._self.cvplbd').each((index, element) => { // Uso jQuery para buscar los elementos HTML que quiero
+      const href = $(element).attr('href');       // Obtengo el valor del atributo 'href'
+      if (href) enlaces.push(href)                // Si el atributo existe y no es vacio, lo añado al arreglo
+    });
+
+  } 
+  catch (error) 
+  {
+    console.error('Error al hacer scraping:', error);
+    throw error;
   }
 
-  await browser.close(); // cierro puppeter
+  enlaces = enlaces.map(str => str.replace('http', 'https'));
   return enlaces;
 }
 
 
+
 // Extraigo la info de una sola revista
-async function extraerRevista(enlace, tiempo) 
+async function extraerRevista(enlace) 
 {
   var respuesta;
-  const browser  = await puppeteer.launch({ // Inicio puppeter
-    headless: 'new',
-    executablePath: google,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
-
 
   try 
   {
-    const page = await browser.newPage();
-    page.setDefaultNavigationTimeout(tiempo);
-    const response = await page.goto(enlace);
-    const body = await response.text();
-  
-    const { window: { document } } = new jsdom.JSDOM(body);
+    const url = enlace;
 
-    const titulo = document.getElementsByClassName("entry-title")[0].textContent.trim().replaceAll(";", ",");
+    const { body } = await request(url); // Hago la solicitud
+    const html = await body.text();      // Obtengo el HTML del sitio web
+    const $ = cheerio.load(html);        // Cargo el HTML en cheerio
 
+    // Obtengo el titulo
+    let titulo = $('.entry-title').text().replaceAll(";", ",").trim();
+
+    // Obtengo los ISSN
     var issnImpresa = "";
     var issnEnLinea = "";
     var auxISSN = ""; // CASO EXCEPCIONAL: Una revista tiene tres ISSN, siendo el tercer ISSN la revista en ingles
     // Algunas revistas solo tienen ISSN en linea, mientras que otras tienen ISSN en linea e impresa
-
-    // Me fijo si la sección con la información tiene etiquetas <p> y <strong>
-    const etiquetasP        = document.getElementsByClassName("siteorigin-widget-tinymce textwidget")[0].querySelectorAll("p");
-    const etiquetasStrong   = document.getElementsByClassName("siteorigin-widget-tinymce textwidget")[0].querySelectorAll("strong");
-    const etiquetasPyStrong = document.getElementsByClassName("siteorigin-widget-tinymce textwidget")[0].querySelectorAll("p strong");
+        
+    // Extraer los elementos <p>, <strong> y <p> dentro de <strong>
+    const etiquetasP        = $(".siteorigin-widget-tinymce.textwidget").first().find("p");
+    const etiquetasStrong   = $(".siteorigin-widget-tinymce.textwidget").first().find("strong");
+    const etiquetasPyStrong = $(".siteorigin-widget-tinymce.textwidget").first().find("p strong");
 
     // Caso expecional. El ISSN no esta marcado con la etiqueta Strong. Todos los ISSN son identificados con la etiqueta Strong
-    if (typeof (etiquetasP[0]) != "undefined" && etiquetasP.length == 2) 
+    if (typeof (etiquetasP.first()) != "undefined" && etiquetasP.length == 2) 
     {
-      issnEnLinea = etiquetasP[0].textContent.trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll(" (En línea)", "");
+      issnEnLinea = etiquetasP.first().text().trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll(" (En línea)", "");
     }
 
+
     // Si no tiene etiquetas <p> y la revista solo tiene ISSN en linea
-    if (typeof (etiquetasP[0]) == "undefined" && etiquetasStrong.length == 2) 
+    if (etiquetasP.length === 0 && etiquetasStrong.length == 2) 
     {
-      issnEnLinea = etiquetasStrong[0].textContent.trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(En línea)", "");
+      issnEnLinea = etiquetasStrong.first().text().trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(En línea)", "");
     }
     // Si no tiene etiquetas <p> y la revista tiene ISSN en linea e ISSN impresa
-    if (typeof (etiquetasP[0]) == "undefined" && etiquetasStrong.length > 2) 
+    if (etiquetasP.length === 0 && etiquetasStrong.length > 2) 
     {
-      issnImpresa = etiquetasStrong[0].textContent.trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(Impresa)");
-      issnEnLinea = etiquetasStrong[1].textContent.trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(En línea)", "");
+      issnImpresa = etiquetasStrong.first().text().trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(Impresa)");
+      issnEnLinea = etiquetasStrong.eq(1).text().trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(En línea)", "");
     }
 
     // Si tiene etiquetas <p> y la revista solo tiene ISSN en linea
-    if (typeof (etiquetasP[0]) != "undefined" && etiquetasPyStrong.length == 2) 
+    if (typeof (etiquetasP.first()) != "undefined" && etiquetasPyStrong.length == 2) 
     {
-      issnEnLinea = etiquetasPyStrong[0].textContent.trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(En línea)", "");
+      issnEnLinea = etiquetasPyStrong.first().text().trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(En línea)", "");
     }
     // Si tiene etiquetas <p> y la revista tiene ISSN en linea e ISSN impresa
-    if (typeof (etiquetasP[0]) != "undefined" && etiquetasPyStrong.length > 2) 
+    if (typeof (etiquetasP.first()) != "undefined" && etiquetasPyStrong.length > 2) 
     {
-      issnImpresa = etiquetasPyStrong[0].textContent.trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(Impresa)");
-      issnEnLinea = etiquetasPyStrong[2].textContent.trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(En línea)", "");
+      issnImpresa = etiquetasPyStrong.first().text().trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(Impresa)");
+      issnEnLinea = etiquetasPyStrong.eq(2).text().trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(En línea)", "");
 
       // No todas las revistas tienen el ISSN en linea bien escrito
-      if (issnEnLinea == "Ver publicación" || issnEnLinea.replace(/(?:\r\n|\r|\n)/g, "") == "" /*Quita los saltos de línea*/ || etiquetasP[0].textContent.trim().includes("English ed.") /* Una revista tiene tres ISSN, siendo el tercer ISSN la revista en ingles */) 
+      if (issnEnLinea == "Ver publicación" || issnEnLinea.replace(/(?:\r\n|\r|\n)/g, "") == "" /*Quita los saltos de línea*/ || etiquetasP.first().text().trim().includes("English ed.") /* Una revista tiene tres ISSN, siendo el tercer ISSN la revista en ingles */) 
       {
-        issnEnLinea = etiquetasPyStrong[1].textContent.trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(En línea)", "");
+        issnEnLinea = etiquetasPyStrong.eq(1).text().trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(En línea)", "");
       }
 
       // Algunas revistas tienen las etiquetas para el ISSN en linea pero no tienen nada de texto dentro
       if (issnEnLinea == "") 
       {
         issnImpresa = "";
-        issnEnLinea = etiquetasPyStrong[0].textContent.trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(En línea)", "");
+        issnEnLinea = etiquetasPyStrong.first().text().trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(En línea)", "");
       }
 
-      if(etiquetasP[0].textContent.trim().includes("English ed.") ) auxISSN = etiquetasPyStrong[2].textContent.trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(En línea)", "");  /* Una revista tiene tres ISSN, siendo el tercer ISSN la revista en ingles */
+      if(etiquetasP.first().text().trim().includes("English ed.") ) auxISSN = etiquetasPyStrong.eq(2).text().trim().replaceAll(";", ",").replaceAll("ISSN ", "").replaceAll("(En línea)", "");  /* Una revista tiene tres ISSN, siendo el tercer ISSN la revista en ingles */
 
     }
-      
+        
+    // Obtengo la imagen    
+    const imagen = $(".so-widget-image").attr("src"); // Para chequear a que área corresponde cada revista reviso que imagen tienen en la clase "so-widget-image"
+            
+    // Mapeo de URL a área
+    const areas = {
+      "http://www.caicyt-conicet.gov.ar/sitio/wp-content/uploads/2017/09/CIENCIAS-BIOLÓGICAS-Y-DE-LA-SALUD-00.jpg":"Ciencias biológicas y de la salud",
+      "http://www.caicyt-conicet.gov.ar/sitio/wp-content/uploads/2017/09/CIENCIAS-AGRARIAS-INGENIERÍA-Y-MATERIALES-00.jpg":"Ciencias agrarias, ingeniería y materiales",
+      "http://www.caicyt-conicet.gov.ar/sitio/wp-content/uploads/2017/09/CIENCIAS-EXACTAS-Y-NATURALES-00.jpg":"Ciencias exactas y naturales",
+      "http://www.caicyt-conicet.gov.ar/sitio/wp-content/uploads/2017/09/CIENCIAS-SOCIALES-Y-HUMANIDADES-00.jpg":"Ciencias sociales y humanidades"
+    };
 
-    var area = "";
-    // Para chequear a que área corresponde cada revista reviso que imagen tienen en la clase "so-widget-image"
-    const imagen = document.getElementsByClassName("so-widget-image")[0].getAttribute("src");
-    switch (imagen) 
-    {
-      case "http://www.caicyt-conicet.gov.ar/sitio/wp-content/uploads/2017/09/CIENCIAS-BIOLÓGICAS-Y-DE-LA-SALUD-00.jpg":
-        area = "Ciencias biológicas y de la salud";
-        break;
+    let area = areas[imagen];
+    
 
-      case "http://www.caicyt-conicet.gov.ar/sitio/wp-content/uploads/2017/09/CIENCIAS-AGRARIAS-INGENIERÍA-Y-MATERIALES-00.jpg":
-        area = "Ciencias agrarias, ingeniería y materiales";
-        break;
+    // Obtengo el instituto
+    let instituto;
+    if ( etiquetasP && etiquetasP.first() ) instituto = $(".siteorigin-widget-tinymce.textwidget").first().text().trim(); // Si no tiene etiquetas <p>
+    else                               instituto = etiquetasP.first().text().trim();                               // Si tiene etiquetas <p>
+        
 
-      case "http://www.caicyt-conicet.gov.ar/sitio/wp-content/uploads/2017/09/CIENCIAS-EXACTAS-Y-NATURALES-00.jpg":
-        area = "Ciencias exactas y naturales";
-        break;
+    // Pares [buscar, reemplazar]
+    const reemplazos = [
+      ["English ed.", ""],
+      [auxISSN, ""],
+      [";", ","],
+      [".", ""],
+      ["(", ""],
+      [")", ""],
+      ["ISSN ", ""],
+      [issnEnLinea, ""],
+      [issnImpresa, ""],
+      ["Impresa", ""],
+      ["impresa", ""],
+      ["lmpresa", ""], // Corrige "impresa" mal escrito
+      ["En", ""],
+      ["en", ""],
+      ["línea", ""],
+      ["linea", ""],
+      ["Ver publicación", ""]
+    ];
 
-      case "http://www.caicyt-conicet.gov.ar/sitio/wp-content/uploads/2017/09/CIENCIAS-SOCIALES-Y-HUMANIDADES-00.jpg":
-        area = "Ciencias sociales y humanidades";
-        break;
+    // Aplica todas las sustituciones
+    reemplazos.forEach(([buscar, reemplazo]) => {
+      if (buscar !== "") instituto = instituto.replaceAll(buscar, reemplazo);
+    });
 
-      default:
-        area = "No hay area";
-        break;
-    }
+    // Eliminar saltos de línea y quitar espacios a la izquierda
+    instituto = instituto.replace(/(?:\r\n|\r|\n)/g, "").trimStart();
 
-    // Obtener la información de la institución es muy complicado porque todos tienen algo diferente
-    // Elimino todo lo que no quiero hasta que solo me quede el nombre de la institución
-    var instituto;
-    if (typeof (etiquetasP[0]) == "undefined")  // Si no tiene etiquetas <p>
-    {
-      instituto = document.getElementsByClassName("siteorigin-widget-tinymce textwidget")[0].textContent.trim();
-    }
-    else // Si tiene etiquetas <p>
-    {
-      instituto = etiquetasP[0].textContent.trim();
-    }
-
-    if (instituto.includes("English ed."))     instituto = instituto.replaceAll("English ed.", ""); // Hay una revista que tiene un tercer ISSN de la versión en ingles. Esta no se cuenta porque no es Argentina
-    if (auxISSN != "")                         instituto = instituto.replaceAll(`${auxISSN}`, "");  // Hay una revista que tiene un tercer ISSN de la versión en ingles. Esta no se cuenta porque no es Argentina
-    if (instituto.includes(";"))               instituto = instituto.replaceAll(";", ",");
-    if (instituto.includes("."))               instituto = instituto.replaceAll(".", "");
-    if (instituto.includes("("))               instituto = instituto.replaceAll("(", "");
-    if (instituto.includes(")"))               instituto = instituto.replaceAll(")", "");
-    if (instituto.includes("ISSN "))           instituto = instituto.replaceAll("ISSN ", "");
-    if (instituto.includes(`${issnEnLinea}`))  instituto = instituto.replaceAll(`${issnEnLinea}`, "");
-    if (instituto.includes(`${issnImpresa}`))  instituto = instituto.replaceAll(`${issnImpresa}`, "");
-    if (instituto.includes("Impresa"))         instituto = instituto.replaceAll("Impresa", "");
-    if (instituto.includes("impresa"))         instituto = instituto.replaceAll("impresa", "");
-    if (instituto.includes("lmpresa"))         instituto = instituto.replaceAll("lmpresa", ""); // Alguien en una revista puso impresa con l en vez I
-    if (instituto.includes("En"))              instituto = instituto.replaceAll("En", "");
-    if (instituto.includes("en"))              instituto = instituto.replaceAll("en", "");
-    if (instituto.includes("línea"))           instituto = instituto.replaceAll("línea", "");
-    if (instituto.includes("linea"))           instituto = instituto.replaceAll("linea", "");
-    if (instituto.includes("Ver publicación")) instituto = instituto.replaceAll("Ver publicación", "");
-    instituto = instituto.replace(/(?:\r\n|\r|\n)/g, ""); // Quita los saltos de línea
-    instituto = instituto.trimStart(); // Quita los espacios en blanco que quedan al principio
-
-
-    // Chequeo que el string que me quedo no este vacio
-    var instituoVacio = true;
-    for (var i = 0; i < instituto.length; i++) {
-      if (instituto[i] != " ") instituoVacio = false;
-    }
-
-    if (instituoVacio) instituto = "";
+    // Si el string queda vacío (o solo con espacios) se asigna ""
+    if (instituto.trim() === "")  instituto = "";
 
     // Muestro en consola el resultado
     console.log(`***********************************************************************************`);
@@ -204,79 +172,96 @@ async function extraerRevista(enlace, tiempo)
     console.log(`ISSN en linea: ${issnEnLinea}`);
     console.log(`Área: ${area}`);
     console.log(`Instituto: ${instituto}`);
-    console.log(`URL: ${enlace}`)
+    console.log(`URL: ${enlace}`);
     console.log(`***********************************************************************************`);
 
-    respuesta = `${titulo};${issnImpresa};${issnEnLinea};${area};${instituto};${enlace}` + '\n';
+    respuesta = `${titulo};${issnImpresa};${issnEnLinea};${area};${instituto};${enlace}` + '\n';    
   }
   catch (error) 
   {
     console.log("HUBO UN ERROR AL EXTRAER LOS DATOS");
     throw error;
   } 
-  finally 
-  {
-    await browser.close();
-  }
 
   return respuesta;
 }
 
 
-
 // Extraigo la info de todas las revistas
 async function extraerInfoRepositorio() 
 {
-  console.log("Comienza la extracción de datos de CAICYT");
+  console.log("Comienza la extracción de datos de NBRA");
 
-  try
+  try 
   {
-    const enlaces = await buscarEnlacesARevistas(60000);
+    let tiempoEmpieza = Date.now();
+
+    const enlaces = await buscarEnlacesARevistas();
     console.log(`CANTIDAD DE REVISTAS ${enlaces.length}`);
 
-    var info = "Título;ISSN impresa;ISSN en linea;Área;Instituto;URL" + "\n"; // No usar las tildes inclinadas (` `) acá porque al ser la línea cabecera genera error al crear el archivo csv
+    let info = "Título;ISSN impresa;ISSN en linea;Área;Instituto;URL\n"; // Cabecera
 
-    var revistaActual = 0;
-    var cantidadRevistasExtraidas = 0;
-    var cantidadRevistasNoExtraidas = 0;
+    let cantidadRevistasExtraidas = 0;
+    let cantidadRevistasNoExtraidas = 0;
 
-    for (var i = 0; i < enlaces.length; i++) // Recorro todos los enlaces y obtengo la info de cada revista una por una
-    {
-      console.log(`EXTRAYENDO DATOS DE LA REVISTA ${++revistaActual} DE ${enlaces.length}`);
-      
-      try
+    // Función auxiliar asincronica para procesar cada enlace
+    const procesarEnlace = async (enlace, indice) => {
+
+      console.log(`EXTRAYENDO DATOS DE LA REVISTA ${indice + 1} DE ${enlaces.length}`);
+
+      try 
       {
-        info += await extraerRevista(enlaces[i], 60000);
-        cantidadRevistasExtraidas++
-      }
-      catch(error) // Si falla la extracción de una revista por X motivo, se pasa a extraer la siguiente
+        const resultado = await extraerRevista(enlace);
+        cantidadRevistasExtraidas++;
+        return resultado;
+      } 
+      catch (error) 
       {
         cantidadRevistasNoExtraidas++;
-        console.log(error);
+        console.error(error);
+        return ""; // Retorna cadena vacía en caso de error
       }
-    }      
 
-    console.log("CANTIDAD DE REVISTAS EXTRAIDAS CON EXITO: " + cantidadRevistasExtraidas);
-    console.log("CANTIDAD DE REVISTAS NO EXTRAIDAS: " + cantidadRevistasNoExtraidas);
+    };
+
+
+    // Procesa en lotes de 2
+    const loteSize = 2;
+
+    for (let i = 0; i < enlaces.length; i += loteSize) 
+    {
+      const lote = enlaces.slice(i, i + loteSize); // Divido el arreglo desde el enlace en que se quedo hasta el tamaño del lote
+      
+      const resultados = await Promise.all( // Mapeamos cada enlace a su tarea (con su índice real). Espera a que termine la extracción de todos los enlaces del lote para seguir con la iteración del for
+        lote.map((enlace, index) => procesarEnlace(enlace, i + index))
+      );
+
+      info += resultados.join("");
+    }
+
+    console.log("CANTIDAD DE REVISTAS EXTRAIDAS CON EXITO:", cantidadRevistasExtraidas);
+    console.log("CANTIDAD DE REVISTAS NO EXTRAIDAS:", cantidadRevistasNoExtraidas);
 
     const csvFilePath  = path.join(__dirname, '../Repositorios/NBRA.csv');
     const jsonFilePath = path.join(__dirname, '../Repositorios/NBRA.json');
 
-    await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
-    
-    const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito
-  
+    await fs.promises.writeFile(csvFilePath, info); // Escribo el archivo CSV
+    const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON
     await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
-  
-    console.log("Termina la extracción de datos de CAICYT");
 
-  }
-  catch(error)
+    calcularTiempoActualizacion(tiempoEmpieza, 'NBRA'); // Registro el tiempo que tomo la actualización
+    
+    console.log("Termina la extracción de datos de CAICYT");
+  } 
+  catch (error) 
   {
-    throw new Error('Error durante la extracción de revistas de CAICYT: ' + error.message); // Lanza un error hacia arriba (hacia el archivo que lo llamo)
+    throw new Error('Error durante la extracción de revistas de CAICYT: ' + error.message);
+  }
+  finally
+  {
+    actualizarEstado(false, 'NBRA'); // Indico en la base de datos que este repositorio ya termino de actualizarse
   }
 
 }
-
 
 exports.extraerInfoRepositorio = extraerInfoRepositorio;

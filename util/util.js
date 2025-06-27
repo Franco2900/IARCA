@@ -36,12 +36,41 @@ function obtenerNombreNuevoArchivo(nombreOriginal)
 };
 
 
-// Calcula el tiempo promedio que le toma a un repositorio actualizarse
+// Calcula el tiempo que le tomo al repositorio actualizarse
+function calcularTiempoActualizacion(tiempoEmpieza, repositorio)
+{
+    let tiempoTermina = Date.now();
+    let segundos = Math.ceil( ( tiempoTermina - tiempoEmpieza) / 1000 );
+        
+    console.log(`Se tardo ${segundos} segundos en extraer los datos`);
+    
+    // Si existe el archivo de tiempo, se actualiza el archivo
+    if( fs.existsSync( path.join(__dirname, `Tiempos/${repositorio}Tiempo.txt`) ) ) 
+    { 
+        fs.appendFileSync(path.join(__dirname, `Tiempos/${repositorio}Tiempo.txt`), `${segundos};`, error => 
+        { 
+            if(error) console.log(error);
+        })
+    }
+    // Si no existe el archivo de tiempo, se lo crea
+    else
+    {
+        fs.writeFileSync(path.join(__dirname, `Tiempos/${repositorio}Tiempo.txt`), `${segundos};`, error => 
+        { 
+            if(error) console.log(error);
+        })
+    }
+
+    calcularTiempoPromedio(repositorio);
+}
+
+
+// Calcula el tiempo PROMEDIO que le toma a un repositorio actualizarse
 function calcularTiempoPromedio(repositorio)
 {
     let tiempoPromedio = 0;
 
-    fs.readFile(path.join(__dirname, `../util/Tiempos/${repositorio}Tiempo.txt`), (error, datos) => { 
+    fs.readFile(path.join(__dirname, `Tiempos/${repositorio}Tiempo.txt`), (error, datos) => { 
         if(error) console.log(error)
         else 
         {
@@ -61,7 +90,7 @@ function calcularTiempoPromedio(repositorio)
             tiempoPromedio = Math.ceil(tiempoPromedio / tiempos.length);
 
             // Escribo en un archivo json el resultado final
-            fs.writeFile(path.join(__dirname, `../util/Tiempos/${repositorio}TiempoPromedio.json`), `[{"TiempoPromedio":${tiempoPromedio}}]`, error => 
+            fs.writeFile(path.join(__dirname, `Tiempos/${repositorio}TiempoPromedio.json`), `[{"TiempoPromedio":${tiempoPromedio}}]`, error => 
             { 
                 if(error) console.log(error);
             })
@@ -81,6 +110,7 @@ function logURL(metodo, ruta) {
 module.exports = { 
     autentificarUsuario,
     obtenerNombreNuevoArchivo,
+    calcularTiempoActualizacion,
     calcularTiempoPromedio,
     logURL,
 };

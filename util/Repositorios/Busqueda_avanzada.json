@@ -135,6 +135,23 @@
         ]
     },
     {
+        "folio_u": 249,
+        "tit_propio": "Acta geológica lilloana",
+        "nombre_edi": "Fundación Miguel Lillo",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "99",
+        "nombre_largo": "Argentina",
+        "issn_e": "1852-6217",
+        "issn_l": "0567-7513",
+        "issn_imp": "0567-7513",
+        "subtemas": [
+            {
+                "nom_subtema": "Geología"
+            }
+        ]
+    },
+    {
         "folio_u": 325,
         "tit_propio": "Acta zoológica lilloana",
         "nombre_edi": "Fundación Miguel Lillo, Dirección de Zoología",
@@ -889,23 +906,6 @@
         ]
     },
     {
-        "folio_u": 1581,
-        "tit_propio": "Argumentos",
-        "nombre_edi": "Universidad de Buenos Aires, Facultad de Ciencias Sociales, Instituto de Investigaciones Gino Germani",
-        "es_enlinea": 1,
-        "catalogada": "1",
-        "id_catalogo": "609",
-        "nombre_largo": "Argentina",
-        "issn_e": "1666-8979",
-        "issn_l": "1666-8979",
-        "issn_imp": null,
-        "subtemas": [
-            {
-                "nom_subtema": "Sociología"
-            }
-        ]
-    },
-    {
         "folio_u": 25393,
         "tit_propio": "Argumentos",
         "nombre_edi": "Centro de perfeccionamiento Ricardo Nuñez",
@@ -919,6 +919,23 @@
         "subtemas": [
             {
                 "nom_subtema": "Derecho y jurisprudencia"
+            }
+        ]
+    },
+    {
+        "folio_u": 1581,
+        "tit_propio": "Argumentos",
+        "nombre_edi": "Universidad de Buenos Aires, Facultad de Ciencias Sociales, Instituto de Investigaciones Gino Germani",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "609",
+        "nombre_largo": "Argentina",
+        "issn_e": "1666-8979",
+        "issn_l": "1666-8979",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Sociología"
             }
         ]
     },
@@ -1149,6 +1166,38 @@
             },
             {
                 "nom_subtema": "Multidisciplinarias"
+            }
+        ]
+    },
+    {
+        "folio_u": 21975,
+        "tit_propio": "Aura",
+        "nombre_edi": "Universidad Nacional del Centro de la Provincia de Buenos Aires. Facultad de Arte. Departamento de Historia y Teoría del Arte.",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "8970",
+        "nombre_largo": "Argentina",
+        "issn_e": "2347-0135",
+        "issn_l": "2347-0135",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Cine"
+            },
+            {
+                "nom_subtema": "Cultura"
+            },
+            {
+                "nom_subtema": "Filosofía"
+            },
+            {
+                "nom_subtema": "Historia del arte"
+            },
+            {
+                "nom_subtema": "Música"
+            },
+            {
+                "nom_subtema": "Teatro"
             }
         ]
     },
@@ -3419,6 +3468,29 @@
             },
             {
                 "nom_subtema": "Sociología"
+            }
+        ]
+    },
+    {
+        "folio_u": 28055,
+        "tit_propio": "EducaMuseo",
+        "nombre_edi": "Centro de Investigaciones y Estudios sobre Cultura y Sociedad;  Consejo Nacional de Investigaciones Científicas y Técnicas; Universidad Nacional de Córdoba",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "11741",
+        "nombre_largo": "Argentina",
+        "issn_e": "2953-4283",
+        "issn_l": "2953-4283",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Educación"
+            },
+            {
+                "nom_subtema": "Sociología"
+            },
+            {
+                "nom_subtema": "Estudios de género"
             }
         ]
     },
@@ -5835,6 +5907,23 @@
         ]
     },
     {
+        "folio_u": 28231,
+        "tit_propio": "Nota al margen",
+        "nombre_edi": "Escuela de Letras, Facultad de Filosofía y Humanidades, Universidad Nacional de Córdoba",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "11755",
+        "nombre_largo": "Argentina",
+        "issn_e": "3008-7015",
+        "issn_l": "3008-7015",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Literatura"
+            }
+        ]
+    },
+    {
         "folio_u": 27414,
         "tit_propio": "Notas sobre mamíferos sudamericanos",
         "nombre_edi": "Sociedad Argentina para el Estudio de los Mamíferos (SAREM)",
@@ -6734,6 +6823,29 @@
         ]
     },
     {
+        "folio_u": 26018,
+        "tit_propio": "Proyecciones.",
+        "nombre_edi": "Universidad Nacional de La Plata, Facultad de Ciencias Económicas",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "10750",
+        "nombre_largo": "Argentina",
+        "issn_e": "2618-5474",
+        "issn_l": "1850-6542",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Ciencias sociales y humanidades"
+            },
+            {
+                "nom_subtema": "Contabilidad"
+            },
+            {
+                "nom_subtema": "Finanzas"
+            }
+        ]
+    },
+    {
         "folio_u": 27666,
         "tit_propio": "Proyecciones.",
         "nombre_edi": "Facultad Regional Buenos Aires, Universidad Tecnológica Nacional",
@@ -6762,29 +6874,6 @@
             },
             {
                 "nom_subtema": "Ingeniería química"
-            }
-        ]
-    },
-    {
-        "folio_u": 26018,
-        "tit_propio": "Proyecciones.",
-        "nombre_edi": "Universidad Nacional de La Plata, Facultad de Ciencias Económicas",
-        "es_enlinea": 1,
-        "catalogada": "1",
-        "id_catalogo": "10750",
-        "nombre_largo": "Argentina",
-        "issn_e": "2618-5474",
-        "issn_l": "1850-6542",
-        "issn_imp": null,
-        "subtemas": [
-            {
-                "nom_subtema": "Ciencias sociales y humanidades"
-            },
-            {
-                "nom_subtema": "Contabilidad"
-            },
-            {
-                "nom_subtema": "Finanzas"
             }
         ]
     },
@@ -7677,6 +7766,32 @@
         "subtemas": [
             {
                 "nom_subtema": "Medicina"
+            }
+        ]
+    },
+    {
+        "folio_u": 20390,
+        "tit_propio": "Revista argentina de producción animal",
+        "nombre_edi": "Asociación Argentina de Producción Animal",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "8034",
+        "nombre_largo": "Argentina",
+        "issn_e": "2314-324X",
+        "issn_l": "0326-0550",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Agronomía"
+            },
+            {
+                "nom_subtema": "Ganadería"
+            },
+            {
+                "nom_subtema": "Veterinaria"
+            },
+            {
+                "nom_subtema": "Zootecnia"
             }
         ]
     },
@@ -8789,23 +8904,6 @@
         ]
     },
     {
-        "folio_u": 25438,
-        "tit_propio": "Revista de la Facultad de Odontología.",
-        "nombre_edi": "Universidad Nacional de Córdoba",
-        "es_enlinea": 1,
-        "catalogada": "1",
-        "id_catalogo": "10561",
-        "nombre_largo": "Argentina",
-        "issn_e": "2545-7594",
-        "issn_l": "0325-1071",
-        "issn_imp": null,
-        "subtemas": [
-            {
-                "nom_subtema": "Odontología"
-            }
-        ]
-    },
-    {
         "folio_u": 27153,
         "tit_propio": "Revista de la Facultad de Odontología.",
         "nombre_edi": "Universidad Nacional del Nordeste, Facultad de Odontología (FOUNE)",
@@ -8815,6 +8913,23 @@
         "nombre_largo": "Argentina",
         "issn_e": "2683-7986",
         "issn_l": "1668-7280",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Odontología"
+            }
+        ]
+    },
+    {
+        "folio_u": 25438,
+        "tit_propio": "Revista de la Facultad de Odontología.",
+        "nombre_edi": "Universidad Nacional de Córdoba",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "10561",
+        "nombre_largo": "Argentina",
+        "issn_e": "2545-7594",
+        "issn_l": "0325-1071",
         "issn_imp": null,
         "subtemas": [
             {
@@ -8890,6 +9005,26 @@
             },
             {
                 "nom_subtema": "Ginecologia y obstetricia"
+            }
+        ]
+    },
+    {
+        "folio_u": 14850,
+        "tit_propio": "Revista de la Sociedad Entomológica Argentina",
+        "nombre_edi": "Sociedad Entomológica Argentina",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "5379",
+        "nombre_largo": "Argentina",
+        "issn_e": "1851-7471",
+        "issn_l": "0373-5680",
+        "issn_imp": "0373-5680",
+        "subtemas": [
+            {
+                "nom_subtema": "Biología"
+            },
+            {
+                "nom_subtema": "Zoología"
             }
         ]
     },
@@ -9425,6 +9560,38 @@
             },
             {
                 "nom_subtema": "Derechos humanos"
+            }
+        ]
+    },
+    {
+        "folio_u": 28963,
+        "tit_propio": "Revista diversidad de las culturas.",
+        "nombre_edi": "Universidad Nacional de Jujuy; Universidad Federal de Goiás",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "11737",
+        "nombre_largo": "Argentina",
+        "issn_e": "2718-8310",
+        "issn_l": "2718-8310",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Arte"
+            },
+            {
+                "nom_subtema": "Ciencias sociales y humanidades"
+            },
+            {
+                "nom_subtema": "Fotografía"
+            },
+            {
+                "nom_subtema": "Literatura"
+            },
+            {
+                "nom_subtema": "Humanidades"
+            },
+            {
+                "nom_subtema": "Poesía"
             }
         ]
     },
@@ -11381,6 +11548,23 @@
         ]
     },
     {
+        "folio_u": 22952,
+        "tit_propio": "Traslaciones",
+        "nombre_edi": "Universidad Nacional de Cuyo; Facultad de Educación Elemental y Especial; Subsede Cátedra UNESCO para la Lectura y la Escritura en América Latina; Instituto de Lectura y Escritura; Instituto de Lectura y Escritura",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "9559",
+        "nombre_largo": "Argentina",
+        "issn_e": "2362-6194",
+        "issn_l": "2362-6194",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Lingüística"
+            }
+        ]
+    },
+    {
         "folio_u": 24824,
         "tit_propio": "Trayectorias Universitarias",
         "nombre_edi": "Universidad Nacional de La Plata",
@@ -11500,6 +11684,26 @@
         "subtemas": [
             {
                 "nom_subtema": "Administración"
+            }
+        ]
+    },
+    {
+        "folio_u": 28023,
+        "tit_propio": "Vivienda y ciudad",
+        "nombre_edi": "Instituto de Investigación de Vivienda y Hábitat, Facultad de Arquitectura, Urbanismo y Diseño, Universidad Nacional de Córdoba, Argentina",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "11715",
+        "nombre_largo": "Argentina",
+        "issn_e": "2422-670X",
+        "issn_l": "2422-670X",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Arquitectura"
+            },
+            {
+                "nom_subtema": "Urbanismo"
             }
         ]
     },
