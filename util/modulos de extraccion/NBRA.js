@@ -197,7 +197,8 @@ async function extraerInfoRepositorio()
     let tiempoEmpieza = Date.now();
 
     const enlaces = await buscarEnlacesARevistas();
-    console.log(`CANTIDAD DE REVISTAS ${enlaces.length}`);
+    const cantidadRevistasParaExtraer = enlaces.length;
+    console.log(`CANTIDAD DE REVISTAS PARA EXTRAER: ${cantidadRevistasParaExtraer}`);
 
     let info = "Título;ISSN impresa;ISSN en linea;Área;Instituto;URL\n"; // Cabecera
 
@@ -205,9 +206,9 @@ async function extraerInfoRepositorio()
     let cantidadRevistasNoExtraidas = 0;
 
     // Función auxiliar asincronica para procesar cada enlace
-    const procesarEnlace = async (enlace, indice) => {
-
-      console.log(`EXTRAYENDO DATOS DE LA REVISTA ${indice + 1} DE ${enlaces.length}`);
+    async function procesarEnlace(enlace, indice, cantidadRevistasParaExtraer) 
+    {
+      console.log(`EXTRAYENDO DATOS DE LA REVISTA ${indice + 1} DE ${cantidadRevistasParaExtraer}`);
 
       try 
       {
@@ -224,19 +225,18 @@ async function extraerInfoRepositorio()
 
     };
 
+    
+    const loteSize = 2; // Procesa en lotes de 2
 
-    // Procesa en lotes de 2
-    const loteSize = 2;
-
-    for (let i = 0; i < enlaces.length; i += loteSize) 
+    for (let i = 0; i < cantidadRevistasParaExtraer; i += loteSize) 
     {
       const lote = enlaces.slice(i, i + loteSize); // Divido el arreglo desde el enlace en que se quedo hasta el tamaño del lote
       
-      const resultados = await Promise.all( // Mapeamos cada enlace a su tarea (con su índice real). Espera a que termine la extracción de todos los enlaces del lote para seguir con la iteración del for
-        lote.map((enlace, index) => procesarEnlace(enlace, i + index))
+      const resultadosDelLote = await Promise.all( // Mapeamos cada enlace a su tarea (con su índice real). Espera a que termine la extracción de todos los enlaces del lote para seguir con la iteración del for
+        lote.map((enlace, index) => procesarEnlace(enlace, i + index, cantidadRevistasParaExtraer))
       );
 
-      info += resultados.join("");
+      info += resultadosDelLote.filter(resultado => resultado && resultado.trim() !== "").join("");
     }
 
     console.log("CANTIDAD DE REVISTAS EXTRAIDAS CON EXITO:", cantidadRevistasExtraidas);
@@ -251,11 +251,11 @@ async function extraerInfoRepositorio()
 
     calcularTiempoActualizacion(tiempoEmpieza, 'NBRA'); // Registro el tiempo que tomo la actualización
     
-    console.log("Termina la extracción de datos de CAICYT");
+    console.log("Termina la extracción de datos de NBRA");
   } 
   catch (error) 
   {
-    throw new Error('Error durante la extracción de revistas de CAICYT: ' + error.message);
+    throw new Error('Error durante la extracción de revistas de NBRA: ' + error.message);
   }
   finally
   {

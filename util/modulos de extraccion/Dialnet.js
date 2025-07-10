@@ -1,14 +1,17 @@
+// Módulos
+const fs        = require("fs"); // Módulo para leer y escribir archivos
+const puppeteer = require("puppeteer"); // Módulo para web scrapping
+const jsdom     = require("jsdom"); // Módulo para filtrar la información extraida con web scrapping
+
 // Variables de entorno
 require('dotenv').config(); // Carga las variables del archivo .env en process.envs
-const google = process.env.GOOGLE_PATH;
 
-// Módulos
-const fs = require("fs"); // Módulo para leer y escribir archivos
-const puppeteer = require("puppeteer"); // Módulo para web scrapping
-const jsdom = require("jsdom"); // Módulo para filtrar la información extraida con web scrapping
+let google = process.env.GOOGLE_PATH;
+if ( !path.isAbsolute(google) ) google = path.join(__dirname, google); // Si la ruta de google no es absoluta, entonces es una ruta relativa y le añado lo que le falta (Linux usa una ruta absoluta mientras que Windows usa una ruta relativa)
 
 // Busco cuantas páginas devuelve la consulta a Latindex (cada página tiene entre 1 y 20 revistas)
-async function generarUrls() {
+async function generarUrls() 
+{
   const alfabeto =["A", "B", "C","D", "E", "F","G", "H", "I","J", "K", "L","M", "N", "O","P", "Q", "R","S", "T", "U", "V", "W", "X", "Y", "Z", "OTROS"];
   //const alfabeto =["A"];  
   const urls = [];
@@ -16,7 +19,7 @@ async function generarUrls() {
   try {
     const browser = await puppeteer.launch({ 
       headless: "new",
-      executablePath: path.join(__dirname, google),
+      executablePath: google,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
     const page = await browser.newPage();

@@ -1,13 +1,15 @@
-// Variables de entorno
-require('dotenv').config(); // Carga las variables del archivo .env en process.envs
-const google = process.env.GOOGLE_PATH;
-
 // Módulos
 const fs         = require("fs");        // Módulo para leer y escribir archivos
 const puppeteer  = require("puppeteer"); // Módulo para web scrapping
 const jsdom      = require("jsdom");     // Módulo para filtrar la información extraida con web scrapping
 const path       = require('path');      // Módulo para trabajar con rutas
 const csvtojson  = require('csvtojson'); // Módulo para pasar texto csv a json
+
+// Variables de entorno
+require('dotenv').config(); // Carga las variables del archivo .env en process.envs
+
+let google = process.env.GOOGLE_PATH;
+if ( !path.isAbsolute(google) ) google = path.join(__dirname, google); // Si la ruta de google no es absoluta, entonces es una ruta relativa y le añado lo que le falta (Linux usa una ruta absoluta mientras que Windows usa una ruta relativa)
 
 // Metodos importados
 const { calcularTiempoActualizacion } = require('../util.js');
@@ -22,7 +24,7 @@ async function obtenerUrls()
   {
     const browser  = await puppeteer.launch({ // Inicio puppeter
       headless: 'new',
-      executablePath: path.join(__dirname, google),
+      executablePath: google,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     }); 
     const page = await browser.newPage();
@@ -63,7 +65,7 @@ async function extraerInfoRevista(urls)
 {
   const browser  = await puppeteer.launch({ // Inicio puppeter
     headless: 'new',
-      executablePath: path.join(__dirname, google),
+      executablePath: google,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
   }); 
   const registros = [];

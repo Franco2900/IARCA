@@ -679,6 +679,23 @@
         ]
     },
     {
+        "folio_u": 29673,
+        "tit_propio": "Anuario del Centro de Estudios Históricos \"Profesor Carlos S. A. Segreti\".",
+        "nombre_edi": "Universidad Nacional de Córdoba",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "11759",
+        "nombre_largo": "Argentina",
+        "issn_e": "2683-9164",
+        "issn_l": "1666-6836",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Historia"
+            }
+        ]
+    },
+    {
         "folio_u": 20738,
         "tit_propio": "Anuario del Instituto de Historia Argentina",
         "nombre_edi": "Consejo Nacional de Investigaciones Científicas y Técnicas. Instituto de Investigaciones en Humanidades y Ciencias Sociales - Universidad Nacional de La Plata. Centro de Historia Argentina y Americana",
@@ -6823,29 +6840,6 @@
         ]
     },
     {
-        "folio_u": 26018,
-        "tit_propio": "Proyecciones.",
-        "nombre_edi": "Universidad Nacional de La Plata, Facultad de Ciencias Económicas",
-        "es_enlinea": 1,
-        "catalogada": "1",
-        "id_catalogo": "10750",
-        "nombre_largo": "Argentina",
-        "issn_e": "2618-5474",
-        "issn_l": "1850-6542",
-        "issn_imp": null,
-        "subtemas": [
-            {
-                "nom_subtema": "Ciencias sociales y humanidades"
-            },
-            {
-                "nom_subtema": "Contabilidad"
-            },
-            {
-                "nom_subtema": "Finanzas"
-            }
-        ]
-    },
-    {
         "folio_u": 27666,
         "tit_propio": "Proyecciones.",
         "nombre_edi": "Facultad Regional Buenos Aires, Universidad Tecnológica Nacional",
@@ -6874,6 +6868,29 @@
             },
             {
                 "nom_subtema": "Ingeniería química"
+            }
+        ]
+    },
+    {
+        "folio_u": 26018,
+        "tit_propio": "Proyecciones.",
+        "nombre_edi": "Universidad Nacional de La Plata, Facultad de Ciencias Económicas",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "10750",
+        "nombre_largo": "Argentina",
+        "issn_e": "2618-5474",
+        "issn_l": "1850-6542",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Ciencias sociales y humanidades"
+            },
+            {
+                "nom_subtema": "Contabilidad"
+            },
+            {
+                "nom_subtema": "Finanzas"
             }
         ]
     },
@@ -8904,23 +8921,6 @@
         ]
     },
     {
-        "folio_u": 27153,
-        "tit_propio": "Revista de la Facultad de Odontología.",
-        "nombre_edi": "Universidad Nacional del Nordeste, Facultad de Odontología (FOUNE)",
-        "es_enlinea": 1,
-        "catalogada": "1",
-        "id_catalogo": "11007",
-        "nombre_largo": "Argentina",
-        "issn_e": "2683-7986",
-        "issn_l": "1668-7280",
-        "issn_imp": null,
-        "subtemas": [
-            {
-                "nom_subtema": "Odontología"
-            }
-        ]
-    },
-    {
         "folio_u": 25438,
         "tit_propio": "Revista de la Facultad de Odontología.",
         "nombre_edi": "Universidad Nacional de Córdoba",
@@ -8930,6 +8930,23 @@
         "nombre_largo": "Argentina",
         "issn_e": "2545-7594",
         "issn_l": "0325-1071",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Odontología"
+            }
+        ]
+    },
+    {
+        "folio_u": 27153,
+        "tit_propio": "Revista de la Facultad de Odontología.",
+        "nombre_edi": "Universidad Nacional del Nordeste, Facultad de Odontología (FOUNE)",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "11007",
+        "nombre_largo": "Argentina",
+        "issn_e": "2683-7986",
+        "issn_l": "1668-7280",
         "issn_imp": null,
         "subtemas": [
             {
