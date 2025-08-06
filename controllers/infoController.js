@@ -1,5 +1,5 @@
 // Metodos importados de 'util.js'
-const { logURL } = require('../util/util.js');
+const { logURL } = require('./utilController');
 
 async function getInfo(req, res)
 {

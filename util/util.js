@@ -2,39 +2,8 @@
 const path = require( 'path' ); // Módulo para trabajar con rutas de archivos y directorios
 const fs   = require('fs');     // Módulo para escribir, leer, borrar y renombrar archivos
 
-
-// ================== VARIABLES DE ENTORNO ==================
-require('dotenv').config(); // Carga las variables del archivo .env en process.env
-const puerto  = process.env.PUERTO;
-const dominio = process.env.DOMINIO;
-
-
 // ================== FUNCIONES ÚTILES ==================
 // Estas son funciones que son utilizadas por múltiples archivos.
-
-
-// Redirige a la página de login si el usuario no está logueado 
-function autentificarUsuario(req, res, next) 
-{
-    if (req.session && req.session.nombre) return next();
-    else                                   res.redirect('/login');   
-}
-
-
-// Genera un nombre con la fecha y hora actuales
-function obtenerNombreNuevoArchivo(nombreOriginal)
-{
-    const fecha = new Date();
-    const año = fecha.getFullYear();
-    const mes = ('0' + (fecha.getMonth() + 1)).slice(-2);
-    const dia = ('0' + fecha.getDate()).slice(-2);
-    const horas = ('0' + fecha.getHours()).slice(-2);
-    const minutos = ('0' + fecha.getMinutes()).slice(-2);
-    const segundos = ('0' + fecha.getSeconds()).slice(-2);
-
-    return `${año}${mes}${dia}_${horas}${minutos}${segundos}_${nombreOriginal}`; 
-};
-
 
 // Calcula el tiempo que le tomo al repositorio actualizarse
 function calcularTiempoActualizacion(tiempoEmpieza, repositorio)
@@ -100,17 +69,7 @@ function calcularTiempoPromedio(repositorio)
 }
 
 
-// Indica la URL en la que se encuentra el usuario web actualmente
-function logURL(metodo, ruta) {
-    console.log('***********************************************************');
-    console.log(`URL actual: ${metodo} ${dominio}:${puerto}/iarca${ruta} \n`);
-}
-
-
 module.exports = { 
-    autentificarUsuario,
-    obtenerNombreNuevoArchivo,
     calcularTiempoActualizacion,
-    calcularTiempoPromedio,
-    logURL,
+    calcularTiempoPromedio
 };

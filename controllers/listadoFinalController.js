@@ -3,8 +3,10 @@ const path = require( 'path' ); // Módulo para trabajar con rutas de archivos y
 const fs   = require('fs');     // Módulo para escribir, leer, borrar y renombrar archivos
 
 // Metodos importados de 'util.js'
-const { calcularTiempoPromedio, logURL } = require('../util/util.js');
+const { logURL } = require('./utilController');
 const { crearListadoDeRevistas, armarTablaDeRevistas } = require('./listadoFinalControllerUtils.js');
+
+const { calcularTiempoPromedio } = require('../util/util.js');
 
 async function getListadoFinal(req, res)
 {

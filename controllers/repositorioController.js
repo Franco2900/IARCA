@@ -5,7 +5,7 @@ const xlsx = require('xlsx');       // Módulo para trabajar con archivos excel
 const csvtojson  = require('csvtojson'); // Módulo para pasar texto csv a json
 
 // Metodos importados
-const { logURL } = require('../util/util.js');
+const { logURL } = require('./utilController');
 const { crearListadoDeRevistas, armarTablaDeRevistas } = require('./repositorioControllerUtils.js');
 const { estadoActual, actualizarEstado } = require('../models/estadoActualizacionModel.js');
 

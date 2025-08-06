@@ -1,9 +1,12 @@
 // URL base: http://DOMINIO/listadoFinal/
 
-// Modulos
+// ================== MÓDULOS Y DEPENDENCIAS ==================
 const router = require('express').Router(); // Permite definir rutas
 
-// Defino las rutas de navegación del usuario
+// ================== MIDDLEWARES A NIVEL DE ROUTER ==================
+//const { autentificarUsuario } = require('./utilRoutes.js'); // Este middleware solo afecta a rutas especificas
+
+// ================== RUTAS DE NAVEGACIÓN DEL USUARIO ==================
 router.get ( '/',                       require('../controllers/listadoFinalController').getListadoFinal );
 router.get ( '/descargarCSV',           require('../controllers/listadoFinalController').getDescargarCSV);
 router.get ( '/descargarJSON',          require('../controllers/listadoFinalController').getDescargarJSON );

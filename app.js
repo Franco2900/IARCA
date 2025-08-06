@@ -40,9 +40,9 @@ app.use(session({
 }));
 
 
-// Asigna la información del usuario a res.locals para que esté disponible en todas las vistas.
+// Variables que se usan en la vista
 app.use((req, res, next) => {
-    res.locals.usuario = req.session;
+    res.locals.usuario = req.session; // Asigna la información del usuario a res.locals para que esté disponible en todas las vistas.
     next(); 
 });
 

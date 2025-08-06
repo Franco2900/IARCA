@@ -2,10 +2,9 @@
 const path = require('path'); // Módulo para trabajar con rutas de archivos y directorios
 const fs   = require('fs');   // Módulo para escribir, leer, borrar y renombrar archivos
 
-const { obtenerNombreNuevoArchivo, logURL } = require('../util/util.js');
+const { logURL } = require('./utilController');
+const { obtenerNombreNuevoArchivo } = require('./perfilControllerUtils.js');
 const { cambiarImagen, existeUsuario, cambiarNombre, cambiarContrasenia } = require('../models/usuarioModel.js');
-
-
 
 async function getPerfil(req, res)
 {
@@ -69,8 +68,8 @@ async function postCambiarNombre(req, res)
     logURL(`POST`, `/perfil/cambiarNombre`);
 
     if (req.body.nuevoNombre) console.log('Nuevo nombre recibido:', req.body.nuevoNombre);
-    else                      res.status(400).send('No se recibió ningún nombre.');
-
+    else                      res.status(400).json({error: 'No se recibió ningún nombre.'});
+        
     const viejoNombre = req.session.nombre;
     const nuevoNombre = req.body.nuevoNombre;
 
@@ -81,6 +80,7 @@ async function postCambiarNombre(req, res)
         {
             await cambiarNombre(nuevoNombre, viejoNombre);
             req.session.nombre = nuevoNombre; // Actualizo los datos de sesion del usuario
+            console.log(`Cambiando el viejo nombre ${viejoNombre} por el nuevo nombre ${nuevoNombre}`)
 
             return res.status(200).json({ message: 'Nombre cambiado exitosamente.' }); // Envío respuesta de éxito al cliente
         }

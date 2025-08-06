@@ -5,3 +5,12 @@
     justify-content: left;
     border: 1px solid black;
 }
+
+.bi-pencil-square {
+  cursor: pointer;
+}
+
+.bi-pencil-square:hover {
+  color: #f70808;     /* o el color que prefieras */
+  transition: color .2s;
+}

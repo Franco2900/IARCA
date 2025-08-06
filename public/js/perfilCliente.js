@@ -59,7 +59,7 @@ function cambiarNombre()
         .then(response => response.json())
         .then(data => {
             console.log('Éxito:', data);
-            window.location.reload();
+            window.location.href = `${dominio}/iarca/perfil/`;
         })
         .catch(error => {
             console.error('Error:', error);

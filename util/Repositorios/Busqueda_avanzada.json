@@ -1827,6 +1827,23 @@
         ]
     },
     {
+        "folio_u": 3816,
+        "tit_propio": "CELEHIS",
+        "nombre_edi": "Universidad Nacional de Mar del Plata; Facultad de Humanidades; Departamento de Letras; Centro de Letras Hispanoamericanas",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "1184",
+        "nombre_largo": "Argentina",
+        "issn_e": "2313-9463",
+        "issn_l": "0328-5766",
+        "issn_imp": "0328-5766",
+        "subtemas": [
+            {
+                "nom_subtema": "Literatura"
+            }
+        ]
+    },
+    {
         "folio_u": 3919,
         "tit_propio": "Ciclos en la historia, la economía y la sociedad",
         "nombre_edi": "Fundación de Investigaciones Históricas, Económicas y Sociales",
@@ -3570,6 +3587,26 @@
         ]
     },
     {
+        "folio_u": 28837,
+        "tit_propio": "El Faro.",
+        "nombre_edi": "Universidad de Flores",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "11778",
+        "nombre_largo": "Argentina",
+        "issn_e": "3008-8437",
+        "issn_l": "3008-8437",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Educación"
+            },
+            {
+                "nom_subtema": "Educación superior"
+            }
+        ]
+    },
+    {
         "folio_u": 23948,
         "tit_propio": "El hilo de la fábula",
         "nombre_edi": "Ediciones UNL",
@@ -4059,6 +4096,23 @@
             },
             {
                 "nom_subtema": "Estudios latinoamericanos"
+            }
+        ]
+    },
+    {
+        "folio_u": 26721,
+        "tit_propio": "Estudios curatoriales.",
+        "nombre_edi": "Universidad Nacional de Tres de Febrero",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "11769",
+        "nombre_largo": "Argentina",
+        "issn_e": "2314-2022",
+        "issn_l": "2314-2022",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Arte"
             }
         ]
     },
@@ -5642,6 +5696,38 @@
         "subtemas": [
             {
                 "nom_subtema": "Historia"
+            }
+        ]
+    },
+    {
+        "folio_u": 27583,
+        "tit_propio": "Malvinas en Cuestión.",
+        "nombre_edi": "Universidad Nacional de La Plata / Universidad Nacional de Tierra del Fuego, Antártida e Islas del Atlántico Sur",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "11785",
+        "nombre_largo": "Argentina",
+        "issn_e": "2953-3430",
+        "issn_l": "2953-3430",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Ciencias sociales y humanidades"
+            },
+            {
+                "nom_subtema": "Derecho internacional"
+            },
+            {
+                "nom_subtema": "Historia"
+            },
+            {
+                "nom_subtema": "Desarrollo económico"
+            },
+            {
+                "nom_subtema": "Defensa y seguridad"
+            },
+            {
+                "nom_subtema": "Derechos humanos"
             }
         ]
     },
@@ -7729,6 +7815,23 @@
             },
             {
                 "nom_subtema": "Sociología"
+            }
+        ]
+    },
+    {
+        "folio_u": 13164,
+        "tit_propio": "Revista argentina de historiografía lingüística",
+        "nombre_edi": "Guillermo Toscano y García",
+        "es_enlinea": 1,
+        "catalogada": "1",
+        "id_catalogo": "4617",
+        "nombre_largo": "Argentina",
+        "issn_e": "1852-1495",
+        "issn_l": "1852-1495",
+        "issn_imp": null,
+        "subtemas": [
+            {
+                "nom_subtema": "Lingüística"
             }
         ]
     },

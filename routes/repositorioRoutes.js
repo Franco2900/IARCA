@@ -1,13 +1,18 @@
-// URL base: http://DOMINIO/:repositorio/
-// El : significa que es una ruta dinamica
+// URL base: http://DOMINIO/repositorio/
 
-// Modulos
+
+// ================== MÓDULOS Y DEPENDENCIAS ==================
 const router = require('express').Router(); // Permite definir rutas
 
 const multer = require('multer');                           // Modulo para manejar la subidad de archivos
 const upload = multer({ storage: multer.memoryStorage() }); // Creo una instancia de multer
 
-// Rutas URL de: /repositorio
+// ================== MIDDLEWARES A NIVEL DE ROUTER ==================
+//const { autentificarUsuario } = require('./utilRoutes.js'); // Este middleware solo afecta a rutas especificas
+
+// ================== RUTAS DE NAVEGACIÓN DEL USUARIO ==================
+// Rutas URL de: /:repositorio (el : significa que es una ruta dinamica, es decir que la ruta va a ser reemplazada por una variable, ej: /repositorio/LATAM)
+
 // router.get('/'); No se usa
 router.get ( '/:repositorio',                        require('../controllers/repositorioController').getRepositorio ); 
 router.get ( '/:repositorio/descargarCSV',           require('../controllers/repositorioController').getDescargarCSV );
