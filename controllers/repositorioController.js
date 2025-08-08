@@ -11,7 +11,7 @@ const { estadoActual, actualizarEstado } = require('../models/estadoActualizacio
 
 async function getRepositorio(req, res)
 {
-    //console.log(req.params); // Los datos de una ruta dinamica se almacenan aquí
+    //console.log(req.params); // El req.params se usa para capturar los segmentos dinámicos de la URL, los definidos con dos puntos (:)
     let repositorio = req.params.repositorio;
 
     logURL(`GET`, `/repositorio/${repositorio}`);
@@ -397,6 +397,89 @@ async function postExcelDialnet(req, res)
 }
 
 
+async function postBuscarRevistaPorNombre(req, res)
+{
+    try
+    {
+        let repositorio = req.params.repositorio;   // Repositorio actual
+        logURL(`POST`, `/repositorio/${repositorio}/postBuscarRevistaPorNombre`); // Log de consola
+
+        const tituloRevista = req.body.tituloRevista.trim().toLowerCase();       // Revista a buscar
+        const archivoJSON = require(`../util/Repositorios/${repositorio}.json`); // Archivo JSON en el que buscar
+
+        // Busqueda de coincidencias parciales teniendo en cuenta la posición de los carácteres
+        const resultadosFiltro = archivoJSON.filter( item => item.Título.toLowerCase().startsWith(tituloRevista) );
+
+        let listadoRevistas = crearListadoDeRevistas(resultadosFiltro); // Parseo el arreglo JSON a un arreglo de objetos
+        tabla = armarTablaDeRevistas( listadoRevistas, 1 ); // Armo la tabla HTML
+        
+        res.send(tabla); // Envio la tabla HTMLS
+    }
+    catch(error)
+    {
+        console.log("ERROR EN EL SERVIDOR: ");
+        console.log(error);
+
+        res.status(500).json( { mensaje: error.message });
+    }
+}
+
+
+async function postBuscarRevistaPorISSNimpreso(req, res)
+{
+    try
+    {
+        let repositorio = req.params.repositorio;   // Repositorio actual
+        logURL(`POST`, `/repositorio/${repositorio}/postBuscarRevistaPorISSNimpreso`); // Log de consola
+
+        const issnImpreso = req.body.issnImpreso.trim().toLowerCase();           // Revista a buscar
+        const archivoJSON = require(`../util/Repositorios/${repositorio}.json`); // Archivo JSON en el que buscar
+
+        // Busqueda de coincidencias parciales teniendo en cuenta la posición de los carácteres
+        const resultadosFiltro = archivoJSON.filter( item => item['ISSN impresa'].toLowerCase().startsWith(issnImpreso) );
+
+        let listadoRevistas = crearListadoDeRevistas(resultadosFiltro); // Parseo el arreglo JSON a un arreglo de objetos
+        tabla = armarTablaDeRevistas( listadoRevistas, 1 ); // Armo la tabla HTML
+        
+        res.send(tabla); // Envio la tabla HTMLS
+    }
+    catch(error)
+    {
+        console.log("ERROR EN EL SERVIDOR: ");
+        console.log(error);
+
+        res.status(500).json( { mensaje: error.message });
+    }
+}
+
+
+async function postBuscarRevistaPorISSNelectronico(req, res)
+{
+    try
+    {
+        let repositorio = req.params.repositorio;   // Repositorio actual
+        logURL(`POST`, `/repositorio/${repositorio}/postBuscarRevistaPorISSNelectronico`); // Log de consola
+
+        const issnElectronico = req.body.issnElectronico.trim().toLowerCase();           // Revista a buscar
+        const archivoJSON = require(`../util/Repositorios/${repositorio}.json`); // Archivo JSON en el que buscar
+
+        // Busqueda de coincidencias parciales teniendo en cuenta la posición de los carácteres
+        const resultadosFiltro = archivoJSON.filter( item => item['ISSN en linea'].toLowerCase().startsWith(issnElectronico) );
+
+        let listadoRevistas = crearListadoDeRevistas(resultadosFiltro); // Parseo el arreglo JSON a un arreglo de objetos
+        tabla = armarTablaDeRevistas( listadoRevistas, 1 ); // Armo la tabla HTML
+        
+        res.send(tabla); // Envio la tabla HTMLS
+    }
+    catch(error)
+    {
+        console.log("ERROR EN EL SERVIDOR: ");
+        console.log(error);
+
+        res.status(500).json( { mensaje: error.message });
+    }
+}
+
 module.exports = { 
     getRepositorio, 
     getDescargarCSV, 
@@ -407,5 +490,8 @@ module.exports = {
     postPrimerPagina,
     postUltimaPagina,
     postActualizarCatalogo,
+    postBuscarRevistaPorNombre,
+    postBuscarRevistaPorISSNimpreso,
+    postBuscarRevistaPorISSNelectronico,
     postExcelDialnet,
 };

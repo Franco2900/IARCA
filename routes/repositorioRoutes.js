@@ -17,12 +17,18 @@ const upload = multer({ storage: multer.memoryStorage() }); // Creo una instanci
 router.get ( '/:repositorio',                        require('../controllers/repositorioController').getRepositorio ); 
 router.get ( '/:repositorio/descargarCSV',           require('../controllers/repositorioController').getDescargarCSV );
 router.get ( '/:repositorio/descargarJSON',          require('../controllers/repositorioController').getDescargarJSON );
+
 router.post( '/:repositorio/siguientePagina',        require('../controllers/repositorioController').postSiguientePagina );
 router.post( '/:repositorio/anteriorPagina',         require('../controllers/repositorioController').postAnteriorPagina );
 router.post( '/:repositorio/buscarPaginaEspecifica', require('../controllers/repositorioController').postBuscarPaginaEspecifica );
 router.post( '/:repositorio/primerPagina',           require('../controllers/repositorioController').postPrimerPagina );
 router.post( '/:repositorio/ultimaPagina',           require('../controllers/repositorioController').postUltimaPagina );
+
 router.post( '/:repositorio/actualizarCatalogo',     require('../controllers/repositorioController').postActualizarCatalogo );
+
+router.post( '/:repositorio/buscarRevistaPorNombre',          require('../controllers/repositorioController').postBuscarRevistaPorNombre );
+router.post( '/:repositorio/buscarRevistaPorISSNimpreso',     require('../controllers/repositorioController').postBuscarRevistaPorISSNimpreso );
+router.post( '/:repositorio/buscarRevistaPorISSNelectronico', require('../controllers/repositorioController').postBuscarRevistaPorISSNelectronico );
 
 //Solo para el caso especial de Dialnet en el que no podemos hacemos webscrapping o llamado a apis
 router.post( '/Dialnet/excelDialnet', upload.single('excelDialnet'), require('../controllers/repositorioController').postExcelDialnet ); 
