@@ -24,18 +24,56 @@
 <p>Estas son todas las revistas científicas argentinas que se pudieron encontrar en <%= repositorio %></p>
 
 <!-- Botones para manejar la tabla --> 
-<p>Página <span id="paginaActual">1</span> de <span id="cantidadPaginasDeNavegacion"><%= cantidadPaginasDeNavegacion %></span></p>
+<div id="manejoTablaPaginacion">
+    <p>Página <span id="paginaActual">1</span> de <span id="cantidadPaginasDeNavegacion"><%= cantidadPaginasDeNavegacion %></span></p>
 
-<button id="botonPrimeraPagina" onclick="primerPagina('<%= repositorio %>')"> <<< </button>
-<button id="botonAnterior"      onclick="anteriorPagina('<%= repositorio %>')"> < </button>
-<input id="buscarPaginaEspecifica" type="number" placeholder="Ingrese página a buscar" onchange="buscarPaginaEspecifica('<%= repositorio %>')">
-<button id="botonSiguiente"     onclick="siguientePagina('<%= repositorio %>')"> > </button>
-<button id="botonUltimaPagina"  onclick="ultimaPagina('<%= repositorio %>')"> >>> </button>     
+    <button id="botonPrimeraPagina" onclick="primerPagina('<%= repositorio %>')"> <<< </button>
+    <button id="botonAnterior"      onclick="anteriorPagina('<%= repositorio %>')"> < </button>
+    <input id="buscarPaginaEspecifica" type="number" placeholder="Ingrese página a buscar" oninput="buscarPaginaEspecifica('<%= repositorio %>')">
+    <button id="botonSiguiente"     onclick="siguientePagina('<%= repositorio %>')"> > </button>
+    <button id="botonUltimaPagina"  onclick="ultimaPagina('<%= repositorio %>')"> >>> </button>     
+</div>
 
-<br></br>
+<br>
+
+<!-- Inputs para búsquedas con filtro -->
+<div class="row">
+
+    <div class="col-4" id="manejoTablaBusquedaPorNombre">
+        <p>Buscar revista por nombre</p>
+        <input id="buscarRevistaPorNombre" 
+               type="text" 
+               placeholder="Ingrese nombre a buscar"
+               size="30" 
+               oninput="buscarRevistaPorNombre('<%= repositorio %>')">
+    </div>
+
+    <div class="col-4" id="manejoTablaBusquedaPorISSNimpreso">
+        <p>Buscar revista por ISSN impreso</p>
+        <input id="buscarRevistaPorISSNimpreso" 
+               type="text" 
+               placeholder="EJ: 1111-1111"
+               size="10" 
+               oninput="buscarRevistaPorISSNimpreso('<%= repositorio %>')">
+    </div>
+
+    <div class="col-4" id="manejoTablaBusquedaPorISSNelectronico">
+        <p>Buscar revista por ISSN electronico</p>
+        <input id="buscarRevistaPorISSNelectronico" 
+               type="text" 
+               placeholder="EJ: 1111-1111"
+               size="10" 
+               oninput="buscarRevistaPorISSNelectronico('<%= repositorio %>')">
+    </div>
+
+</div>  
+
+<br>
 
 <!-- Tabla con las revistas del repositorio -->
-<%- tabla %>
+<div id="tablaContainer">
+    <%- tabla %>
+</div>
 
 <!-- Datos sobre el repositorio -->
 <p>Cantidad de revistas en <%= repositorio %>: <%= cantidadRevistasRepositorio %></p>

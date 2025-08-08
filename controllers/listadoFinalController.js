@@ -3,8 +3,10 @@ const path = require( 'path' ); // Módulo para trabajar con rutas de archivos y
 const fs   = require('fs');     // Módulo para escribir, leer, borrar y renombrar archivos
 
 // Metodos importados de 'util.js'
-const { calcularTiempoPromedio, logURL } = require('../util/util.js');
+const { logURL } = require('./utilController');
 const { crearListadoDeRevistas, armarTablaDeRevistas } = require('./listadoFinalControllerUtils.js');
+
+const { calcularTiempoPromedio } = require('../util/util.js');
 
 async function getListadoFinal(req, res)
 {
@@ -275,6 +277,87 @@ async function postActualizarCatalogo(req, res)
 }
 
 
+async function postBuscarRevistaPorNombre(req, res)
+{
+    try
+    {
+        logURL(`POST`, `/listadoFinal/buscarRevistaPorNombre`); // Log de consola
+
+        const tituloRevista = req.body.tituloRevista.trim().toLowerCase();       // Revista a buscar
+        const archivoJSON = require(`../util/Listado final/Listado final.json`); // Archivo JSON en el que buscar
+
+        // Busqueda de coincidencias parciales teniendo en cuenta la posición de los carácteres
+        const resultadosFiltro = archivoJSON.filter( item => item.Título.toLowerCase().startsWith(tituloRevista) );
+
+        let listadoRevistas = crearListadoDeRevistas(resultadosFiltro); // Parseo el arreglo JSON a un arreglo de objetos
+        tabla = armarTablaDeRevistas( listadoRevistas, 1 ); // Armo la tabla HTML
+        
+        res.send(tabla); // Envio la tabla HTMLS
+    }
+    catch(error)
+    {
+        console.log("ERROR EN EL SERVIDOR: ");
+        console.log(error);
+
+        res.status(500).json( { mensaje: error.message });
+    }
+}
+
+
+async function postBuscarRevistaPorISSNimpreso(req, res)
+{
+    try
+    {
+        logURL(`POST`, `/listadoFinal/buscarRevistaPorISSNimpreso`); // Log de consola
+
+        const issnImpreso = req.body.issnImpreso.trim().toLowerCase();           // Revista a buscar
+        const archivoJSON = require(`../util/Listado final/Listado final.json`); // Archivo JSON en el que buscar
+
+        // Busqueda de coincidencias parciales teniendo en cuenta la posición de los carácteres
+        const resultadosFiltro = archivoJSON.filter( item => item['ISSN impresa'].toLowerCase().startsWith(issnImpreso) );
+
+        let listadoRevistas = crearListadoDeRevistas(resultadosFiltro); // Parseo el arreglo JSON a un arreglo de objetos
+        tabla = armarTablaDeRevistas( listadoRevistas, 1 ); // Armo la tabla HTML
+        
+        res.send(tabla); // Envio la tabla HTMLS
+    }
+    catch(error)
+    {
+        console.log("ERROR EN EL SERVIDOR: ");
+        console.log(error);
+
+        res.status(500).json( { mensaje: error.message });
+    }
+}
+
+
+async function postBuscarRevistaPorISSNelectronico(req, res)
+{
+    try
+    {
+        logURL(`POST`, `/listadoFinal/buscarRevistaPorISSNelectronico`); // Log de consola
+
+        const issnElectronico = req.body.issnElectronico.trim().toLowerCase();           // Revista a buscar
+        const archivoJSON = require(`../util/Listado final/Listado final.json`); // Archivo JSON en el que buscar
+
+        // Busqueda de coincidencias parciales teniendo en cuenta la posición de los carácteres
+        const resultadosFiltro = archivoJSON.filter( item => item['ISSN en linea'].toLowerCase().startsWith(issnElectronico) );
+
+        let listadoRevistas = crearListadoDeRevistas(resultadosFiltro); // Parseo el arreglo JSON a un arreglo de objetos
+        tabla = armarTablaDeRevistas( listadoRevistas, 1 ); // Armo la tabla HTML
+        
+        res.send(tabla); // Envio la tabla HTMLS
+    }
+    catch(error)
+    {
+        console.log("ERROR EN EL SERVIDOR: ");
+        console.log(error);
+
+        res.status(500).json( { mensaje: error.message });
+    }
+}
+
+
 module.exports = { 
     getListadoFinal, 
     getDescargarCSV, 
@@ -285,4 +368,7 @@ module.exports = {
     postPrimerPagina,
     postUltimaPagina,
     postActualizarCatalogo,
+    postBuscarRevistaPorNombre,
+    postBuscarRevistaPorISSNimpreso,
+    postBuscarRevistaPorISSNelectronico,
 };

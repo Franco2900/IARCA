@@ -247,7 +247,7 @@ function actualizarCatalogo(repositorio)
     {
         console.log(data);
     
-       location.reload();
+        location.reload();
     })
     .catch(error => 
     {
@@ -264,4 +264,185 @@ function actualizarCatalogo(repositorio)
         document.getElementById("actualizarCatalogo").style.display="block"; 
     });
 
+}
+
+
+// Variables globales para guardar la tabla original
+let tablaOriginalHTML = '';
+let tablaGuardada = false;
+
+async function buscarRevistaPorNombre(repositorio)
+{
+    const tablaContainer = document.getElementById('tablaContainer');
+
+    // Recupero el texto del input
+    const tituloRevista = document.getElementById('buscarRevistaPorNombre').value.trim();
+    console.log(`Titulo Revista a buscar: ${tituloRevista}, Repositorio en el que buscar: ${repositorio}`);
+
+    // Si no hay input
+    if(!tituloRevista || tituloRevista.length === 0)          
+    {
+
+        if (tablaGuardada) 
+        {
+            tablaContainer.innerHTML = tablaOriginalHTML; // Vuelvo a mostrar la tabla original
+            tablaGuardada = false;
+        }
+
+        document.getElementById('manejoTablaPaginacion').style.visibility = ''; // Hago visible los botones de paginación
+        document.getElementById('manejoTablaBusquedaPorISSNimpreso').style.visibility = ''; // Hago visible la busqueda por ISSN impreso
+        document.getElementById('manejoTablaBusquedaPorISSNelectronico').style.visibility = ''; // Hago visible la busqueda por ISSN electronico
+
+        return; // Salgo temprano para no ejecutar el resto del código
+    }
+
+    // Si es la primera vez que se escribe algo en el input (Guarda la tabla original solo al primer carácter que escriba el usuario)
+    if (!tablaGuardada) 
+    {
+      tablaOriginalHTML = tablaContainer.innerHTML; // Guardo la tabla original
+      tablaGuardada = true;
+    }
+
+    // Si hay input
+    document.getElementById('manejoTablaPaginacion').style.visibility = 'hidden'; // Hago invisible los botones de paginación
+    document.getElementById('manejoTablaBusquedaPorISSNimpreso').style.visibility = 'hidden'; // Hago invisible la busqueda por ISSN impreso
+    document.getElementById('manejoTablaBusquedaPorISSNelectronico').style.visibility = 'hidden'; // Hago invisible la busqueda por ISSN electronico
+
+    const url = `${dominio}/iarca/repositorio/${repositorio}/buscarRevistaPorNombre`;
+    try 
+    {
+        // Hago fetch al backend
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify( { tituloRevista } ) 
+        });
+
+        if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+        
+        const tablaNuevaHTML = await response.text(); // Respuesta del servidor
+        tablaContainer.innerHTML = tablaNuevaHTML;    // Reemplazo la tabla actual por la nueva
+    } 
+    catch (error) 
+    {
+        console.error('Fetch fallido:', error);
+    }
+}
+
+
+async function buscarRevistaPorISSNimpreso(repositorio)
+{
+    const tablaContainer = document.getElementById('tablaContainer');
+
+    // Recupero el texto del input
+    const issnImpreso = document.getElementById('buscarRevistaPorISSNimpreso').value.trim();
+    console.log(`ISSN impreso de la revista a buscar: ${issnImpreso}, Repositorio en el que buscar: ${repositorio}`);
+
+    // Si no hay input
+    if(!issnImpreso || issnImpreso.length === 0)          
+    {
+
+        if (tablaGuardada) 
+        {
+            tablaContainer.innerHTML = tablaOriginalHTML; // Vuelvo a mostrar la tabla original
+            tablaGuardada = false;
+        }
+
+        document.getElementById('manejoTablaPaginacion').style.visibility = ''; // Hago visible los botones de paginación
+        document.getElementById('manejoTablaBusquedaPorNombre').style.visibility = ''; // Hago visible la busqueda por nombre
+        document.getElementById('manejoTablaBusquedaPorISSNelectronico').style.visibility = ''; // Hago visible la busqueda por ISSN electronico
+
+        return; // Salgo temprano para no ejecutar el resto del código
+    }
+
+    // Si es la primera vez que se escribe algo en el input (Guarda la tabla original solo al primer carácter que escriba el usuario)
+    if (!tablaGuardada) 
+    {
+      tablaOriginalHTML = tablaContainer.innerHTML; // Guardo la tabla original
+      tablaGuardada = true;
+    }
+
+    // Si hay input
+    document.getElementById('manejoTablaPaginacion').style.visibility = 'hidden'; // Hago invisible los botones de paginación
+    document.getElementById('manejoTablaBusquedaPorNombre').style.visibility = 'hidden'; // Hago invisible la busqueda por nombre
+    document.getElementById('manejoTablaBusquedaPorISSNelectronico').style.visibility = 'hidden'; // Hago invisible la busqueda por ISSN electronico
+
+    const url = `${dominio}/iarca/repositorio/${repositorio}/buscarRevistaPorISSNimpreso`;
+    try 
+    {
+        // Hago fetch al backend
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify( { issnImpreso } ) 
+        });
+
+        if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+        
+        const tablaNuevaHTML = await response.text(); // Respuesta del servidor
+        tablaContainer.innerHTML = tablaNuevaHTML;    // Reemplazo la tabla actual por la nueva
+    } 
+    catch (error) 
+    {
+        console.error('Fetch fallido:', error);
+    }
+}
+
+
+async function buscarRevistaPorISSNelectronico(repositorio)
+{
+    const tablaContainer = document.getElementById('tablaContainer');
+
+    // Recupero el texto del input
+    const issnElectronico = document.getElementById('buscarRevistaPorISSNelectronico').value.trim();
+    console.log(`ISSN electronico de la revista a buscar: ${issnElectronico}, Repositorio en el que buscar: ${repositorio}`);
+
+    // Si no hay input
+    if(!issnElectronico || issnElectronico.length === 0)          
+    {
+
+        if (tablaGuardada) 
+        {
+            tablaContainer.innerHTML = tablaOriginalHTML; // Vuelvo a mostrar la tabla original
+            tablaGuardada = false;
+        }
+
+        document.getElementById('manejoTablaPaginacion').style.visibility = ''; // Hago visible los botones de paginación
+        document.getElementById('manejoTablaBusquedaPorNombre').style.visibility = ''; // Hago visible la busqueda por nombre
+        document.getElementById('manejoTablaBusquedaPorISSNimpreso').style.visibility = ''; // Hago visible la busqueda por ISSN impreso
+
+        return; // Salgo temprano para no ejecutar el resto del código
+    }
+
+    // Si es la primera vez que se escribe algo en el input (Guarda la tabla original solo al primer carácter que escriba el usuario)
+    if (!tablaGuardada) 
+    {
+      tablaOriginalHTML = tablaContainer.innerHTML; // Guardo la tabla original
+      tablaGuardada = true;
+    }
+
+    // Si hay input
+    document.getElementById('manejoTablaPaginacion').style.visibility = 'hidden'; // Hago invisible los botones de paginación
+    document.getElementById('manejoTablaBusquedaPorNombre').style.visibility = 'hidden'; // Hago invisible la busqueda por nombre
+    document.getElementById('manejoTablaBusquedaPorISSNimpreso').style.visibility = 'hidden'; // Hago invisible la busqueda por ISSN impreso
+
+    const url = `${dominio}/iarca/repositorio/${repositorio}/buscarRevistaPorISSNelectronico`;
+    try 
+    {
+        // Hago fetch al backend
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify( { issnElectronico } ) 
+        });
+
+        if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+        
+        const tablaNuevaHTML = await response.text(); // Respuesta del servidor
+        tablaContainer.innerHTML = tablaNuevaHTML;    // Reemplazo la tabla actual por la nueva
+    } 
+    catch (error) 
+    {
+        console.error('Fetch fallido:', error);
+    }
 }

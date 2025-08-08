@@ -1,17 +1,27 @@
 // URL base: http://DOMINIO/listadoFinal/
 
-// Modulos
+// ================== MÓDULOS Y DEPENDENCIAS ==================
 const router = require('express').Router(); // Permite definir rutas
 
-// Defino las rutas de navegación del usuario
+// ================== MIDDLEWARES A NIVEL DE ROUTER ==================
+//const { autentificarUsuario } = require('./utilRoutes.js'); // Este middleware solo afecta a rutas especificas
+
+// ================== RUTAS DE NAVEGACIÓN DEL USUARIO ==================
 router.get ( '/',                       require('../controllers/listadoFinalController').getListadoFinal );
 router.get ( '/descargarCSV',           require('../controllers/listadoFinalController').getDescargarCSV);
 router.get ( '/descargarJSON',          require('../controllers/listadoFinalController').getDescargarJSON );
+
 router.post( '/siguientePagina',        require('../controllers/listadoFinalController').postSiguientePagina );
 router.post( '/anteriorPagina',         require('../controllers/listadoFinalController').postAnteriorPagina);
 router.post( '/buscarPaginaEspecifica', require('../controllers/listadoFinalController').postBuscarPaginaEspecifica );
 router.post( '/primerPagina',           require('../controllers/listadoFinalController').postPrimerPagina );
 router.post( '/ultimaPagina',           require('../controllers/listadoFinalController').postUltimaPagina );
+
 router.post( '/actualizarCatalogo',     require('../controllers/listadoFinalController').postActualizarCatalogo );
+
+router.post( '/buscarRevistaPorNombre',          require('../controllers/listadoFinalController').postBuscarRevistaPorNombre );
+router.post( '/buscarRevistaPorISSNimpreso',     require('../controllers/listadoFinalController').postBuscarRevistaPorISSNimpreso );
+router.post( '/buscarRevistaPorISSNelectronico', require('../controllers/listadoFinalController').postBuscarRevistaPorISSNelectronico );
+
 
 module.exports = router;

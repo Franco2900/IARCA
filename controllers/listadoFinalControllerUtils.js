@@ -40,7 +40,7 @@ class Revista {
 
 
 
-// Crea un arreglo de objetos con la información de las revistas
+// Parseo el arreglo JSON a un arreglo de objetos
 function crearListadoDeRevistas( archivoJSON ){
 
     var revistas = [];
@@ -83,6 +83,7 @@ function crearListadoDeRevistas( archivoJSON ){
 
 function armarTablaDeRevistas( arregloRevistas, numeroPagina ){
 
+    // Encabezado de la tabla
     let tabla = 
     `<table id="tablaRevistas" border="1" class="table table-light table-striped table-bordered">
         <thead>
@@ -105,21 +106,25 @@ function armarTablaDeRevistas( arregloRevistas, numeroPagina ){
 
             </tr>
         </thead>
-    `
-    
-    if(numeroPagina > 1) numeroPagina = (numeroPagina * 20) - 19;
+    `;
+
+    // Calculo desde que número debería empezar a contar el número de la revista, ej: si estoy en la página 1 empieza a contar desde la revista 1 hasta la revista 20, si estoy en la página 2 empieza a contar desde la revista 21 hasta la revista 40
+    let numeroRevista = 1;
+    if(numeroPagina > 1) numeroRevista = (numeroPagina * 20) - 19;
 
     let repositorios = ['nbra', 'doaj', 'latindex', 'redalyc', 'scimago', 'scielo', 'wos', 'biblat', 'dialnet'];
 
+    // Con el arreglo que recibo, armo el cuerpo de la tabla
     for(let i = 0; i < arregloRevistas.length; i++)
     {
         tabla += `<tr>
-                    <td class="text-center">${numeroPagina}</td>
+                    <td class="text-center">${numeroRevista}</td>
                     <td>${arregloRevistas[i].tituloRevista}</td>
                     <td class="text-center">${arregloRevistas[i].issnImpreso}</td>
                     <td class="text-center">${arregloRevistas[i].issnEnLinea}</td>
                     <td>${arregloRevistas[i].instituto}</td>`
 
+        // Enlaces a revistas
         repositorios.forEach(repositorio => {
 
             if( arregloRevistas[i][repositorio] === "true" && arregloRevistas[i][`url_${repositorio}`] !== "null" )
@@ -127,19 +132,18 @@ function armarTablaDeRevistas( arregloRevistas, numeroPagina ){
             
             else if ( arregloRevistas[i][repositorio] === "true" && arregloRevistas[i][`url_${repositorio}`] === "null" )
                 tabla += `<td class="text-center"> X </td>`;
+            
             else
-
                 tabla += `<td></td>`;
-
         })
         
         tabla += `</tr>`
-        numeroPagina++;
+        numeroRevista++;
     }
 
-    tabla += `</table>`
+    tabla += `</table>` // Fin de la tabla
 
-    return tabla;
+    return tabla; // Devuelvo la tabla HTML
 }
 
 

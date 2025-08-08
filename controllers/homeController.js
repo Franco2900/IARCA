@@ -3,7 +3,7 @@ const path = require( 'path' ); // Módulo para trabajar con rutas de archivos y
 const fs   = require('fs');
 
 // Metodos importados de 'util.js'
-const { logURL } = require('../util/util.js');
+const { logURL } = require('./utilController');
 
 async function getHome(req, res)
 {

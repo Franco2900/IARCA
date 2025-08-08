@@ -36,18 +36,56 @@
 <p>Este es el listado final que pudimos conseguir al combinar y filtrar los datos recopilados de todos los repositorios web</p>
 
 <!-- Botones para manejar la tabla --> 
-<p>Página <span id="paginaActual">1</span> de <span id="cantidadPaginasDeNavegacion"><%= cantidadPaginasDeNavegacion %></span></p>
+<div id="manejoTablaPaginacion">
+    <p>Página <span id="paginaActual">1</span> de <span id="cantidadPaginasDeNavegacion"><%= cantidadPaginasDeNavegacion %></span></p>
 
-<button id="botonPrimeraPagina" onclick="primerPagina()"> <<< </button>
-<button id="botonAnterior"      onclick="anteriorPagina()"> < </button>
-<input id="buscarPaginaEspecifica" type="number" placeholder="Ingrese página a buscar" onchange="buscarPaginaEspecifica()">
-<button id="botonSiguiente"     onclick="siguientePagina()"> > </button>
-<button id="botonUltimaPagina"  onclick="ultimaPagina()"> >>> </button>     
+    <button id="botonPrimeraPagina" onclick="primerPagina()"> <<< </button>
+    <button id="botonAnterior"      onclick="anteriorPagina()"> < </button>
+    <input id="buscarPaginaEspecifica" type="number" placeholder="Ingrese página a buscar" oninput="buscarPaginaEspecifica()">
+    <button id="botonSiguiente"     onclick="siguientePagina()"> > </button>
+    <button id="botonUltimaPagina"  onclick="ultimaPagina()"> >>> </button>     
+</div>
 
-<br></br>
+<br>
+
+<!-- Inputs para búsquedas con filtro -->
+<div class="row">
+
+    <div class="col-4" id="manejoTablaBusquedaPorNombre">
+        <p>Buscar revista por nombre</p>
+        <input id="buscarRevistaPorNombre" 
+               type="text" 
+               placeholder="Ingrese nombre a buscar"
+               size="30" 
+               oninput="buscarRevistaPorNombre()">
+    </div>
+
+    <div class="col-4" id="manejoTablaBusquedaPorISSNimpreso">
+        <p>Buscar revista por ISSN impreso</p>
+        <input id="buscarRevistaPorISSNimpreso" 
+               type="text" 
+               placeholder="EJ: 1111-1111"
+               size="10" 
+               oninput="buscarRevistaPorISSNimpreso()">
+    </div>
+
+    <div class="col-4" id="manejoTablaBusquedaPorISSNelectronico">
+        <p>Buscar revista por ISSN electronico</p>
+        <input id="buscarRevistaPorISSNelectronico" 
+               type="text" 
+               placeholder="EJ: 1111-1111"
+               size="10" 
+               oninput="buscarRevistaPorISSNelectronico()">
+    </div>
+
+</div>  
+
+<br>
 
 <!-- Tabla con las revistas del listado final -->
-<%- tabla %>
+<div id="tablaContainer">
+    <%- tabla %>
+</div>
  
 <!-- Datos sobre el listado final -->
 <p>Cantidad de revistas en el listado final: <%= cantidadRevistas %></p>

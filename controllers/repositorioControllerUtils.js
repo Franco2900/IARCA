@@ -17,7 +17,7 @@ class Revista {
 }
 
 
-// Crea un arreglo de objetos con la información de las revistas
+// Parseo el arreglo JSON a un arreglo de objetos
 function crearListadoDeRevistas( archivoJSON ){
 
     var revistas = [];
@@ -35,6 +35,7 @@ function crearListadoDeRevistas( archivoJSON ){
 // Crea una tabla HTML con el arreglo de revistas pasado, sin importar el tamaño del arreglo
 function armarTablaDeRevistas( arregloRevistas, numeroPagina ){
 
+    // Encabezado de la tabla
     let tabla = 
     `<table id="tablaRevistas" border="1" class="table table-light table-striped table-bordered">
         <thead>
@@ -45,10 +46,13 @@ function armarTablaDeRevistas( arregloRevistas, numeroPagina ){
                 <th class="text-center">ISSN electronico</th>
                 <th class="text-center">Instituto/Editorial</th>
             </tr>
-        </thead>`
+        </thead>`;
 
-    if(numeroPagina > 1) numeroPagina = (numeroPagina * 20) - 19;
+    // Calculo desde que número debería empezar a contar el número de la revista, ej: si estoy en la página 1 empieza a contar desde la revista 1 hasta la revista 20, si estoy en la página 2 empieza a contar desde la revista 21 hasta la revista 40
+    let numeroRevista = 1;
+    if(numeroPagina > 1) numeroRevista = (numeroPagina * 20) - 19;
 
+    // Con el arreglo que recibo, armo el cuerpo de la tabla
     for(let i = 0; i < arregloRevistas.length; i++){
 
         let tituloRevista;
@@ -56,19 +60,19 @@ function armarTablaDeRevistas( arregloRevistas, numeroPagina ){
         else                              tituloRevista = `<td>${arregloRevistas[i].tituloRevista}</td>`;
 
         tabla += `<tr>
-                    <td class="text-center">${numeroPagina}</td>
+                    <td class="text-center">${numeroRevista}</td>
                     ${tituloRevista}
                     <td class="text-center">${arregloRevistas[i].issnImpreso}</td>
                     <td class="text-center">${arregloRevistas[i].issnEnLinea}</td>
                     <td>${arregloRevistas[i].instituto}</td>
                  </tr>`
         
-        numeroPagina++;
+        numeroRevista++;
     }
 
-    tabla += `</table>`
+    tabla += `</table>` // Fin de la tabla
 
-    return tabla;
+    return tabla; // Devuelvo la tabla HTML
 }
 
 
