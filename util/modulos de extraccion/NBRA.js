@@ -6,7 +6,7 @@ const csvtojson = require('csvtojson'); // Módulo para pasar texto csv a json
 const path      = require('path');      // Módulo para trabajar con rutas
 
 // Metodos importados
-const { calcularTiempoActualizacion } = require('../util.js');
+const { calcularTiempoActualizacion } = require('../utilActualizacion.js');
 const { actualizarEstado } = require('../../models/estadoActualizacionModel.js');
 
 // Busco los enlaces de todas las revistas

@@ -6,7 +6,7 @@ const fs   = require('fs');     // Módulo para escribir, leer, borrar y renombr
 const { logURL } = require('./utilController');
 const { crearListadoDeRevistas, armarTablaDeRevistas } = require('./listadoFinalControllerUtils.js');
 
-const { calcularTiempoPromedio } = require('../util/util.js');
+const { calcularTiempoPromedio } = require('../util/utilActualizacion.js');
 
 async function getListadoFinal(req, res)
 {
@@ -235,35 +235,10 @@ async function postActualizarCatalogo(req, res)
 
     try
     {
-        let tiempoEmpieza       = Date.now();
         let archivoDeActualizacion = require(`../util/Listado final/listadoFinal.js`);
         
         console.log(`Actualizando el listado final`);
         await archivoDeActualizacion.crearListado(); // Llamo al método de actualización dentro del archivo .js
-    
-        let tiempoTermina = Date.now();
-        let segundos = Math.ceil( ( tiempoTermina - tiempoEmpieza) / 1000 );
-        
-        console.log(`Se tardo ${segundos} segundos en actualizar los datos`);
-    
-        // Si existe el archivo de tiempo, se actualiza el archivo
-        if( fs.existsSync( path.join(__dirname, `../util/Tiempos/Listado finalTiempo.txt`) ) ) 
-        {
-            fs.appendFileSync(path.join(__dirname, `../util/Tiempos/Listado finalTiempo.txt`), `${segundos};`, error => 
-            { 
-                if(error) console.log(error);
-            })
-        }
-        // Si no existe el archivo de tiempo, se lo crea
-        else
-        {
-            fs.writeFileSync(path.join(__dirname, `../util/Tiempos/Listado finalTiempo.txt`), `${segundos};`, error => 
-            { 
-                if(error) console.log(error);
-            }) 
-        }
-
-        calcularTiempoPromedio('Listado final');
     
         res.status(200).json( { mensaje: "Actualización exitosa" } ); 
     }
@@ -287,7 +262,10 @@ async function postBuscarRevistaPorNombre(req, res)
         const archivoJSON = require(`../util/Listado final/Listado final.json`); // Archivo JSON en el que buscar
 
         // Busqueda de coincidencias parciales teniendo en cuenta la posición de los carácteres
-        const resultadosFiltro = archivoJSON.filter( item => item.Título.toLowerCase().startsWith(tituloRevista) );
+        //const resultadosFiltro = archivoJSON.filter( item => item.Título.toLowerCase().startsWith(tituloRevista) );
+
+        // Busqueda de coincidencias parciales si contiene los caracteres
+        const resultadosFiltro = archivoJSON.filter( item => item.Título.toLowerCase().includes(tituloRevista) );
 
         let listadoRevistas = crearListadoDeRevistas(resultadosFiltro); // Parseo el arreglo JSON a un arreglo de objetos
         tabla = armarTablaDeRevistas( listadoRevistas, 1 ); // Armo la tabla HTML
@@ -314,7 +292,10 @@ async function postBuscarRevistaPorISSNimpreso(req, res)
         const archivoJSON = require(`../util/Listado final/Listado final.json`); // Archivo JSON en el que buscar
 
         // Busqueda de coincidencias parciales teniendo en cuenta la posición de los carácteres
-        const resultadosFiltro = archivoJSON.filter( item => item['ISSN impresa'].toLowerCase().startsWith(issnImpreso) );
+        //const resultadosFiltro = archivoJSON.filter( item => item['ISSN impresa'].toLowerCase().startsWith(issnImpreso) );
+
+        // Busqueda de coincidencias parciales si contiene los caracteres
+        const resultadosFiltro = archivoJSON.filter( item => item['ISSN impresa'].toLowerCase().includes(issnImpreso) );
 
         let listadoRevistas = crearListadoDeRevistas(resultadosFiltro); // Parseo el arreglo JSON a un arreglo de objetos
         tabla = armarTablaDeRevistas( listadoRevistas, 1 ); // Armo la tabla HTML
@@ -341,7 +322,10 @@ async function postBuscarRevistaPorISSNelectronico(req, res)
         const archivoJSON = require(`../util/Listado final/Listado final.json`); // Archivo JSON en el que buscar
 
         // Busqueda de coincidencias parciales teniendo en cuenta la posición de los carácteres
-        const resultadosFiltro = archivoJSON.filter( item => item['ISSN en linea'].toLowerCase().startsWith(issnElectronico) );
+        //const resultadosFiltro = archivoJSON.filter( item => item['ISSN en linea'].toLowerCase().startsWith(issnElectronico) );
+
+        // Busqueda de coincidencias parciales si contiene los caracteres
+        const resultadosFiltro = archivoJSON.filter( item => item['ISSN en linea'].toLowerCase().includes(issnElectronico) );
 
         let listadoRevistas = crearListadoDeRevistas(resultadosFiltro); // Parseo el arreglo JSON a un arreglo de objetos
         tabla = armarTablaDeRevistas( listadoRevistas, 1 ); // Armo la tabla HTML
