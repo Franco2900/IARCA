@@ -4,7 +4,7 @@ const csvtojson      = require('csvtojson')  // Módulo para pasar texto csv a j
 const path           = require('path');      // Módulo para trabajar con rutas
 
 // Metodos importados
-const { calcularTiempoActualizacion } = require('../util.js');
+const { calcularTiempoActualizacion } = require('../utilActualizacion.js');
 const { actualizarEstado } = require('../../models/estadoActualizacionModel.js');
 
 async function extraerInfoRepositorio(paginaActual = 1, revista = 1, info = "Título;ISSN impresa;ISSN en linea;Instituto;Editora;URL\n") 

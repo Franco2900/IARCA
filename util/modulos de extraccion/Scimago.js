@@ -6,7 +6,7 @@ const path       = require('path'); // Módulo para trabajar con rutas
 const csvtojson  = require('csvtojson'); // Módulo para pasar texto csv a json
 
 // Metodos importados
-const { calcularTiempoActualizacion } = require('../util.js');
+const { calcularTiempoActualizacion } = require('../utilActualizacion.js');
 const { actualizarEstado } = require('../../models/estadoActualizacionModel.js');
 
 async function descargarArchivo() 

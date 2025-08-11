@@ -11,7 +11,7 @@ let google = process.env.GOOGLE_PATH;
 if ( !path.isAbsolute(google) ) google = path.join(__dirname, google); // Si la ruta de google no es absoluta, entonces es una ruta relativa y le añado lo que le falta (Linux usa una ruta absoluta mientras que Windows usa una ruta relativa)
 
 // Metodos importados
-const { calcularTiempoActualizacion } = require('../util.js');
+const { calcularTiempoActualizacion } = require('../utilActualizacion.js');
 const { actualizarEstado } = require('../../models/estadoActualizacionModel.js');
 
 async function extraerInfoRevistas() 
