@@ -318,7 +318,7 @@ async function postBuscarRevistaPorISSNelectronico(req, res)
     {
         logURL(`POST`, `/listadoFinal/buscarRevistaPorISSNelectronico`); // Log de consola
 
-        const issnElectronico = req.body.issnElectronico.trim().toLowerCase();           // Revista a buscar
+        const issnElectronico = req.body.issnElectronico.trim().toLowerCase();   // Revista a buscar
         const archivoJSON = require(`../util/Listado final/Listado final.json`); // Archivo JSON en el que buscar
 
         // Busqueda de coincidencias parciales teniendo en cuenta la posición de los carácteres
@@ -342,6 +342,35 @@ async function postBuscarRevistaPorISSNelectronico(req, res)
 }
 
 
+async function postBuscarRevistaPorInstituto(req, res)
+{
+    try
+    {
+        logURL(`POST`, `/listadoFinal/buscarRevistaPorInstituto`); // Log de consola
+
+        const instituto = req.body.instituto.trim().toLowerCase();  // Revista a buscar
+        const archivoJSON = require(`../util/Listado final/Listado final.json`); // Archivo JSON en el que buscar
+
+        // Busqueda de coincidencias parciales teniendo en cuenta la posición de los carácteres
+        //const resultadosFiltro = archivoJSON.filter( item => item['Instituto/Editorial'].toLowerCase().startsWith(instituto) );
+
+        // Busqueda de coincidencias parciales si contiene los caracteres
+        const resultadosFiltro = archivoJSON.filter( item => item['Instituto/Editorial'].toLowerCase().includes(instituto) );
+
+        let listadoRevistas = crearListadoDeRevistas(resultadosFiltro); // Parseo el arreglo JSON a un arreglo de objetos
+        tabla = armarTablaDeRevistas( listadoRevistas, 1 ); // Armo la tabla HTML
+        
+        res.send(tabla); // Envio la tabla HTMLS
+    }
+    catch(error)
+    {
+        console.log("ERROR EN EL SERVIDOR: ");
+        console.log(error);
+
+        res.status(500).json( { mensaje: error.message });
+    }
+}
+
 module.exports = { 
     getListadoFinal, 
     getDescargarCSV, 
@@ -355,4 +384,5 @@ module.exports = {
     postBuscarRevistaPorNombre,
     postBuscarRevistaPorISSNimpreso,
     postBuscarRevistaPorISSNelectronico,
+    postBuscarRevistaPorInstituto,
 };

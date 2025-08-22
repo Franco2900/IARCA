@@ -292,6 +292,7 @@ async function buscarRevistaPorNombre(repositorio)
         document.getElementById('manejoTablaPaginacion').style.visibility = ''; // Hago visible los botones de paginación
         document.getElementById('manejoTablaBusquedaPorISSNimpreso').style.visibility = ''; // Hago visible la busqueda por ISSN impreso
         document.getElementById('manejoTablaBusquedaPorISSNelectronico').style.visibility = ''; // Hago visible la busqueda por ISSN electronico
+        document.getElementById('manejoTablaBusquedaPorInstituto').style.visibility = ''; // Hago visible la busqueda por Instituto
 
         return; // Salgo temprano para no ejecutar el resto del código
     }
@@ -307,6 +308,7 @@ async function buscarRevistaPorNombre(repositorio)
     document.getElementById('manejoTablaPaginacion').style.visibility = 'hidden'; // Hago invisible los botones de paginación
     document.getElementById('manejoTablaBusquedaPorISSNimpreso').style.visibility = 'hidden'; // Hago invisible la busqueda por ISSN impreso
     document.getElementById('manejoTablaBusquedaPorISSNelectronico').style.visibility = 'hidden'; // Hago invisible la busqueda por ISSN electronico
+    document.getElementById('manejoTablaBusquedaPorInstituto').style.visibility = 'hidden'; // Hago invisible la busqueda por Instituto
 
     const url = `${dominio}/iarca/repositorio/${repositorio}/buscarRevistaPorNombre`;
     try 
@@ -351,6 +353,7 @@ async function buscarRevistaPorISSNimpreso(repositorio)
         document.getElementById('manejoTablaPaginacion').style.visibility = ''; // Hago visible los botones de paginación
         document.getElementById('manejoTablaBusquedaPorNombre').style.visibility = ''; // Hago visible la busqueda por nombre
         document.getElementById('manejoTablaBusquedaPorISSNelectronico').style.visibility = ''; // Hago visible la busqueda por ISSN electronico
+        document.getElementById('manejoTablaBusquedaPorInstituto').style.visibility = ''; // Hago visible la busqueda por Instituto
 
         return; // Salgo temprano para no ejecutar el resto del código
     }
@@ -366,6 +369,7 @@ async function buscarRevistaPorISSNimpreso(repositorio)
     document.getElementById('manejoTablaPaginacion').style.visibility = 'hidden'; // Hago invisible los botones de paginación
     document.getElementById('manejoTablaBusquedaPorNombre').style.visibility = 'hidden'; // Hago invisible la busqueda por nombre
     document.getElementById('manejoTablaBusquedaPorISSNelectronico').style.visibility = 'hidden'; // Hago invisible la busqueda por ISSN electronico
+    document.getElementById('manejoTablaBusquedaPorInstituto').style.visibility = 'hidden'; // Hago invisible la busqueda por Instituto
 
     const url = `${dominio}/iarca/repositorio/${repositorio}/buscarRevistaPorISSNimpreso`;
     try 
@@ -410,6 +414,7 @@ async function buscarRevistaPorISSNelectronico(repositorio)
         document.getElementById('manejoTablaPaginacion').style.visibility = ''; // Hago visible los botones de paginación
         document.getElementById('manejoTablaBusquedaPorNombre').style.visibility = ''; // Hago visible la busqueda por nombre
         document.getElementById('manejoTablaBusquedaPorISSNimpreso').style.visibility = ''; // Hago visible la busqueda por ISSN impreso
+        document.getElementById('manejoTablaBusquedaPorInstituto').style.visibility = ''; // Hago visible la busqueda por Instituto
 
         return; // Salgo temprano para no ejecutar el resto del código
     }
@@ -425,6 +430,7 @@ async function buscarRevistaPorISSNelectronico(repositorio)
     document.getElementById('manejoTablaPaginacion').style.visibility = 'hidden'; // Hago invisible los botones de paginación
     document.getElementById('manejoTablaBusquedaPorNombre').style.visibility = 'hidden'; // Hago invisible la busqueda por nombre
     document.getElementById('manejoTablaBusquedaPorISSNimpreso').style.visibility = 'hidden'; // Hago invisible la busqueda por ISSN impreso
+    document.getElementById('manejoTablaBusquedaPorInstituto').style.visibility = 'hidden'; // Hago invisible la busqueda por Instituto
 
     const url = `${dominio}/iarca/repositorio/${repositorio}/buscarRevistaPorISSNelectronico`;
     try 
@@ -434,6 +440,67 @@ async function buscarRevistaPorISSNelectronico(repositorio)
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify( { issnElectronico } ) 
+        });
+
+        if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+        
+        const tablaNuevaHTML = await response.text(); // Respuesta del servidor
+        tablaContainer.innerHTML = tablaNuevaHTML;    // Reemplazo la tabla actual por la nueva
+    } 
+    catch (error) 
+    {
+        console.error('Fetch fallido:', error);
+    }
+}
+
+
+async function buscarRevistaPorInstituto(repositorio)
+{
+    const tablaContainer = document.getElementById('tablaContainer');
+
+    // Recupero el texto del input
+    const instituto = document.getElementById('buscarRevistaPorInstituto').value.trim();
+    console.log(`Instituto de la revista a buscar: ${instituto}, Repositorio en el que buscar: ${repositorio}`);
+
+    // Si no hay input
+    if(!instituto || instituto.length === 0)          
+    {
+
+        if (tablaGuardada) 
+        {
+            tablaContainer.innerHTML = tablaOriginalHTML; // Vuelvo a mostrar la tabla original
+            tablaGuardada = false;
+        }
+
+        document.getElementById('manejoTablaPaginacion').style.visibility = ''; // Hago visible los botones de paginación
+        document.getElementById('manejoTablaBusquedaPorNombre').style.visibility = ''; // Hago visible la busqueda por nombre
+        document.getElementById('manejoTablaBusquedaPorISSNimpreso').style.visibility = ''; // Hago visible la busqueda por ISSN impreso
+        document.getElementById('manejoTablaBusquedaPorISSNelectronico').style.visibility = ''; // Hago visible la busqueda por ISSN electronico
+
+        return; // Salgo temprano para no ejecutar el resto del código
+    }
+
+    // Si es la primera vez que se escribe algo en el input (Guarda la tabla original solo al primer carácter que escriba el usuario)
+    if (!tablaGuardada) 
+    {
+      tablaOriginalHTML = tablaContainer.innerHTML; // Guardo la tabla original
+      tablaGuardada = true;
+    }
+
+    // Si hay input
+    document.getElementById('manejoTablaPaginacion').style.visibility = 'hidden'; // Hago invisible los botones de paginación
+    document.getElementById('manejoTablaBusquedaPorNombre').style.visibility = 'hidden'; // Hago invisible la busqueda por nombre
+    document.getElementById('manejoTablaBusquedaPorISSNimpreso').style.visibility = 'hidden'; // Hago invisible la busqueda por ISSN impreso
+    document.getElementById('manejoTablaBusquedaPorISSNelectronico').style.visibility = 'hidden'; // Hago invisible la busqueda por ISSN electronico
+
+    const url = `${dominio}/iarca/repositorio/${repositorio}/buscarRevistaPorInstituto`;
+    try 
+    {
+        // Hago fetch al backend
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify( { instituto } ) 
         });
 
         if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);

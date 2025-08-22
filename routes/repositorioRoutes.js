@@ -29,6 +29,7 @@ router.post( '/:repositorio/actualizarCatalogo',     require('../controllers/rep
 router.post( '/:repositorio/buscarRevistaPorNombre',          require('../controllers/repositorioController').postBuscarRevistaPorNombre );
 router.post( '/:repositorio/buscarRevistaPorISSNimpreso',     require('../controllers/repositorioController').postBuscarRevistaPorISSNimpreso );
 router.post( '/:repositorio/buscarRevistaPorISSNelectronico', require('../controllers/repositorioController').postBuscarRevistaPorISSNelectronico );
+router.post( '/:repositorio/buscarRevistaPorInstituto',       require('../controllers/repositorioController').postBuscarRevistaPorInstituto );
 
 //Solo para el caso especial de Dialnet en el que no podemos hacemos webscrapping o llamado a apis
 router.post( '/Dialnet/excelDialnet', upload.single('excelDialnet'), require('../controllers/repositorioController').postExcelDialnet ); 

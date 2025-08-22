@@ -74,28 +74,28 @@ async function crearListado() {
         let cantidadRevistasRepetidas = 0;
 
         let revistasUnicas = new Set(); // Un set es un array pero sin valores repetidos
-        let issnUnicos     = new Set();
+        let issnYaVistos   = new Set();
 
         // Para cada revista
         revistas.forEach(revista => {
 
             if // Hago un filtro
             (
-                revista.issnEnLinea !== revista.issnImpreso                  // Elimino todas las revistas que tengan lo mismo tanto en el ISSN en linea como en el ISSN impreso, ejemplo: https://www.latindex.org/latindex/Solr/Busqueda?idModBus=0&buscar=Visi%C3%B3n+de+futuro&submit=Buscar
-                &&
-                !(revista.issnEnLinea === '' && revista.issnImpreso === '')  // Elimino todas las revistas que tienen ambos ISSN vacios'')
-                &&
+                /*revista.issnEnLinea !== revista.issnImpreso                  // Elimino todas las revistas que tengan lo mismo tanto en el ISSN en linea como en el ISSN impreso, ejemplo: https://www.latindex.org/latindex/Solr/Busqueda?idModBus=0&buscar=Visi%C3%B3n+de+futuro&submit=Buscar
+                &&*/
+                /*!(revista.issnEnLinea === '' && revista.issnImpreso === '')  // Elimino todas las revistas que tienen ambos ISSN vacios'')
+                &&*/
                 (
-                    (revista.issnEnLinea !== '' && !issnUnicos.has(revista.issnEnLinea)  && !issnUnicos.has(revista.issnImpreso) )  // Elimino las revistas con el mismo ISSN electronico (dicho ISSN no debe ser '')
+                    (revista.issnEnLinea !== '' && !issnYaVistos.has(revista.issnEnLinea)  && !issnYaVistos.has(revista.issnImpreso) )  // Elimino las revistas con el mismo ISSN electronico (dicho ISSN no debe ser '')
                     || 
-                    (revista.issnImpreso  !== '' && !issnUnicos.has(revista.issnImpreso) && !issnUnicos.has(revista.issnEnLinea) ) // Elimino las revistas con el mismo ISSN impreso (dicho ISSN no debe ser '')
+                    (revista.issnImpreso  !== '' && !issnYaVistos.has(revista.issnImpreso) && !issnYaVistos.has(revista.issnEnLinea) ) // Elimino las revistas con el mismo ISSN impreso (dicho ISSN no debe ser '')
                 )
             )
             {  // Si la revista pasa el filtro
                 revistasUnicas.add(revista); // Añado la revista al listado de revistas únicas
 
-                if(revista.issnEnLinea !== '') issnUnicos.add(revista.issnEnLinea); // Añado los ISSN de la revista a un set para asegurarme que futuras revistas con los mismos ISSN no sean añadidas al listado de revistas únicas
-                if(revista.issnImpreso !== '') issnUnicos.add(revista.issnImpreso);
+                if(revista.issnEnLinea !== '') issnYaVistos.add(revista.issnEnLinea); // Añado los ISSN de la revista a un set para asegurarme que futuras revistas con los mismos ISSN no sean añadidas al listado de revistas únicas
+                if(revista.issnImpreso !== '') issnYaVistos.add(revista.issnImpreso);
             }
             else
             {   // Si la revista no pasa el filtro
@@ -112,11 +112,11 @@ async function crearListado() {
         // Recorro cada repositorio uno por uno
         repositoriosWeb.forEach((repositorioNombre) =>{ 
             
+            // Busco el archivo .json correspondiente al repositorio actualmente recorrido
+            let archivoJSON = require(path.join(__dirname, `../Repositorios/${repositorioNombre}.json`)); 
+
             // Para cada repositorio, recorro todas las revistas del listado filtrado uno por uno
             revistasUnicas.forEach(revistaUnica => { 
-
-                // Busco el archivo .json correspondiente al repositorio actualmente recorrido
-                let archivoJSON = require(path.join(__dirname, `../Repositorios/${repositorioNombre}.json`)); 
 
                 // Valores por defecto
                 revistaUnica[repositorioNombre] = false;          // Bandera que indica si la revista pertenece al repositorio que se esta revisando actualmente o no
@@ -126,9 +126,9 @@ async function crearListado() {
                 for(let i = 0; i < archivoJSON.length; i++) 
                 {
 
-                    if // Me fijo si el titulo, el ISSN o el eISSN de la revista estan en el archivo .json
+                    if // Me fijo si el ISSN o el eISSN de la revista estan en el archivo .json
                     (
-                        (archivoJSON[i]['Título'] == revistaUnica.titulo) || 
+                        /*(archivoJSON[i]['Título'] == revistaUnica.titulo) || */ 
                         (revistaUnica.issnEnLinea && revistaUnica.issnEnLinea !== "" && archivoJSON[i]['ISSN en linea'] == revistaUnica.issnEnLinea) || 
                         (revistaUnica.issnImpreso && revistaUnica.issnImpreso !== "" && archivoJSON[i]['ISSN impresa']  == revistaUnica.issnImpreso)
                     )
@@ -140,9 +140,6 @@ async function crearListado() {
                         if(archivoJSON[i].URL && archivoJSON[i].URL !== "") revistaUnica['URL_' + repositorioNombre] = archivoJSON[i].URL;
                         else                                                revistaUnica['URL_' + repositorioNombre] = null;
 
-                        // Si la revista tiene el campo de instituto vacio, me fijo si el archivo .json lo tiene
-                        if( (!revistaUnica.instituto || revistaUnica.instituto == "") && archivoJSON[i]['Instituto'] ) revistaUnica.instituto =  archivoJSON[i]['Instituto'];
-
                         break; // Dejo de recorrer el archivo .json y procedo a revisar la siguiente revista para hacer el proceso más rapido
                     }
 
@@ -153,7 +150,7 @@ async function crearListado() {
         })
 
 
-        // Cuando hacemos el filtro, agarramos la primera revista que pase los parametros establecidos y que
+        // Cuando hacemos el filtro, agarramos la primera revista que
         // tenga los ISSN sin repetir, en otras palabras, agarramos la primera revista que encontramos y descartamos
         // las siguientes revistas porque se repiten.
         
@@ -166,27 +163,30 @@ async function crearListado() {
         // Recorro cada repositorio uno por uno
         repositoriosWeb.forEach((repositorioNombre) =>{
             
+            // Busco el archivo .json correspondiente al repositorio actualmente recorrido
+            let archivoJSON = require(path.join(__dirname, `../Repositorios/${repositorioNombre}.json`));
+
             // Para cada repositorio, recorro todas las revistas del listado filtrado uno por uno
             revistasUnicas.forEach(revistaUnica => { 
-
-                // Busco el archivo .json correspondiente al repositorio actualmente recorrido
-                let archivoJSON = require(path.join(__dirname, `../Repositorios/${repositorioNombre}.json`));
             
                 // Me fijo si la revista actual esta en el archivo .json del repositorio
                 for(let i = 0; i < archivoJSON.length; i++)
                 {
-                    if // Me fijo si el titulo, el ISSN o el eISSN de la revista estan en el archivo .json
+                    if // Me fijo si el ISSN o el eISSN de la revista estan en el archivo .json
                     (
-                        (archivoJSON[i]['Título'] == revistaUnica.titulo) || 
+                        /*(archivoJSON[i]['Título'] == revistaUnica.titulo) || */
                         (revistaUnica.issnEnLinea && revistaUnica.issnEnLinea !== "" && archivoJSON[i]['ISSN en linea'] == revistaUnica.issnEnLinea) || 
                         (revistaUnica.issnImpreso && revistaUnica.issnImpreso !== "" && archivoJSON[i]['ISSN impresa']  == revistaUnica.issnImpreso)
                     )
                     { // Si la revista esta esta en el archivo
 
-                        // Si el listado final no tiene el ISSN o el eISSN pero el archivo .json si lo tiene
+                        // Si la revista no tiene el ISSN o el eISSN pero el archivo .json si lo tiene
                         if( (!revistaUnica.issnEnLinea || revistaUnica.issnEnLinea == "") && archivoJSON[i]['ISSN en linea'] ) revistaUnica.issnEnLinea = archivoJSON[i]['ISSN en linea'];
                         if( (!revistaUnica.issnImpreso || revistaUnica.issnImpreso == "") && archivoJSON[i]['ISSN impresa'] )  revistaUnica.issnImpreso = archivoJSON[i]['ISSN impresa'];
                         
+                        // Si la revista tiene el campo de instituto vacio, me fijo si el archivo .json lo tiene
+                        if( (!revistaUnica.instituto || revistaUnica.instituto == "") && archivoJSON[i]['Instituto'] ) revistaUnica.instituto =  archivoJSON[i]['Instituto'];
+
                         break; // Dejo de recorrer el archivo .json y procedo a revisar la siguiente revista para hacer el proceso más rapido
                     }
                 }
@@ -208,9 +208,9 @@ async function crearListado() {
         // otra solo con el eISSN.
 
         // Ahora voy a arreglar este error fusionando las revistas duplicadas en una sola
-
+        
         revistasUnicas = Array.from(revistasUnicas); // Parseo el Set en un Array para poder comparar elementos
-
+        
         // Recorro todas las revistas una por una (hasta length-1 para evitar desbordar al comparar la posición i+1)
         for(let i = 0; i < revistasUnicas.length - 1; i++)  
         { 
@@ -219,7 +219,7 @@ async function crearListado() {
                 revistasUnicas[i].issnEnLinea == revistasUnicas[i+1].issnEnLinea &&
                 revistasUnicas[i].issnImpreso == revistasUnicas[i+1].issnImpreso
                 // NOTA: Aprovecho el hecho de que todo esta ordenado alfabeticamente.
-                // En el caso de que tenga dos revistas repetidas, la revista actual y la siguiente al tener el
+                // En el caso de que tenga dos revistas repetidas, la revista actual y la siguiente van a tener el
                 // mismo nombre y por lo tanto van a estar práctimamente pegadas
             )
             {
@@ -227,18 +227,18 @@ async function crearListado() {
                 let nuevaRevista = new Revista(revistasUnicas[i].titulo, revistasUnicas[i].issnImpreso, revistasUnicas[i].issnEnLinea, revistasUnicas[i].instituto);
                 
                 // Recorro cada repositorio
-                repositoriosWeb.forEach((repositorioNombre) =>{
+                repositoriosWeb.forEach((repositorio) =>{
                     
                     // Reviso la revista actual y la siguiente, y si alguna de las dos tiene
                     // la bandera que indica si la revista pertenece al repositorio que se esta revisando actualmente o no
                     // o la URL que lleva a la revista de repositorio
                     // las copio en la nueva revista
 
-                    if ( revistasUnicas[i][repositorioNombre] )                   nuevaRevista[repositorioNombre]          = true;
-                    if ( revistasUnicas[i]['URL_' + repositorioNombre] !== null ) nuevaRevista['URL_' + repositorioNombre] = revistasUnicas[i]['URL_' + repositorioNombre];
+                    if ( revistasUnicas[i][repositorio] )                   nuevaRevista[repositorio]          = true;
+                    if ( revistasUnicas[i]['URL_' + repositorio] !== null ) nuevaRevista['URL_' + repositorio] = revistasUnicas[i]['URL_' + repositorio];
                 
-                    if ( revistasUnicas[i+1][repositorioNombre] )                   nuevaRevista[repositorioNombre]          = true;
-                    if ( revistasUnicas[i+1]['URL_' + repositorioNombre] !== null ) nuevaRevista['URL_' + repositorioNombre] = revistasUnicas[i+1]['URL_' + repositorioNombre];
+                    if ( revistasUnicas[i+1][repositorio] )                   nuevaRevista[repositorio]          = true;
+                    if ( revistasUnicas[i+1]['URL_' + repositorio] !== null ) nuevaRevista['URL_' + repositorio] = revistasUnicas[i+1]['URL_' + repositorio];
 
                 })
 
@@ -249,7 +249,7 @@ async function crearListado() {
             }
             
         }
-
+        
         // Vuelvo a ordenar alfabeticamente las revistas según el título.
         revistasUnicas.sort((A, B) => A.titulo.localeCompare(B.titulo));
 

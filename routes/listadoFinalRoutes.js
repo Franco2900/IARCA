@@ -22,6 +22,6 @@ router.post( '/actualizarCatalogo',     require('../controllers/listadoFinalCont
 router.post( '/buscarRevistaPorNombre',          require('../controllers/listadoFinalController').postBuscarRevistaPorNombre );
 router.post( '/buscarRevistaPorISSNimpreso',     require('../controllers/listadoFinalController').postBuscarRevistaPorISSNimpreso );
 router.post( '/buscarRevistaPorISSNelectronico', require('../controllers/listadoFinalController').postBuscarRevistaPorISSNelectronico );
-
+router.post( '/buscarRevistaPorInstituto',       require('../controllers/listadoFinalController').postBuscarRevistaPorInstituto );
 
 module.exports = router;

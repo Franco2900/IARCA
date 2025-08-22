@@ -105,6 +105,7 @@ async function extraerInfoRepositorio()
 
     await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
     const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito    
+    json.sort((A, B) => A.Título.localeCompare(B.Título)); // Ordena alfabeticamente las revistas según el título
     await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
 
     calcularTiempoActualizacion(tiempoEmpieza, 'Scimago');

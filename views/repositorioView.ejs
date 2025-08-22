@@ -39,16 +39,16 @@
 <!-- Inputs para búsquedas con filtro -->
 <div class="row">
 
-    <div class="col-4" id="manejoTablaBusquedaPorNombre">
+    <div class="col-3" id="manejoTablaBusquedaPorNombre">
         <p>Buscar revista por nombre</p>
         <input id="buscarRevistaPorNombre" 
                type="text" 
-               placeholder="Ingrese nombre a buscar"
+               placeholder="EJ: Salud Colectiva"
                size="30" 
                oninput="buscarRevistaPorNombre('<%= repositorio %>')">
     </div>
 
-    <div class="col-4" id="manejoTablaBusquedaPorISSNimpreso">
+    <div class="col-3" id="manejoTablaBusquedaPorISSNimpreso">
         <p>Buscar revista por ISSN impreso</p>
         <input id="buscarRevistaPorISSNimpreso" 
                type="text" 
@@ -57,13 +57,22 @@
                oninput="buscarRevistaPorISSNimpreso('<%= repositorio %>')">
     </div>
 
-    <div class="col-4" id="manejoTablaBusquedaPorISSNelectronico">
+    <div class="col-3" id="manejoTablaBusquedaPorISSNelectronico">
         <p>Buscar revista por ISSN electronico</p>
         <input id="buscarRevistaPorISSNelectronico" 
                type="text" 
                placeholder="EJ: 1111-1111"
                size="10" 
                oninput="buscarRevistaPorISSNelectronico('<%= repositorio %>')">
+    </div>
+
+    <div class="col-3" id="manejoTablaBusquedaPorInstituto">
+        <p>Buscar revista por Instituto</p>
+        <input id="buscarRevistaPorInstituto" 
+               type="text" 
+               placeholder="EJ: Universidad Nacional de Lanús"
+               size="30" 
+               oninput="buscarRevistaPorInstituto('<%= repositorio %>')">
     </div>
 
 </div>  

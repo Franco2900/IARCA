@@ -34,10 +34,10 @@ async function extraerInfoRepositorio()
         await page.goto(`https://www.redalyc.org/pais.oa?id=9`); // URL del sitio web al que se le hace web scrapping
         await page.waitForSelector(".wrapper");                  // Espera a que el elemento indicado se cargue en el sitio web
        
-        await page.click('#pageSize');                                       // Hago click en la opción de tamaño
-        await page.waitForSelector('#pageSize option');                      // Espero a que se cargue
-        await page.select('#pageSize', '50');                                // Selecciono que se muestre de 50 revistas a la vez
-        await page.waitForSelector("div.container-cards div:nth-child(50)"); // Espero a que se carguen las 50 revistas
+        //await page.click('#pageSize');                                       // Hago click en la opción de tamaño
+        //await page.waitForSelector('#pageSize option');                      // Espero a que se cargue
+        //await page.select('#pageSize', '50');                                // Selecciono que se muestre de 50 revistas a la vez
+        //await page.waitForSelector("div.container-cards div:nth-child(50)"); // Espero a que se carguen las 50 revistas
         
 
         var html = await page.content();                         // Guardo el HTML extraido en esta variable  
@@ -49,7 +49,7 @@ async function extraerInfoRepositorio()
         console.log(cantidadRevistas)
         console.log("Cantidad de revistas: " + cantidadRevistas);
 
-        var cantidadPaginas = Math.ceil(cantidadRevistas / 50);
+        var cantidadPaginas = Math.ceil(cantidadRevistas / 15);
         console.log("Cantidad de páginas: " + cantidadPaginas);
 
 
@@ -108,6 +108,7 @@ async function extraerInfoRepositorio()
         
         await fs.promises.writeFile(csvFilePath, info); // Escribo la info en formato CSV. En caso de que ya exista el archivo, lo reescribe así tenemos siempre la información actualizada
         const json = await csvtojson({ delimiter: [";"] }).fromFile(csvFilePath); // Parseo de CSV a JSON directamente después de asegurarse de que el archivo CSV esté escrito
+        json.sort((A, B) => A.Título.localeCompare(B.Título)); // Ordena alfabeticamente las revistas según el título
         await fs.promises.writeFile(jsonFilePath, JSON.stringify(json));  // Escribo el archivo JSON
 
         calcularTiempoActualizacion(tiempoEmpieza, 'Redalyc'); // Registro el tiempo que tomo la actualización
